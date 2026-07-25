@@ -13,7 +13,7 @@ description: >-
   reel, video, TOD, tool of the day, AI news, "day N" content, or drops any AI
   story, tool, or number for his page. Merges and supersedes ac-ai-news,
   ac-tool-of-the-day, and the older ac-reel-creator. For static posts, captions,
-  bio, or highlights use ac-instagram.
+  bio, or highlights use itsac-instagram.
 ---
 
 # AC â€” Reel Creator (the studio: Tool of the Day + AI News)
@@ -127,7 +127,7 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory â
 ## Guardrails
 
 - **Frame one is loud and the payoff comes first.** Never a fade from black, never a tease.
-- **One gold accent per scene.** Black canvas, Lora + Poppins only, plain English; if a
+- **One gold accent per scene.** Black canvas, Space Grotesk + JetBrains Mono only, plain English; if a
   12-year-old couldn't follow scene A, rewrite it.
 - **No em-dashes on screen, ever** (captions may use the em-dash CTA lead).
 - **The handle comes from the `HANDLE` constant** in each template â€” one line, both spots.
@@ -138,4 +138,4 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory â
   "this changes everything," no hard selling in feed â€” value in feed, offer in DMs.
 - **Don't skip the checkpoint (step 6) or the scorecard gate.** They are the difference
   between shipping content and shipping retained content. When unsure on voice, defer to
-  `ac-instagram` Part 2.
+  `itsac-instagram` Part 2.

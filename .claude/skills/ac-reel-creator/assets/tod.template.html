@@ -15,6 +15,7 @@
   :root{
     --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
     --white:#F4F0E7; --stone:#B9B1A1; --grey:#6f6a60;
+    --verdict-pass:#4ADE80; --verdict-fail:#F87171;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
   html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
@@ -111,6 +112,10 @@
   .handle{font-family:'Space Grotesk';font-weight:600;font-size:80px;}
   .saverow{display:flex;align-items:center;gap:20px;}
   .loopcur{font-family:'JetBrains Mono';font-weight:500;font-size:30px;letter-spacing:3px;color:rgba(231,199,101,0.6);}
+  .verdict{font-family:'JetBrains Mono';font-weight:700;font-size:34px;
+    letter-spacing:2px;text-transform:uppercase;padding:10px 22px;border-radius:8px;}
+  .verdict.pass{color:var(--verdict-pass);border:2px solid var(--verdict-pass);}
+  .verdict.fail{color:var(--verdict-fail);border:2px solid var(--verdict-fail);}
 </style>
 </head>
 <body>
@@ -147,7 +152,7 @@ function icon(name,size,cls){return '<svg class="ic '+(cls||'')+'" width="'+size
 
 /* ===== HANDLE — stamped on EVERY frame (footer watermark) AND the CTA card.
    This is the ONE place it is set. Change this single line to switch handles
-   everywhere (e.g. '@ac.wins'). Keep it in sync with cover.template.html. ===== */
+   everywhere (e.g. '@itsac.ai'). Keep it in sync with cover.template.html. ===== */
 const HANDLE='@itsac.ai';
 
 /* =========================================================================

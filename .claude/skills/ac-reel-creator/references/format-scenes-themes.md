@@ -5,7 +5,7 @@ object** and the **`THEME`** constant (plus the one-time `HANDLE` constant). Sce
 structure, timing, animation, retouch FX, and the synced audio stay fixed. Total runtime
 ~11.4s + 0.3s tail (~11.7s). The order is deliberately payoff-first.
 
-Keep the big Lora headline lines short (**≤ ~16 characters per line**) or they wrap. No
+Keep the big Space Grotesk headline lines short (**≤ ~16 characters per line**) or they wrap. No
 em-dashes anywhere. One gold idea per scene.
 
 **AI-news framing:** this format doubles as AC's AI-news reel. For a news story, keep
@@ -73,7 +73,7 @@ all look the same": the format stays reliable, the outfit changes. Rotate day to
 - `spotlight` — dramatic top-lit cone, darker corners. Premium and moody.
 - `grid` — faint gold data-grid behind the content, no § motif. Analytical/tech vibe.
 
-All themes keep the black canvas, gold accent, Lora/Poppins, corner frame, and the retouch
+All themes keep the black canvas, gold accent, Space Grotesk/JetBrains Mono, corner frame, and the retouch
 FX. Pick one that suits the story's energy and differs from the previous reel.
 
 ## Retouch FX (already on — knobs if you need them)
@@ -102,6 +102,6 @@ why it retains. If a story truly needs an icon or a second toggle, borrow a shap
 ## Optional cover graphic
 Offer a matching 1080×1920 cover (grid thumbnail). Build it as a static HTML page in the
 same brand system — thin gold frame + corner ticks, `Breaking · AI` kicker, the payoff
-headline (Lora, gold accent word), the hero number big, the handle, and the tagline — with
+headline (Space Grotesk, gold accent word), the hero number big, the handle, and the tagline — with
 all key elements centered so they survive Instagram's 4:5 / 1:1 grid crop. Render it with a
 headless-Chromium screenshot at 1080×1920. Keep the palette and fonts in `brand.md`.

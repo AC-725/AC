@@ -68,5 +68,5 @@ to 1080×1920 for crisp text. Keep key elements inside the center 1080×1350 gri
 - Audio is a synced SFX layer (~−22 dB mean): punctuation, not a music bed. Changing
   `SCENES` timings requires matching cue edits in `tod_audio.py`.
 - Deps: Playwright + system Chromium (auto-found under `/opt/pw-browsers`), ffmpeg,
-  python3 + numpy, and the Lora + Poppins system fonts
+  python3 + numpy, and the Space Grotesk + JetBrains Mono system fonts
   (`fc-list | grep -iE 'lora|poppins'` to verify).

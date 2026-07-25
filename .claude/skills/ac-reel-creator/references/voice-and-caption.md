@@ -2,7 +2,7 @@
 
 The visuals are systematized, so the words are the variable that matters. Everything is
 written in AC's voice: **AI in plain English, no hype, no jargon.** If a 12-year-old
-couldn't follow scene A, rewrite it. Full brand voice: `ac-instagram` Part 2.
+couldn't follow scene A, rewrite it. Full brand voice: `itsac-instagram` Part 2.
 
 ## AC's voice
 - Direct and plain. Short lines. One idea per scene.

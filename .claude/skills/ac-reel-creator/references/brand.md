@@ -5,10 +5,10 @@ serif headline.** That consistency is what turns a feed into a brand. The engine
 encodes all of this; use this page when building a cover or checking a frame.
 
 ## Who
-- **Brand:** AC — *AI in Plain English*. **Person:** Austin (goes by AC).
+- **Brand:** AC — *AI tools, tested*. **Person:** Austin (goes by AC).
 - **Handle:** on every frame (footer watermark + the CTA card), set in ONE place — the
-  `HANDLE` constant in `reel.template.html`. Default `@itsac.ai`. To use `@ac.wins`
-  instead (the handle on AC's Instagram, ac-instagram, and ac-tool-of-the-day), change
+  `HANDLE` constant in `reel.template.html`. Default and current handle: `@itsac.ai`
+  (matches itsac-instagram and ac-tool-of-the-day). To use a different handle, change
   that single line. Never hardcode a handle elsewhere or mix two on one reel.
 - **Promise:** making AI make sense for normal businesses. One real AI trend, plain English,
   zero jargon.
@@ -24,13 +24,15 @@ encodes all of this; use this page when building a cover or checking a frame.
 | `#F4DF95` | Light Gold | gradient highlight / sheen |
 | `#F4F0E7` | Warm White | main headline text |
 | `#B9B1A1` | Muted Stone | body / supporting text |
+| `#4ADE80` | Verdict Green | "works" — verdicts only, never decoration |
+| `#F87171` | Verdict Red | "failed" — verdicts only, never decoration |
 
 Gold gradient (numbers, the `to` chip, buttons): `linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F)`.
 
 ## Type — two fonts, never more
-- **Lora** — headlines & big numbers. Elegant high-contrast serif; this is the "luxury" in
-  black & gold. Weights 400–700.
-- **Poppins** — kickers, labels & body. Clean geometric sans for clarity. Weights 400–700.
+- **Space Grotesk** — headlines & big numbers. Geometric, slightly technical.
+  Weights 500–700.
+- **JetBrains Mono** — kickers, labels, verdicts & body. Weights 400–700.
 
 Both are available on the system; the engine references them by name.
 
@@ -42,7 +44,8 @@ Both are available on the system; the engine references them by name.
 - Footer **watermark** = the handle (from `HANDLE`), centered, muted gold.
 
 ## On-screen guardrails
-- One gold accent per scene. Gold means "look here." The retouch FX are texture, not accents.
+- One gold accent per scene. Gold means "look here." Verdict green/red carry
+  information only and never act as accents. The retouch FX are texture, not accents.
 - No em-dashes on screen, ever. Period, comma, or line break.
 - Plain English only. Kill buzzwords and "this changes everything."
 - ~30 words max on any single frame; lots of black breathing room.

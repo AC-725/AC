@@ -17,6 +17,7 @@
   :root{
     --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
     --white:#F4F0E7; --stone:#B9B1A1; --grey:#6f6a60;
+    --verdict-pass:#4ADE80; --verdict-fail:#F87171;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
   html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
@@ -95,6 +96,10 @@
   #stage.t-grid #bgfx::after{content:"";position:absolute;inset:0;
     background-image:linear-gradient(rgba(231,199,101,0.05) 1px,transparent 1px),linear-gradient(90deg,rgba(231,199,101,0.05) 1px,transparent 1px);
     background-size:66px 66px;-webkit-mask-image:radial-gradient(ellipse 72% 60% at 50% 45%,#000 28%,transparent 76%);mask-image:radial-gradient(ellipse 72% 60% at 50% 45%,#000 28%,transparent 76%);}
+  .verdict{font-family:'JetBrains Mono';font-weight:700;font-size:34px;
+    letter-spacing:2px;text-transform:uppercase;padding:10px 22px;border-radius:8px;}
+  .verdict.pass{color:var(--verdict-pass);border:2px solid var(--verdict-pass);}
+  .verdict.fail{color:var(--verdict-fail);border:2px solid var(--verdict-fail);}
 </style>
 </head>
 <body>
@@ -110,13 +115,13 @@
 <script>
 /* ===== HANDLE — your reel handle, stamped on EVERY frame (footer watermark)
    AND the CTA card. This is the ONE place it is set. Change this single line to
-   switch handles everywhere (e.g. '@ac.wins'). Do not hardcode it elsewhere. ===== */
+   switch handles everywhere (e.g. '@itsac.ai'). Do not hardcode it elsewhere. ===== */
 const HANDLE='@itsac.ai';
 
 /* ===========================  CONTENT  (EDIT THIS)  ===========================
    The ONLY per-video block, together with the THEME constant just below it.
    Replace EVERY field with your verified story before building. Rules: payoff in
-   scene A, ONE real number per scene, no em-dashes on screen, big Lora lines
+   scene A, ONE real number per scene, no em-dashes on screen, big Space Grotesk lines
    <= ~16 chars. For an AI-news story keep hook.kicker as 'Breaking · AI' and use
    proof.chip as the news stamp. Full slot guide: references/format-scenes-themes.md
    The example below is illustrative only. Do not ship it as-is.
