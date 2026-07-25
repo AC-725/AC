@@ -45,8 +45,10 @@ Copied verbatim from the spec. Every task's requirements implicitly include this
 | `.claude/assets/fonts/*.ttf` | Committed font binaries (4 files) |
 | `.claude/scripts/install-fonts.sh` | Installs committed fonts into the user font dir |
 | `.claude/assets/screenshot-frame.template.html` | Screenshot frame template |
+| `tests/render/find-chrome.js` | Shared Chromium-path lookup for both render tests |
 | `tests/render/probe-font.html` | Font-resolution probe used by Task 2's test |
 | `tests/render/check-fonts.js` | Asserts Chromium resolves the brand fonts |
+| `tests/render/check-frame.js` | Asserts the screenshot frame template is well-formed |
 
 **Modify:**
 
@@ -382,17 +384,16 @@ Create `tests/render/probe-font.html`:
 <div id="mono" style="font-family:'JetBrains Mono',monospace">probe</div>
 ```
 
-Create `tests/render/check-fonts.js`:
+Create `tests/render/find-chrome.js` — shared by both render tests, so the
+lookup logic exists once:
 
 ```javascript
-/* Asserts Chromium actually resolves the brand fonts.
- * A missing font falls back silently, so compare rendered width against a
- * known-different generic family: identical widths mean no font loaded. */
-const { chromium } = require('playwright');
+/* Locates the sandbox's pinned Chromium. Returns undefined to let Playwright
+ * resolve its own default. Shared by every test in this directory. */
 const fs = require('fs');
 const path = require('path');
 
-function findChrome() {
+module.exports = function findChrome() {
   const base = '/opt/pw-browsers';
   try {
     for (const d of fs.readdirSync(base)) {
@@ -403,7 +404,18 @@ function findChrome() {
     }
   } catch (e) {}
   return undefined;
-}
+};
+```
+
+Create `tests/render/check-fonts.js`:
+
+```javascript
+/* Asserts Chromium actually resolves the brand fonts.
+ * A missing font falls back silently, so compare rendered width against a
+ * known-different generic family: identical widths mean no font loaded. */
+const { chromium } = require('playwright');
+const path = require('path');
+const findChrome = require('./find-chrome');
 
 (async () => {
   const browser = await chromium.launch({ executablePath: findChrome() });
@@ -541,7 +553,9 @@ Swap the retired families for the new pair across all three templates.
 - Consumes: font families installed by Task 2; vendored template paths from Task 1.
 - Produces: templates containing zero `'Lora'` / `'Poppins'` references.
 
-Mapping: `'Lora'` → `'Space Grotesk'` (headlines, big numbers), `'Poppins'` → `'JetBrains Mono'` (kickers, labels, body).
+Mapping: `'Lora'` → `'Space Grotesk'` (headlines, big numbers), `'Poppins'` → `'JetBrains Mono'` (kickers, labels, stamps, verdicts).
+
+**Body copy is the exception.** The Global Constraints scope mono to "numbers, labels, and verdicts." Paragraph text set in monospace reads poorly and runs roughly 15% wider, which overflows fixed-width frames. After the blanket swap, the two body selectors are moved to Space Grotesk: `.sub` and `.step .stx`. Every other former-Poppins selector stays mono.
 
 - [ ] **Step 1: Write the failing check**
 
@@ -560,7 +574,22 @@ sed -i "s/'Lora'/'Space Grotesk'/g; s/'Poppins'/'JetBrains Mono'/g" \
   tod.template.html reel.template.html cover.template.html
 ```
 
-- [ ] **Step 3: Fix the one italic that does not survive the swap**
+- [ ] **Step 3: Move body copy back to Space Grotesk**
+
+Monospace is for labels and data, not paragraphs. Revert the two body selectors:
+
+```bash
+cd /home/user/AC/.claude/skills/ac-reel-creator/assets
+sed -i "s/\.sub{font-family:'JetBrains Mono'/.sub{font-family:'Space Grotesk'/" \
+  tod.template.html reel.template.html cover.template.html
+sed -i "s/\.step \.stx{font-family:'JetBrains Mono'/.step .stx{font-family:'Space Grotesk'/" \
+  tod.template.html
+grep -n "\.sub{font-family\|\.stx{font-family" tod.template.html reel.template.html cover.template.html
+```
+
+Expected: every `.sub` and `.step .stx` rule shows `'Space Grotesk'`. If a file has no `.sub` rule, its grep line is simply absent — that is not a failure.
+
+- [ ] **Step 4: Fix the one italic that does not survive the swap**
 
 `tod.template.html` sets `font-style:italic` on `.step .stx .q`, which was a Lora italic. JetBrains Mono has no true italic and Space Grotesk's is synthesized; replace the italic cue with a gold-light color cue already in the palette.
 
@@ -572,7 +601,7 @@ grep -n "gold-light" tod.template.html
 
 Expected: the `.q` rule shows `font-weight:500`, no `font-style:italic`.
 
-- [ ] **Step 4: Verify the swap is complete**
+- [ ] **Step 5: Verify the swap is complete**
 
 ```bash
 cd /home/user/AC
@@ -582,7 +611,7 @@ grep -c "'Space Grotesk'\|'JetBrains Mono'" .claude/skills/ac-reel-creator/asset
 
 Expected: zero old-family matches; new-family counts match the old totals (7 / 12 / 17).
 
-- [ ] **Step 5: Render a real frame to confirm nothing broke**
+- [ ] **Step 6: Render a real frame to confirm nothing broke**
 
 ```bash
 cd /home/user/AC/.claude/skills/ac-reel-creator/assets
@@ -592,7 +621,7 @@ ls -la qa/
 
 Expected: `TOTAL` prints a duration and four JPEGs are written. Open one and confirm headlines are geometric sans and labels are monospace.
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 7: Commit**
 
 ```bash
 cd /home/user/AC
@@ -718,19 +747,7 @@ Create `tests/render/check-frame.js`:
 const { chromium } = require('playwright');
 const fs = require('fs');
 const path = require('path');
-
-function findChrome() {
-  const base = '/opt/pw-browsers';
-  try {
-    for (const d of fs.readdirSync(base)) {
-      if (d.startsWith('chromium-')) {
-        const p = path.join(base, d, 'chrome-linux', 'chrome');
-        if (fs.existsSync(p)) return p;
-      }
-    }
-  } catch (e) {}
-  return undefined;
-}
+const findChrome = require('./find-chrome');
 
 (async () => {
   const tpl = path.resolve(__dirname, '../../.claude/assets/screenshot-frame.template.html');
@@ -858,8 +875,8 @@ Expected: `PASS: frame template well-formed`, exit code 0.
 ```bash
 cd /home/user/AC
 node -e "
-const {chromium}=require('playwright');const fs=require('fs');const path=require('path');
-function findChrome(){const b='/opt/pw-browsers';for(const d of fs.readdirSync(b)){if(d.startsWith('chromium-')){const p=path.join(b,d,'chrome-linux','chrome');if(fs.existsSync(p))return p;}}}
+const {chromium}=require('playwright');const path=require('path');
+const findChrome=require('./tests/render/find-chrome');
 (async()=>{const br=await chromium.launch({executablePath:findChrome()});
 const pg=await br.newPage({viewport:{width:1080,height:1350}});
 await pg.goto('file://'+path.resolve('.claude/assets/screenshot-frame.template.html'));
@@ -894,9 +911,13 @@ Point the repo at the new protocol and record the one-time environment step.
 
 - [ ] **Step 1: Add a brand section to the README**
 
-Append to `README.md`:
+Run this exactly — the heredoc is quoted (`<<'MDEOF'`) so nothing inside is
+expanded by the shell, and the fenced bash block lands in the README intact:
 
-```markdown
+```bash
+cd /home/user/AC
+cat >> README.md <<'MDEOF'
+
 ## @itsac.ai brand system
 
 The Instagram brand protocol for `@itsac.ai` lives in
@@ -912,7 +933,12 @@ brand fonts installed, or Chromium silently falls back to a default sans:
 ./.claude/scripts/install-fonts.sh
 node tests/render/check-fonts.js   # expect: PASS
 ```
+MDEOF
+tail -20 README.md
 ```
+
+Expected: the appended section ends with a closed ` ``` ` fence and no stray
+`MDEOF` line in the file.
 
 - [ ] **Step 2: Write the status note**
 
