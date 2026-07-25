@@ -716,12 +716,52 @@ And replace the line beginning "One gold accent per scene" with:
   information only and never act as accents. The retouch FX are texture, not accents.
 ```
 
-- [ ] **Step 6: Commit**
+- [ ] **Step 6: Reconcile stale brand references**
+
+The vendored skill was written against the retired brand and still points at it.
+The Global Constraints retire the name "AI in Plain English", the handle
+`@ac.wins`, and Lora/Poppins — so these references are constraint violations,
+not cosmetic leftovers. Task 1 correctly left them alone (vendoring must be
+byte-identical); this step is where they get fixed.
+
+Affected files: `SKILL.md`, `references/brand.md`, `references/tod-scenes.md`,
+`references/format-scenes-themes.md`, `references/voice-and-caption.md`.
+
+Prose references to the old skill and brand name:
+
+```bash
+cd /home/user/AC/.claude/skills/ac-reel-creator
+sed -i 's/`ac-instagram`/`itsac-instagram`/g; s/\bac-instagram\b/itsac-instagram/g' \
+  SKILL.md references/brand.md references/voice-and-caption.md references/tod-scenes.md references/format-scenes-themes.md
+sed -i 's/AI in Plain English/AI tools, tested/g' \
+  SKILL.md references/brand.md references/voice-and-caption.md references/tod-scenes.md references/format-scenes-themes.md
+```
+
+Font names in the remaining reference prose (the templates were already handled
+in Task 3):
+
+```bash
+cd /home/user/AC/.claude/skills/ac-reel-creator
+sed -i "s/\bLora\b/Space Grotesk/g; s/\bPoppins\b/JetBrains Mono/g" \
+  references/tod-scenes.md references/format-scenes-themes.md references/voice-and-caption.md
+```
+
+Verify no retired terms survive anywhere in the skill:
+
+```bash
+cd /home/user/AC
+grep -rn "ac-instagram\|AI in Plain English\|Lora\|Poppins\|@ac\.wins" .claude/skills/ac-reel-creator/ || echo "clean — no retired references"
+```
+
+Expected: `clean — no retired references`. If any line remains, fix it before
+committing; a surviving reference is a constraint violation.
+
+- [ ] **Step 7: Commit**
 
 ```bash
 cd /home/user/AC
 git add .claude/skills/ac-reel-creator
-git commit -m "feat: add verdict color tokens to reel templates and brand reference"
+git commit -m "feat: add verdict color tokens and retire stale brand references"
 ```
 
 ---
