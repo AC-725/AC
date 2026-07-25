@@ -1,0 +1,70 @@
+topic: "Instagram growth & business strategy for @ac.wins — 'AI in Plain English' (AI education for normal businesses, Hong Kong → worldwide)"
+generated: "2026-07-25"
+
+items:
+  # --- Competitor / peer accounts & business models ---
+  - name: "God of Prompt (@godofprompt)"
+    category: competitor_account
+    description: "Large AI-prompt/education brand on Instagram (~342K followers as of mid-2026), aggressive carousel + Reel strategy, digital product monetization"
+  - name: "Ole Lehmann / The AI Solopreneur"
+    category: competitor_account
+    description: "AI education for solopreneurs, strong monetization funnel (courses, newsletter), known for plain-language AI content"
+  - name: "Rowan Cheung / The Rundown AI"
+    category: competitor_account
+    description: "Daily AI news media brand (~$7M projected sponsorship revenue), plain-English positioning, multi-platform"
+  - name: "Zain Kahn / Superhuman AI"
+    category: competitor_account
+    description: "Plain-English AI newsletter brand, 1.5M+ subscribers, 7-figure revenue, audience ~60% managers"
+  - name: "AI-education Instagram creator landscape 2026"
+    category: competitor_account
+    description: "Scan of top AI-education/AI-news Instagram accounts in 2026 incl. the n8n/automation-workflow creator cohort targeting SMBs; sizes, formats, growth stories"
+  - name: "Liam Ottley & the Skool community monetization model (AAA)"
+    category: competitor_account
+    description: "AI Automation Agency model: free mega-community (329K+ members) as lead magnet -> $97/mo subscription -> high-ticket coaching; benchmark for adding a community/course layer between free content and consulting"
+
+  # --- Instagram platform mechanics 2025-2026 ---
+  - name: "Instagram algorithm & ranking signals 2026"
+    category: platform_mechanics
+    description: "Reels/feed ranking factors 2026: watch time, sends-per-reach, official Mosseri guidance; what it rewards and punishes"
+  - name: "Trial Reels & native A/B testing"
+    category: platform_mechanics
+    description: "2025-26 feature showing Reels to non-followers first; Instagram data claims 80% increase in non-follower reach; key lever for sub-10k accounts"
+  - name: "Instagram Edits app & native production stack"
+    category: platform_mechanics
+    description: "Meta's free editing app (Apr 2025): teleprompter, voice enhancer, per-Reel retention insights, auto bilingual captions in 15 languages"
+  - name: "Instagram SEO, keywords & Google indexing"
+    category: platform_mechanics
+    description: "Caption/keyword SEO, in-app search, and Google indexing of Instagram content (live since 2025-07-10); ranking Reels for terms like 'AI for small business Hong Kong'"
+  - name: "Format & engagement benchmarks 2026 (Reels vs carousels vs stories)"
+    category: platform_mechanics
+    description: "2026 organic benchmarks: engagement rates, reach rates, saves/shares norms by format and account size (esp. sub-10k business accounts); recommended posting frequency"
+  - name: "Meta AI-content labeling & originality policies (risk audit)"
+    category: platform_mechanics
+    description: "Since Dec 2025: deprioritization of templated/automated content, auto 'AI info' labels, aggregator penalties, 'AI Creator' labels; risk exposure for an AI-branded page posting AI-generated animated reels"
+
+  # --- Growth tactics & funnel ---
+  - name: "DM automation, comment-to-DM funnels, broadcast channels & WhatsApp mid-funnel"
+    category: growth_tactic
+    description: "ManyChat-style comment-keyword -> DM flows; IG broadcast channel for top-of-funnel nurture -> WhatsApp broadcast for high-intent conversion (esp. relevant in Hong Kong where WhatsApp is the default business channel)"
+  - name: "Creator-to-client funnel for AI consultants & interactive lead magnets"
+    category: growth_tactic
+    description: "Converting followers into consulting clients: link-in-bio, discovery calls, proof assets; 2025-26 shift from PDF lead magnets to interactive ones (custom GPT/chatbot that qualifies and demos)"
+  - name: "LinkedIn founder-led marketing as complementary B2B channel"
+    category: growth_tactic
+    description: "2026 B2B service discovery consolidating on LinkedIn (61% of purchase decisions formed before contact; founder profiles beat company pages); channel-fit check and repurposing lane for closing consulting deals"
+  - name: "Bilingual (EN + Traditional Chinese) content strategy for Hong Kong"
+    category: growth_tactic
+    description: "HK evidence that bilingual captions outperform single-language posts; parallel language strategy vs translation; differentiation no global AI-education competitor can copy"
+
+  # --- Market demand (client side) ---
+  - name: "AI adoption by SMBs in Hong Kong & APAC"
+    category: market_demand
+    description: "Demand-side research: HK SME AI adoption rates (55% used/plan within a year), top barriers (57% lack of knowledge/skills, 38% lack of reliable external support), spending and priority use cases"
+  - name: "Corporate/SME AI training workshop market & pricing"
+    category: market_demand
+    description: "What AI workshops/trainers/consultants charge in 2026; SME segment ~22% CAGR; productized entry-offer design for 'AI in plain English' training"
+
+execution:
+  batch_size: 9
+  items_per_agent: 2
+  output_dir: ./results

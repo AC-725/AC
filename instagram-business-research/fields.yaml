@@ -1,0 +1,97 @@
+# Field definitions for deep research on @ac.wins Instagram/business strategy
+# detail_level hierarchy: brief -> moderate -> detailed
+
+field_categories:
+  - category: "Basic Info"
+    fields:
+      - name: name
+        description: "Name of the account, tactic, platform feature, or market being researched"
+        detail_level: brief
+        required: true
+      - name: category
+        description: "One of: competitor_account, platform_mechanics, growth_tactic, market_demand"
+        detail_level: brief
+        required: true
+      - name: overview
+        description: "Plain-English summary of what this is and why it matters to an AI-education Instagram brand"
+        detail_level: moderate
+        required: true
+
+  - category: "Key Data"
+    fields:
+      - name: key_metrics
+        description: "Verified numbers with dates: follower counts, engagement rates, benchmark percentages, market sizes, pricing. Each metric should state its as-of date."
+        detail_level: detailed
+        required: true
+      - name: data_recency
+        description: "How current the data is (e.g., 'as of 2026-06') and how fast it goes stale"
+        detail_level: brief
+
+  - category: "Strategy"
+    fields:
+      - name: tactics_that_work
+        description: "Specific tactics with evidence of effectiveness (for accounts: what drives their growth; for mechanics: how to exploit them)"
+        detail_level: detailed
+        required: true
+      - name: content_formats
+        description: "Formats used or favored: Reels, carousels, stories, lives, broadcast channels — with any performance comparison"
+        detail_level: moderate
+      - name: posting_cadence
+        description: "How often content is posted / recommended frequency"
+        detail_level: brief
+      - name: hooks_and_copy_style
+        description: "Hook patterns, caption structure, tone, CTA style observed or recommended"
+        detail_level: moderate
+
+  - category: "Business"
+    fields:
+      - name: monetization_model
+        description: "How money is made: services, courses, newsletters, sponsorships, SaaS, affiliate"
+        detail_level: moderate
+      - name: offer_and_pricing
+        description: "Concrete offers and price points where discoverable"
+        detail_level: moderate
+      - name: audience_profile
+        description: "Follower demographics / ICP match: are these SMB decision-makers or AI hobbyists?"
+        detail_level: moderate
+      - name: funnel_map
+        description: "Surface-by-surface path: content -> comment keyword -> DM automation -> broadcast/email/WhatsApp -> call/purchase"
+        detail_level: moderate
+      - name: proof_and_credibility
+        description: "How proof is displayed: client results, case studies, before/after workflows, revenue screenshots"
+        detail_level: moderate
+
+  - category: "Application"
+    fields:
+      - name: takeaways_for_ac_wins
+        description: "2-5 concrete, actionable takeaways for @ac.wins (AI in Plain English; black-and-gold brand; daily one-stat posts; funnels to ac-wins.com consulting; Hong Kong base, worldwide clients; sub-10k account)"
+        detail_level: detailed
+        required: true
+      - name: risks_or_avoid
+        description: "What to avoid copying, pitfalls, or threats this item implies for @ac.wins"
+        detail_level: moderate
+      - name: platform_policy_risk
+        description: "Exposure to 2025-26 Meta policies: AI-content labels, originality/aggregator penalties, templated-content deprioritization"
+        detail_level: moderate
+      - name: discoverability_seo
+        description: "Keyword/caption SEO posture incl. Google indexing of Instagram (live since 2025-07)"
+        detail_level: moderate
+      - name: localization_language
+        description: "Language mix (EN / Traditional Chinese / bilingual captions) and geo-targeting relevance for a HK-based worldwide brand"
+        detail_level: brief
+      - name: replicability_effort
+        description: "Solo-founder feasibility: time/tools/cost per week to execute this tactic or emulate this account"
+        detail_level: moderate
+      - name: benchmark_targets
+        description: "Concrete numeric KPIs distilled from this item that @ac.wins can score itself against monthly"
+        detail_level: moderate
+
+  - category: "Sources"
+    fields:
+      - name: sources
+        description: "List of source URLs with titles used for this item"
+        detail_level: brief
+        required: true
+
+# Reserved: uncertain fields list (auto-filled during deep phase)
+uncertain: []
