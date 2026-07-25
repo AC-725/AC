@@ -19,12 +19,29 @@ const findChrome = require('./find-chrome');
   const out = await page.evaluate(() => {
     const frame = document.querySelector('.frame');
     const cap = document.querySelector('.caption');
-    const verdict = document.querySelector('.verdict');
     return {
       hasFrame: !!frame,
       hasCaption: !!cap,
-      verdictVisible: verdict ? getComputedStyle(verdict).display !== 'none' : false,
-      captionFont: cap ? getComputedStyle(cap).fontFamily : '',
+      // getComputedStyle().fontFamily returns the SPECIFIED family list, not the
+      // font actually resolved, so it matches even when nothing loaded and
+      // Chromium fell back to a default sans. document.fonts.check() is no help
+      // either — it returns true for an uninstalled system family. The only
+      // reliable probe is rendered width against a family that cannot exist:
+      // identical widths mean both landed on the same fallback.
+      captionFontResolved: (function () {
+        function widthOf(family) {
+          const el = document.createElement('span');
+          el.style.cssText = 'position:absolute;font-size:120px;white-space:nowrap';
+          el.style.fontFamily = family;
+          el.textContent = 'WjgpMi010';
+          document.body.appendChild(el);
+          const w = el.getBoundingClientRect().width;
+          el.remove();
+          return w;
+        }
+        return widthOf("'JetBrains Mono'") !== widthOf("'NoSuchFamily-ZZ9'");
+      })(),
+      captionFontSpecified: cap ? getComputedStyle(cap).fontFamily : '',
       bg: getComputedStyle(document.body).backgroundColor,
     };
   });
@@ -34,7 +51,12 @@ const findChrome = require('./find-chrome');
   const failures = [];
   if (!out.hasFrame) failures.push('missing .frame');
   if (!out.hasCaption) failures.push('missing .caption');
-  if (!/JetBrains Mono/.test(out.captionFont)) failures.push('caption not mono: ' + out.captionFont);
+  if (!/JetBrains Mono/.test(out.captionFontSpecified)) {
+    failures.push('caption not declared mono: ' + out.captionFontSpecified);
+  }
+  if (!out.captionFontResolved) {
+    failures.push('JetBrains Mono declared but not installed — run .claude/scripts/install-fonts.sh');
+  }
   if (out.bg !== 'rgb(10, 10, 10)') failures.push('background not #0A0A0A: ' + out.bg);
 
   if (failures.length) {

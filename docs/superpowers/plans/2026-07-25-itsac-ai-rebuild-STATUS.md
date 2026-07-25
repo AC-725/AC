@@ -13,10 +13,13 @@
   idempotent install script, and a test that actually detects missing fonts.
 - Reel templates retyped. Body copy stays in Space Grotesk — monospace is for
   numbers, labels, and verdicts, not paragraphs.
-- Verdict color tokens (`#4ADE80` works / `#F87171` failed) in both reel
-  templates and the brand reference.
-- Stale references retired: no `ac-instagram`, `Lora`, `Poppins`, `@ac.wins`,
-  or "AI in Plain English" survives in the vendored skill.
+- Verdict color tokens (`#4ADE80` works / `#F87171` failed) live in the
+  screenshot frame template, which renders them. They were removed from the reel
+  templates: nothing there could render a verdict chip, so the CSS was dead.
+  Wiring a verdict slot into the TOD scenes is tracked follow-up work.
+- Stale brand references retired across the vendored skill. Verified with a
+  case-INSENSITIVE grep — an earlier case-sensitive check reported clean while
+  `lora|poppins` and "AI in plain English" were still present in lowercase.
 - Screenshot frame template for proof-layer posts, with a structural test.
 
 ## Bugs found and fixed along the way

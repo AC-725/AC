@@ -69,4 +69,5 @@ to 1080×1920 for crisp text. Keep key elements inside the center 1080×1350 gri
   `SCENES` timings requires matching cue edits in `tod_audio.py`.
 - Deps: Playwright + system Chromium (auto-found under `/opt/pw-browsers`), ffmpeg,
   python3 + numpy, and the Space Grotesk + JetBrains Mono system fonts
-  (`fc-list | grep -iE 'lora|poppins'` to verify).
+  (`fc-list | grep -iE 'space grotesk|jetbrains mono'` to verify; install with
+  `.claude/scripts/install-fonts.sh`).

@@ -17,4 +17,4 @@ cp -f "$SRC"/*.ttf "$DEST"/
 fc-cache -f "$DEST" >/dev/null 2>&1 || true
 
 echo "install-fonts: installed $(ls -1 "$SRC"/*.ttf | wc -l) fonts into $DEST"
-fc-list : family | tr ',' '\n' | grep -iE "space grotesk|jetbrains mono" | sort -u
+fc-list : family | tr ',' '\n' | grep -iE "space grotesk|jetbrains mono" | sort -u || true

@@ -127,15 +127,17 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory �
 ## Guardrails
 
 - **Frame one is loud and the payoff comes first.** Never a fade from black, never a tease.
-- **One gold accent per scene.** Black canvas, Space Grotesk + JetBrains Mono only, plain English; if a
-  12-year-old couldn't follow scene A, rewrite it.
+- **One gold accent per scene.** Black canvas, Space Grotesk + JetBrains Mono only. Write
+  builder-to-builder: technical terms stay, decorative jargon goes. If a builder couldn't
+  act on scene A, rewrite it.
 - **No em-dashes on screen, ever** (captions may use the em-dash CTA lead).
 - **The handle comes from the `HANDLE` constant** in each template — one line, both spots.
   Never hardcode a second handle or mix two.
 - **Never change SCENES timings** without updating the matching audio cues
   (`reel_audio.py` / `tod_audio.py`), or the sound desyncs.
 - **Verify every number** from 1–2 credible sources; match their wording. No hype, no
-  "this changes everything," no hard selling in feed — value in feed, offer in DMs.
+  "this changes everything," and no selling at all. The CTA ladder stops at Comment:
+  Save → Follow → Comment. No offer rung while the account is audience-first.
 - **Don't skip the checkpoint (step 6) or the scorecard gate.** They are the difference
   between shipping content and shipping retained content. When unsure on voice, defer to
   `itsac-instagram` Part 2.

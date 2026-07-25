@@ -1,7 +1,7 @@
 # Brand — the fixed look
 
-One system, infinitely repeatable. Every reel = **black canvas, one gold idea, elegant
-serif headline.** That consistency is what turns a feed into a brand. The engine already
+One system, infinitely repeatable. Every reel = **black canvas, one gold idea, one real
+number.** That consistency is what turns a feed into a brand. The engine already
 encodes all of this; use this page when building a cover or checking a frame.
 
 ## Who
@@ -27,14 +27,21 @@ encodes all of this; use this page when building a cover or checking a frame.
 | `#4ADE80` | Verdict Green | "works" — verdicts only, never decoration |
 | `#F87171` | Verdict Red | "failed" — verdicts only, never decoration |
 
+Verdict colors currently render only in the proof-post frame
+(`.claude/assets/screenshot-frame.template.html`). The reel templates have no
+verdict slot yet — do not reference these two colors in reel scenes until one exists.
+
 Gold gradient (numbers, the `to` chip, buttons): `linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F)`.
 
 ## Type — two fonts, never more
 - **Space Grotesk** — headlines & big numbers. Geometric, slightly technical.
   Weights 500–700.
-- **JetBrains Mono** — kickers, labels, verdicts & body. Weights 400–700.
+- **JetBrains Mono** — kickers, labels, verdicts, and any number presented as data.
+  Weights 400–700. Not for paragraph copy — body text stays Space Grotesk.
 
-Both are available on the system; the engine references them by name.
+Neither font is installed by default. Run `.claude/scripts/install-fonts.sh` once per
+environment, or headless Chromium silently falls back to a default sans and every render
+is wrong with no error. Verify with `NODE_PATH="$(npm root -g)" node tests/render/check-fonts.js`.
 
 ## Fixed frame elements
 - Thin gold frame border inset ~46px, plus gold **corner ticks** at the four corners.

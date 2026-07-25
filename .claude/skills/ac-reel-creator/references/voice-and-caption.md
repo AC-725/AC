@@ -1,8 +1,8 @@
 # Voice, story-pick, caption, hashtags, VO — both formats
 
 The visuals are systematized, so the words are the variable that matters. Everything is
-written in AC's voice: **AI in plain English, no hype, no jargon.** If a 12-year-old
-couldn't follow scene A, rewrite it. Full brand voice: `itsac-instagram` Part 2.
+written in AC's voice: **tested, no hype, receipts over claims.** If a builder couldn't
+act on scene A, rewrite it. Full brand voice: `itsac-instagram` Part 2.
 
 ## AC's voice
 - Direct and plain. Short lines. One idea per scene.
@@ -33,7 +33,7 @@ search queries (social SEO). Then:
    parenthetical; TOD: the 3-step how-to with → arrows.
 4. **The rule** — the memorable takeaway (echoes the video's rule scene).
 5. **Soft CTA** — lead with a dash: Save this · Tag someone · Comment "WORD" · Follow the
-   handle for daily AI in plain English. Never a hard sell.
+   handle for daily tested-AI-tool receipts. Never a hard sell.
 
 Formatting: one big number, line breaks every 1–2 sentences, a question near the end to
 pull comments, end the CTA with the handle from the template's `HANDLE` constant.
