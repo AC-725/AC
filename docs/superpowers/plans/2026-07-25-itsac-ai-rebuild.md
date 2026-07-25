@@ -615,7 +615,7 @@ Expected: zero old-family matches; new-family counts match the old totals (7 / 1
 
 ```bash
 cd /home/user/AC/.claude/skills/ac-reel-creator/assets
-node render_frames.js tod.template.html qa "1,8,16,24"
+NODE_PATH="$(npm root -g)" node render_frames.js tod.template.html qa "1,8,16,24"
 ls -la qa/
 ```
 
@@ -833,7 +833,7 @@ const findChrome = require('./find-chrome');
 - [ ] **Step 2: Run the test to verify it fails**
 
 ```bash
-cd /home/user/AC && node tests/render/check-frame.js
+cd /home/user/AC && NODE_PATH="$(npm root -g)" node tests/render/check-frame.js
 ```
 
 Expected: `FAIL: template missing at ...`, exit code 1.
@@ -905,7 +905,7 @@ Create `.claude/assets/screenshot-frame.template.html`:
 - [ ] **Step 4: Run the test to verify it passes**
 
 ```bash
-cd /home/user/AC && node tests/render/check-frame.js
+cd /home/user/AC && NODE_PATH="$(npm root -g)" node tests/render/check-frame.js
 ```
 
 Expected: `PASS: frame template well-formed`, exit code 0.
@@ -914,7 +914,7 @@ Expected: `PASS: frame template well-formed`, exit code 0.
 
 ```bash
 cd /home/user/AC
-node -e "
+NODE_PATH="$(npm root -g)" node -e "
 const {chromium}=require('playwright');const path=require('path');
 const findChrome=require('./tests/render/find-chrome');
 (async()=>{const br=await chromium.launch({executablePath:findChrome()});
@@ -971,7 +971,7 @@ brand fonts installed, or Chromium silently falls back to a default sans:
 
 ```bash
 ./.claude/scripts/install-fonts.sh
-node tests/render/check-fonts.js   # expect: PASS
+NODE_PATH="$(npm root -g)" node tests/render/check-fonts.js   # expect: PASS
 ```
 MDEOF
 tail -20 README.md
@@ -1018,8 +1018,8 @@ the page targets builders while `ac-wins.com` sells to businesses.
 ```bash
 cd /home/user/AC
 ./.claude/scripts/install-fonts.sh
-node tests/render/check-fonts.js
-node tests/render/check-frame.js
+NODE_PATH="$(npm root -g)" node tests/render/check-fonts.js
+NODE_PATH="$(npm root -g)" node tests/render/check-frame.js
 ```
 
 Expected: installer reports 4 fonts; both tests print `PASS`.
