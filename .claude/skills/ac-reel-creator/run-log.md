@@ -5,6 +5,7 @@ and grades stay consistent across sessions. Newest first.
 
 | Date | Day | Format | Story / tool | Source | Theme / look | Hook | Scorecard | Files |
 |---|---|---|---|---|---|---|---|---|
+| 2026-07-25 | 10 | Tool of the Day | Canva Code 2.0 free for all 265M users incl. free accounts; 20 prompts/day; 75% faster; slides-to-websites angle | VentureBeat · eMarketer · Khaleej Times · EdTech Hub (Jul 2026) | fixed TOD look | A- | 9/10 (freshness 1: Jul 14 news peg; hook A- not A) | AC_TOD_Day10_canvacode.mp4 + silent cut · cover · caption · script · VO · A/B hooks · posting note |
 | 2026-07-25 | 9 | Prompt Drop (AI News engine) | Fresh-context agent review found 2 critical bugs a self-review missed; 100% of renders used an uninstalled font | First-party — AC repo, branch claude/cave-man-install-6erl5m, commit 0b1d559 | ember | A | 9/10 (loses 1: no current news peg) | AC_Reel_Day9_promptdrop.mp4 + silent cut · cover · caption · script · VO · A/B hooks · posting note |
 | 2026-07-24 | 9 (unshipped) | Tool of the Day | (in progress — shortlist: Hostinger AI website builder · AI phone receptionist · OpusClip) | — | fixed TOD look | — | — | — |
 | 2026-07-23 | 8 | AI News | 66% of US small businesses use AI, up from 55%; 70% need more training (Thryv survey, 561 owners) | CPA Practice Advisor 2026-07-14 · Sahm Capital 2026-07-09 | aurora | A | (pre-scorecard era) | AC_Reel_Day8_AInews.mp4 + silent cut · cover · caption · script · VO |
