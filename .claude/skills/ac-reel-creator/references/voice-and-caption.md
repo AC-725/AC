@@ -1,8 +1,8 @@
 # Voice, story-pick, caption, hashtags, VO — both formats
 
 The visuals are systematized, so the words are the variable that matters. Everything is
-written in AC's voice: **tested, no hype, receipts over claims.** If a builder couldn't
-act on scene A, rewrite it. Full brand voice: `itsac-instagram` Part 2.
+written in AC's voice: **tested, no hype, receipts over claims.** Scene A must land
+for a non-technical viewer; depth arrives after the value is clear. Full brand voice: `itsac-instagram` Part 2.
 
 ## AC's voice
 - Direct and plain. Short lines. One idea per scene.

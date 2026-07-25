@@ -127,9 +127,9 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory â
 ## Guardrails
 
 - **Frame one is loud and the payoff comes first.** Never a fade from black, never a tease.
-- **One gold accent per scene.** Black canvas, Space Grotesk + JetBrains Mono only. Write
-  builder-to-builder: technical terms stay, decorative jargon goes. If a builder couldn't
-  act on scene A, rewrite it.
+- **One gold accent per scene.** Black canvas, Space Grotesk + JetBrains Mono only.
+  Plain English first: scene A lands for a non-technical viewer, technical terms stay
+  accurate, decorative jargon goes. If a general viewer couldn't act on scene A, rewrite it.
 - **No em-dashes on screen, ever** (captions may use the em-dash CTA lead).
 - **The handle comes from the `HANDLE` constant** in each template â€” one line, both spots.
   Never hardcode a second handle or mix two.

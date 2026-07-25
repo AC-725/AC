@@ -14,14 +14,16 @@ description: >
 
 - **Handle:** `@itsac.ai`
 - **Person:** Austin (AC)
-- **Audience:** builders and indie hackers — people shipping with AI tools
-- **Positioning:** *"I test AI tools so you don't waste build time."*
+- **Audience:** general and business users first — anyone who wants AI to save them
+  real time. Builders are welcome and the technical detail stays accurate, but no
+  post should lock out a non-technical viewer.
+- **Positioning:** *"I test AI tools so you don't waste time or money."*
 - **Reputation to own:** "he actually tried it" — not "he heard about it"
 - **Goal right now:** audience first. No offer, no funnel, no selling in feed.
 
 ## The problem this page solves
 
-Builders are drowning. Dozens of AI tools launch weekly, each claiming to change
+Everyone is drowning. Dozens of AI tools launch weekly, each claiming to change
 everything, and nobody has time to test them. The valuable person is whoever
 separates signal from noise with evidence.
 
@@ -36,10 +38,11 @@ separates signal from noise with evidence.
 
 **Changed for this audience:**
 
-- **No "explain like they're 12."** Builders want depth. Use RAG, MCP, context
-  window, eval without a glossary. Kill jargon when decorative; keep it when precise.
-- **Peer, not guide.** The old voice coached beginners. This one is
-  builder-to-builder: "tried it, here's what broke." No mentoring.
+- **Plain English, accurate depth.** Scene one must land for someone non-technical.
+  Technical terms are fine once the value is clear — name them, don't lecture with them.
+  Kill jargon when decorative; keep it when precise.
+- **Peer, not preacher.** Not a coach talking down, not a specialist talking past.
+  "Tried it, here's what broke" works for every audience.
 - **Show the receipt.** A screenshot, benchmark, or token count, or it didn't
   happen. No claim without evidence.
 - **Post the failures.** "This tool didn't work" is the highest-trust content in
