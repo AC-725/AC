@@ -65,6 +65,7 @@ Read only what the task needs — loading all of it wastes context and blurs foc
 | Bio, profile, link-in-bio, Highlights, graphic check | **B — Protocol** | `foundation.md` |
 | Growth, reach, weekly plan, engagement routine | **B — Protocol** | `growth.md` |
 | Hashtags | **B — Protocol** | `content.md` (hashtag banks) |
+| Finding a story, verifying a number, competitor research | either | `research.md` |
 | Visual system, palette, type, template internals | either | `brand.md` |
 
 If a request spans both lanes — "turn this story into a reel *and* a carousel" —
@@ -100,12 +101,17 @@ grades so numbering and rotation stay consistent. If AC already named the format
 day, don't re-ask — confirm in one line.
 
 ### 2. Research and suggest (3–5 options)
-Web-search fresh, never from memory. Verify every key figure against 1–2 credible
-sources and match their wording. Screen by the format's pick criteria (news:
-`voice-and-caption.md`; tools: current hook, useful to normal businesses, teachable
-in 3 steps, concrete payoff). Present **3–5 candidates**, each with the hook idea,
-the big number, AC's angle, and an *algorithm read* — who sends this to whom, i.e.
-the share trigger. Let AC pick. If he defers, choose the strongest and say so.
+Search fresh, never from memory — **`references/research.md`** covers how: which
+engine to use, how to phrase a semantic query, and how to verify a number down to
+its primary source. The page's whole positioning is "no hype," so a figure that
+turns out to be secondhand costs more than the reel earns.
+
+Verify every key figure against 1–2 credible sources and match their wording.
+Screen by the format's pick criteria (news: `voice-and-caption.md`; tools: current
+hook, useful to normal businesses, teachable in 3 steps, concrete payoff). Present
+**3–5 candidates**, each with the hook idea, the big number, AC's angle, and an
+*algorithm read* — who sends this to whom, i.e. the share trigger. Let AC pick. If
+he defers, choose the strongest and say so.
 
 ### 3. Confirm the creative (one AskUserQuestion call)
 - **3 theme suggestions.** News → 3 of the 4 THEMEs matched to the story's energy,
@@ -206,6 +212,10 @@ words max for any line going *on a graphic* (captions can run longer).
   banks. Anything about *what to post*.
 - **`references/growth.md`** — cadence, the engagement routine that actually moves
   reach, pillar rotation, the soft-sell CTA ladder. Anything about *gaining traction*.
+- **`references/research.md`** — how to find a story and verify its number. A static
+  post is anchored to one real stat exactly like a reel is, so the same sourcing
+  discipline applies; don't write the hook around a figure you haven't traced to a
+  primary source.
 
 ---
 
