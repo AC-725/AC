@@ -5,12 +5,19 @@ and grades stay consistent across sessions. Newest first.
 
 | Date | Day | Format | Story / tool | Source | Theme / look | Hook | Scorecard | Files |
 |---|---|---|---|---|---|---|---|---|
+| 2026-07-25 | 11 | AI News | 7 AI models from 5 vendors shipped Jul 17-23; angle is permission not pressure ("You're not behind") | digitalapplied.com · MarkTechPost (Kimi K3, Qwen3.8-Max-Preview) | grid | A | 9/10 (freshness 0: story is ~1 week old) | AC_Reel_Day11_notbehind.mp4 + silent cut · cover · caption · script · VO · A/B hooks · posting note |
 | 2026-07-25 | 10 | Tool of the Day | Canva Code 2.0 free for all 265M users incl. free accounts; 20 prompts/day; 75% faster; slides-to-websites angle | VentureBeat · eMarketer · Khaleej Times · EdTech Hub (Jul 2026) | fixed TOD look | A- | 9/10 (freshness 1: Jul 14 news peg; hook A- not A) | AC_TOD_Day10_canvacode.mp4 (v2, re-rendered) + silent cut · cover · caption · script · VO · A/B hooks · posting note |
 | 2026-07-25 | 9 | Prompt Drop (AI News engine) | Fresh-context agent review found 2 critical bugs a self-review missed; 100% of renders used an uninstalled font | First-party — AC repo, branch claude/cave-man-install-6erl5m, commit 0b1d559 | ember | A | 9/10 (loses 1: no current news peg) | AC_Reel_Day9_promptdrop.mp4 + silent cut · cover · caption · script · VO · A/B hooks · posting note |
 | 2026-07-24 | 9 (unshipped) | Tool of the Day | (in progress — shortlist: Hostinger AI website builder · AI phone receptionist · OpusClip) | — | fixed TOD look | — | — | — |
 | 2026-07-23 | 8 | AI News | 66% of US small businesses use AI, up from 55%; 70% need more training (Thryv survey, 561 owners) | CPA Practice Advisor 2026-07-14 · Sahm Capital 2026-07-09 | aurora | A | (pre-scorecard era) | AC_Reel_Day8_AInews.mp4 + silent cut · cover · caption · script · VO |
 
 Notes:
+- Day 11: first build to run the new step-6.5 review gate end to end. Gate returned HOLD on a
+  fabricated claim: an earlier draft truncated the source sentence ("...and the labs know it")
+  and wrote "Not even the labs", inverting its meaning. Re-review then caught two regressions
+  introduced by that fix - the chip dropped the Qwen preview qualifier the caption had just
+  restored, and the rewritten VO line hit 5.2 words/sec against ~3 wps guidance. Both fixed;
+  VO now 35 words at ~3.1 wps. Gate has now caught a real defect on both builds it has seen.
 - Day 10 v2: first cut said "20 free prompts a day on any account" on screen, which implied the
   20/day cap covered paid accounts too (source: free 20/day, paid 60) and contradicted the
   caption in the same post. Caught by the new step-6.5 review gate, corrected to "20 prompts
