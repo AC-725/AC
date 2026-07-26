@@ -1,0 +1,80 @@
+{
+  "name": "Liam Ottley & the Skool community monetization model (AAA)",
+  "category": "competitor_account",
+  "overview": "Liam Ottley is the New Zealand-born founder who popularized the 'AI Automation Agency' (AAA) model — build AI/automation solutions for businesses, land clients, get paid. His monetization architecture is the benchmark 'community ladder': a huge free Skool community ('AI Automation Agency Hub', 329K+ members) acts as the lead magnet and nurture engine between free YouTube/Instagram content and high-ticket offers (the AAA Accelerator mentorship and his agency Morningside AI). For @ac.wins, this is the clearest proven blueprint for inserting a community/course layer between free Instagram content and 1:1 consulting — though the mid-tier '$97/mo subscription' step is better evidenced in peer accounts (Nate Herk's $99/mo Skool) than in Ottley's own current ladder, which jumps from free community to high-ticket.",
+  "key_metrics": [
+    "AI Automation Agency Hub (free Skool): 329K+ members, described as one of the largest business communities on Skool (as of mid-2026); 311,500+ members as of 2026-04; 280K+ cited in earlier 2026 reviews — implying roughly 15-20K new members/quarter",
+    "Free community contents: 8-module course, 57 video lessons, 60+ hours of training, 50+ downloadable templates, weekly live Q&A with Ottley (as of 2026)",
+    "YouTube: 713K+ subscribers (sources range 706K-818K depending on tracker, as of 2026-07)",
+    "Instagram (@liamottley): ~40K followers (as of 2026-07)",
+    "AAA Accelerator (high-ticket): ~$5,000-$7,150 for a 6-month mentorship; sales-call reports cite €2,100 upfront / €6,300 over three installments; one source mentions a US$197/month option [uncertain]",
+    "Business scale: claimed $7M+ revenue in 2024 and $18M+ cumulative across his AI businesses (self-reported, not independently verified); 40+ employees documented by Marks Insights 2026-02, Ottley's own materials claim 65+",
+    "Morningside AI (his agency, founded 2022) is the delivery/credibility arm behind the education business",
+    "Peer benchmark for the mid-tier: Nate Herk's AI Automation Society (free, 305,600+ members) upsells to AI Automation Society Plus at $99/mo with ~3.9K members (~$386K/mo); Nick Saraev won the Skool Games with a ~$335K/mo one-man community (2025) — the free-community -> ~$99/mo -> high-ticket ladder is the niche's proven pattern",
+    "Conversion math implied by peers: ~3.9K paid of ~305K free members = ~1.3% free-to-paid conversion at $99/mo (as of mid-2026)"
+  ],
+  "data_recency": "Data as of 2026-07 (member counts 2026-04 to 2026-07). Skool member counts grow 5-8%/quarter in this niche and go stale within a quarter; pricing and program structure change more slowly (annually).",
+  "tactics_that_work": [
+    "Give away what competitors sell: 60+ hours of full agency training free inside the Skool community — the generosity is the marketing; members closing $20K+ deals using only free resources becomes proof content that recruits more members",
+    "One-click funnel from every video: every YouTube/short CTA points to the same free Skool link, concentrating all traffic into a single owned community rather than scattering across lead magnets",
+    "Community-as-social-proof engine: 329K members, live member wins, and weekly Q&As create constant FOMO and testimonial supply; the community IS the case-study library",
+    "Model-naming: coining and evangelizing 'AAA' as a category made Ottley the default authority for the whole business model — owning a named framework beats competing on generic 'AI tips'",
+    "Practitioner credibility loop: running Morningside AI (a real agency) supplies real client stories that feed the education content, which in turn feeds agency dealflow",
+    "High-ticket by application, not checkout: the Accelerator is sold via sales calls with scarcity framing, keeping the free layer friction-free while extracting high LTV from the most committed 0.1-1%"
+  ],
+  "content_formats": "YouTube long-form (20-60 min tutorials, case studies, 'how I built X' breakdowns) is the primary engine; Instagram Reels and shorts repurpose YouTube segments as discovery clips; inside Skool: structured video course modules, templates, discussion threads, and weekly live Q&A calls. Instagram is clearly secondary for Ottley (40K vs 713K YouTube) — the model is long-form-trust-first, with short-form as top-of-funnel sampling.",
+  "posting_cadence": "YouTube roughly weekly long-form; community engagement continuous (daily threads, weekly live Q&A); Instagram irregular/repurposed [uncertain — exact Instagram cadence not documented in sources]. Recommended pattern from the model: at least one substantial 'pillar' piece weekly plus continuous community touchpoints.",
+  "hooks_and_copy_style": "Hooks lead with money outcomes and speed: 'How I built a $XM AI business', 'Close your first $5K AI client', 'The fastest way to start an AI agency in 2026'. Copy style: direct, numbers-heavy, opportunity-framing ('the biggest wealth transfer of our generation'), always ending in a single CTA to the free community ('Join 300,000+ members — link below'). Income claims are the core persuasion device — effective for his aspiring-entrepreneur audience but a style that reads as hype to SMB owner-operators.",
+  "monetization_model": "Layered ladder: (1) free content (YouTube/IG) -> (2) free Skool community as lead magnet and nurture engine -> (3) high-ticket AAA Accelerator mentorship (~$5K-$7K, application/sales-call based) -> (4) agency services via Morningside AI -> plus ecosystem revenue (software/tools partnerships, affiliate). The famous 'free mega-community -> $97/mo subscription -> high-ticket coaching' framing matches the niche's general pattern (e.g., Nate Herk's $99/mo Plus tier), but current 2026 sources show Ottley's own ladder jumping from free directly to high-ticket, with a $197/mo option mentioned in only one source [uncertain].",
+  "offer_and_pricing": "Free: AI Automation Agency Hub Skool (8 modules, 57 videos, 60+ hrs, 50+ templates, weekly Q&A). Paid: AAA Accelerator — 6-month mentorship with personalized + group coaching and advanced curriculum, ~$5,000-$7,150 (reported €2,100 upfront / €6,300 total on sales calls; one source cites a $197/month option) [uncertain on monthly option]. Agency: Morningside AI custom AI development (enterprise/SMB projects, pricing not public). Peer mid-tier benchmark: $99/mo (Nate Herk AI Automation Society Plus).",
+  "audience_profile": "Aspiring AI-agency owners and side-hustle seekers: typically 18-35, global (heavy US/EU/India/SEA), tech-curious but non-coder, motivated by income opportunity rather than by improving an existing business. NOT SMB decision-makers — this is the critical ICP difference from @ac.wins, whose audience is the business owner these AAA members want to sell to. Ottley's audience overlaps with @ac.wins only as potential imitators/competitors, not clients.",
+  "funnel_map": "YouTube video / Short / Reel (money-outcome hook) -> single CTA 'join the free community' -> Skool signup (email captured by platform) -> onboarding course modules + templates -> community threads, member wins, weekly live Q&A build trust -> periodic pushes to book a call for AAA Accelerator -> sales call -> $5K-$7K program -> top graduates feed testimonials back into content; separately, business inquiries route to Morningside AI. Instagram's role: discovery clips + bio link to Skool; comment-keyword DM automation is common in this cohort though not specifically documented for Ottley [uncertain].",
+  "proof_and_credibility": "Self-reported revenue milestones ($7M+ in 2024, $18M+ cumulative) narrated in videos; running a real agency (Morningside AI, 40+ staff documented) as practitioner proof; member win screenshots ('$20K+ deals closed with free resources'); sheer community size (329K+) as social proof; weekly live access to the founder. Caveat: review sites (Marks Insights, ippei.com, Trustpilot threads) note the revenue claims are unverified and Accelerator sales tactics are aggressive — his proof is volume + self-report, not audited case studies.",
+  "takeaways_for_ac_wins": [
+    "Insert a middle rung between free content and consulting: @ac.wins currently jumps from free posts to consulting calls; the proven ladder adds (a) a free community or email hub as the trust engine and (b) optionally a low-ticket monthly layer later — peer math says expect only ~1% free-to-paid conversion, so the free layer must be big OR the paid layer must be priced high (consulting already is)",
+    "Start with a free community-lite, not a paid one: at sub-10k followers, a $97/mo community would convert single digits; instead launch a free 'AI in Plain English for Business Owners' hub (Skool free tier, WhatsApp community, or broadcast channel + weekly email) as the lead magnet, gated by comment-keyword DM automation on every post",
+    "Give away the checklist, sell the implementation: Ottley gives away the full 'how' and monetizes accountability/speed/done-for-you; @ac.wins should publish complete plain-English AI playbooks free and position ac-wins.com consulting as 'we set it up for you' — for SMB owners, done-for-you converts better than courses anyway",
+    "Name and own a framework: 'AAA' made Ottley the category king; @ac.wins should brand its method (e.g., a named plain-English AI adoption framework for normal businesses) so content, community, and consulting all reinforce one ownable term",
+    "Run a weekly live touchpoint: Ottley's weekly Q&A is the retention engine of a 329K community; a solo-feasible version — a monthly 'Ask me anything about AI for your business' live or Zoom clinic — doubles as consulting lead qualification"
+  ],
+  "risks_or_avoid": "Do not copy the income-claim hype style ('$18M+', 'wealth transfer') — @ac.wins sells trust to conservative SMB owners, and unverified money claims plus aggressive sales-call funnels have generated visible backlash (critical Trustpilot reviews, 'scam risk' review articles) even for Ottley. Do not launch a paid community prematurely: below ~50-100K engaged audience the ~1% conversion math fails, and a ghost-town paid community damages credibility. Community ops at scale (moderation, weekly lives, support) is a real workload — Ottley has 40+ staff. Also note his audience is aspiring agency owners; copying his content angles would attract competitors, not clients, to @ac.wins.",
+  "platform_policy_risk": "Low-to-moderate for the model itself: the funnel's core assets (long-form video, owned community, email) sit outside Meta's control, which is precisely its strength against 2025-26 policy shifts. Instagram-side exposure: repurposed YouTube clips must add an on-screen presence/native commentary to avoid Meta's unoriginal-content deprioritization (crackdown announced 2025-07-14, formalized 2026-03-13); heavy income-claim ads risk Meta ad-policy friction; AI-generated creative in any paid promotion now triggers mandatory 'AI info' labels (2026). The community-ladder model is largely policy-resilient — one reason to emulate it.",
+  "discoverability_seo": "Ottley's discoverability is YouTube-search-led ('AI automation agency', 'make money with AI' queries) plus the named 'AAA' framework ranking across Google; his Skool about-page ranks for the category. Instagram SEO is underexploited by him (generic captions, small IG presence). For @ac.wins: with Google indexing Instagram since 2025-07, pairing a named framework with keyword-rich captions ('AI for small business Hong Kong, in plain English') can capture the SMB-intent searches Ottley's agency-builder keywords ignore.",
+  "localization_language": "Entirely English-language, globally targeted with US/EU framing; no localization. Skool itself is English-centric. For @ac.wins, a bilingual EN + 繁體中文 community/newsletter would be differentiated in HK/TW where no AAA-style plain-English community for local SMB owners is visible [uncertain — Chinese-language community landscape not covered by English sources].",
+  "replicability_effort": "The full Ottley machine is NOT solo-replicable (team of 40+, years of daily content, real agency). The replicable kernel is: one weekly pillar content piece + free community hub + weekly/monthly live Q&A + application-based high-ticket offer. Solo cost: Skool $99/mo (or free WhatsApp/broadcast channel at $0), ManyChat ~$15-29/mo, email tool $0-30/mo; time ~8-12 hrs/week (content 5-6, community 2-4, live 1-2). Realistic sequence for @ac.wins: months 0-6 free hub + email; revisit paid tier only after ~5-10K engaged members/subscribers.",
+  "benchmark_targets": [
+    "Free-to-paid community conversion: ~1.3% (Herk: 3.9K paid of 305K free) — use as ceiling when modeling any future paid tier",
+    "Mid-tier price anchor: $99/mo (niche standard for paid AI-automation communities, 2026)",
+    "High-ticket anchor: $5K-$7K for a 6-month guided program — @ac.wins consulting packages can price against this",
+    "Community growth benchmark (scaled): Ottley adds ~15-20K members/quarter on a 713K YouTube base (~2-3% of audience/quarter); for @ac.wins at ~10K followers, a realistic target is 200-300 community/email joins per quarter from Instagram alone",
+    "Engagement rhythm: 1 live Q&A per week (Ottley) — solo-adjusted target: 1-2 lives per month, plus 100% reply rate to community/DM questions within 24h"
+  ],
+  "sources": [
+    "AI Automation Agency Hub — Skool: https://www.skool.com/learn-ai",
+    "AI Automation Agency Hub: Full Review 2026 — Skoolmakers: https://skoolmakers.com/communities/ai-automation-agency/",
+    "AI Automation Agency Hub Review 2026 — AI Funnel Insider: https://aifunnelinsider.com/ai-automation-agency-hub-review-2026/",
+    "AI Automation Agency Hub Community Review — CommunityHunter: https://communityhunter.com/reviews/ai-automation-agency-hub-liam-ottley/",
+    "Liam Ottley Review: Legit Programs or Waste of Time? (2026) — Marks Insights: https://marksinsights.com/liam-ottley-review/",
+    "AAA Accelerator Review 2026 — ippei.com: https://ippei.com/aaa-accelerator/",
+    "AAA Accelerator Reviews — Trustpilot: https://www.trustpilot.com/review/aaaaccelerator.com",
+    "AAA Accelerator Review — Online Training Reviewer: https://onlinetrainingreviewer.com/reviews/aaa-accelerator-review-liam-ottley",
+    "From E-Commerce to AI Empire (community growth story) — Typeshare: https://typeshare.co/zacharyauslander320/posts/from-e-commerce-to-ai-empire-how-one-founder-built-a-255k-member-community-by-giving-everything-away-free-n2xa9",
+    "AI Automation Agency Hub by Liam Ottley Review — AI Skillset Course: https://skillsetcourse.com/class/skool-ai-automation-agency-hub-by-liam-ottley",
+    "Liam Ottley (@liamottley) — Instagram: https://www.instagram.com/liamottley/",
+    "Liam Ottley — YouTube: https://www.youtube.com/@LiamOttley",
+    "Liam Ottley — YouTube Channel Analysis — OutlierKit: https://outlierkit.com/channel/liamottley",
+    "Nate Herk AI Automation Society Plus Review ($99/mo benchmark) — Marks Insights: https://marksinsights.com/ai-automation-society/",
+    "AI Automation Society Review 2026 — CommunityHunter: https://communityhunter.com/reviews/ai-automation-society-nate-herk/",
+    "How I won the Skool Games w a $335K/mo one-man community (Nick Saraev) — YouTube: https://www.youtube.com/watch?v=TOhndexmOj4",
+    "Best Skool Communities for AI and Automation in 2026 — KoolReviews: https://koolreviews.com/blog/best-ai-automation-skool-communities",
+    "Meta Follows YouTube In Crackdown On Unoriginal Content — Search Engine Journal: https://www.searchenginejournal.com/meta-follows-youtube-in-crackdown-on-unoriginal-content/551096/"
+  ],
+  "uncertain": [
+    "key_metrics",
+    "posting_cadence",
+    "monetization_model",
+    "offer_and_pricing",
+    "funnel_map",
+    "localization_language"
+  ]
+}
