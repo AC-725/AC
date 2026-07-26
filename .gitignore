@@ -1,0 +1,8 @@
+# Firecrawl CLI scratch output (scrape/crawl results)
+.firecrawl/
+
+# Never commit credentials. EXA_API_KEY / FIRECRAWL_API_KEY belong in the
+# environment's variable settings, not in the repo.
+.env
+.env.*
+!.env.example
