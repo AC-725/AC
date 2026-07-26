@@ -56,6 +56,74 @@ The workflow asks for 1–2 credible sources and *matching their wording*. Concr
 Match the source's wording on screen. Rounding "38.6%" to "nearly 40%" is fine;
 turning "projected to reach" into "reached" is not.
 
+## Deep research — when one pass isn't enough
+
+Most days a search and a verify is the whole job. Escalate to a deep pass when:
+
+- **The number is surprising or contested.** A stat that sounds too good is either
+  the best hook of the week or a trap, and one search can't tell you which.
+- **A tool is going to be Tool of the Day.** TOD tells people to go use something.
+  Recommending vaporware, or a "free tier" that turns out to be a 7-day trial, costs
+  the page more trust than one good reel builds.
+- **The angle is "nobody's talking about this."** If the claim is that the obvious
+  read is wrong, the obvious read has to be established first.
+- **Planning a week or a series** rather than a single post.
+
+If the Exa `search` skill is available it runs this as an orchestrated multi-agent
+sweep and is the faster path. Everything below is the same method done by hand, and
+it works with the plain MCP tools.
+
+### 1. Filter the noise before deep-reading
+
+Cheaper to discard a bad source than to read it. Disqualifiers:
+
+| Signal | What it looks like |
+| --- | --- |
+| No skin in the game | Explains the thing, has never shipped the thing |
+| Misaligned incentives | Vendor blog, sponsored post, affiliate-heavy roundup |
+| Circular credentials | Only ever cited by others in the same bubble |
+| **Positive-only advice** | No tradeoffs, no failure modes, "just use X" |
+| Temporal decay | Moved from building to advising; check they still practise |
+
+The fourth one is the important one here. Content with no downside discussed *is*
+the hype this page exists to counter — so a source exhibiting it is not just weak
+evidence, it's the thing being argued against.
+
+**Practitioner vs commentator** is the distinction that matters most. Practitioners
+ship and report what happened ("we ran this for a quarter, here's the bill").
+Commentators write listicles about what practitioners did. One real practitioner
+account beats five roundups.
+
+### 2. Triangulate
+
+Three searches, run when a claim actually carries the reel:
+
+```
+web_search_exa  query="<claim> independent results data"      # who else found this
+web_search_exa  query="<tool/company> case study real numbers" # track record
+web_search_exa  query="<tool/claim> criticism overrated problems limitations"
+```
+
+That third one is non-negotiable for a TOD pick. If a tool has *no* criticism
+anywhere, it's usually too new to recommend rather than too good to criticise.
+
+### 3. Synthesize
+
+- **Lead with the finding.** The first line should carry the value on its own —
+  same discipline as the reel itself.
+- **Organize by theme, not by source.** "Source A says… source B says…" is notes,
+  not research. "Two things are true: X, and despite it, Y" is an angle.
+- **Surface disagreement rather than averaging it.** Where credible sources
+  genuinely conflict, that gap is frequently the most interesting reel on the
+  table — it's the contrarian-but-constructive hook, pre-made.
+- **Carry confidence forward.** How many independent sources, how fresh, and
+  practitioner or commentator. AC needs to know how hard he can lean on a number
+  before it goes on screen at 200pt.
+
+Deep research that ends in a confident wrong number is worse than no research —
+it launders a guess into something that looks checked. If it stays uncertain after
+a deep pass, say so and pick a different story.
+
 ## When a page needs a browser (Firecrawl)
 
 `web_fetch_exa` handles ordinary pages. Escalate only when it returns empty,

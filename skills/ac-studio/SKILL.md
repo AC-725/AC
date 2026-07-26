@@ -66,6 +66,7 @@ Read only what the task needs — loading all of it wastes context and blurs foc
 | Growth, reach, weekly plan, engagement routine | **B — Protocol** | `growth.md` |
 | Hashtags | **B — Protocol** | `content.md` (hashtag banks) |
 | Finding a story, verifying a number, competitor research | either | `research.md` |
+| Vetting a TOD tool, a contested stat, or a week's plan | either | `research.md` (deep-research pass) |
 | Visual system, palette, type, template internals | either | `brand.md` |
 
 If a request spans both lanes — "turn this story into a reel *and* a carousel" —
@@ -112,6 +113,12 @@ hook, useful to normal businesses, teachable in 3 steps, concrete payoff). Prese
 **3–5 candidates**, each with the hook idea, the big number, AC's angle, and an
 *algorithm read* — who sends this to whom, i.e. the share trigger. Let AC pick. If
 he defers, choose the strongest and say so.
+
+Escalate to the **deep-research pass** in `research.md` once AC picks, whenever the
+pick is a TOD tool, a surprising or contested number, or a "nobody's talking about
+this" angle. TOD in particular sends people off to *use* something — a tool that
+turns out to be vaporware, or a free tier that's really a trial, costs more trust
+than the reel builds. Run the criticism search before committing.
 
 ### 3. Confirm the creative (one AskUserQuestion call)
 - **3 theme suggestions.** News → 3 of the 4 THEMEs matched to the story's energy,

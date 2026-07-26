@@ -28,7 +28,10 @@ fi
 
 MARKETPLACE_REPO="anthropics/claude-plugins-official"
 MARKETPLACE="claude-plugins-official"
-PLUGIN="firecrawl"
+# firecrawl: browser-backed scraping for JS-heavy pages.
+# exa:       semantic search plus the deep-research orchestrator.
+# Both are external plugins, so each is a separate small clone.
+PLUGINS="firecrawl exa"
 
 warn() { echo "session-start: $*" >&2; }
 
@@ -64,12 +67,16 @@ if ! attempt "marketplace add" \
   exit 0
 fi
 
-if ! attempt "plugin install" \
-    claude plugin install "${PLUGIN}@${MARKETPLACE}" --scope user; then
-  warn "could not install ${PLUGIN}; it is unavailable this session"
-  exit 0
-fi
+# One failing plugin shouldn't cost the others, so each is attempted independently.
+for plugin in $PLUGINS; do
+  if ! attempt "install ${plugin}" \
+      claude plugin install "${plugin}@${MARKETPLACE}" --scope user; then
+    warn "could not install ${plugin}; it is unavailable this session"
+  fi
+done
 
+# Exa's MCP tools authenticate through the managed connector and need no key here,
+# so only Firecrawl is worth warning about.
 if [ -z "${FIRECRAWL_API_KEY:-}" ]; then
-  warn "${PLUGIN} installed, but FIRECRAWL_API_KEY is unset — add it to the environment's variables before using the plugin"
+  warn "firecrawl installed, but FIRECRAWL_API_KEY is unset — add it to the environment's variables before using the plugin"
 fi
