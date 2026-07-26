@@ -102,6 +102,17 @@ up?"). Score below 8 → revise first, don't present a weak draft. Then **wait f
 go** (or apply his tweaks and re-QA). Only proceed unprompted if the session is clearly
 unattended, saying so plainly.
 
+### 6.5 Review gate — fresh-context fact & brand check (mandatory)
+After AC's go, before the render, dispatch a **fresh agent** to check the words.
+Never the agent that wrote them — the writer re-reads its own intent into the copy and
+sees what it meant, not what it wrote. Hand it `script.md`, `caption.txt`, the filled
+template's `CONTENT`, `vo_script.md`, the brand rules, and the self-assessed scorecard.
+It verifies every number traces to a cited source with matching wording, flags any
+unsupported claim, checks the four artifacts agree with each other, and grades the
+scorecard honestly. Findings only — it never fixes and never reopens AC's approved
+creative. **BLOCKER → fix the copy and re-run the gate; never render past one.** Full
+prompt template and verdict handling: `references/review-gate.md`.
+
 ### 7. Build and verify
 Backgrounded (`nohup … &`, then poll) so a tool timeout can't kill the render — the TOD
 render is ~90s:
@@ -117,7 +128,8 @@ brand-system cover page). Keep cover key elements inside the center 1080×1350 g
 
 ### 8. Grade, deliver, log
 Grade the hook (A–F per `hooks.md`; ship A- or better, one rewrite pass if below) and
-finalize the scorecard. `SendUserFile`: **MP4**, **cover PNG**, **vo_script.md**,
+finalize the scorecard **against the step-6.5 reviewer's findings, not by self-assertion**
+— if the reviewer scored a row lower, use its score or say plainly why not. `SendUserFile`: **MP4**, **cover PNG**, **vo_script.md**,
 **caption.txt** (SEO line + caption + 5 hashtags, + 繁體中文 version if chosen),
 **script.md**, **ab_hooks.txt**, and a short **posting note** (trial-reel + timing +
 baked-SFX guidance from `algorithm-2026.md`). Present the grade + scorecard so AC sees
@@ -135,6 +147,8 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory �
   Never hardcode a second handle or mix two.
 - **Never change SCENES timings** without updating the matching audio cues
   (`reel_audio.py` / `tod_audio.py`), or the sound desyncs.
+- **The agent that wrote the copy never grades it alone.** Step 6.5's fresh-context
+  review is mandatory; a self-review of one's own words reliably reports clean.
 - **Verify every number** from 1–2 credible sources; match their wording. No hype, no
   "this changes everything," and no selling at all. The CTA ladder stops at Comment:
   Save → Follow → Comment. No offer rung while the account is audience-first.
