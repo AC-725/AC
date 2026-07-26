@@ -24,9 +24,10 @@ grep -rniE "price|pricing|package|retainer|offer|service" --include='*.md' ~/.cl
 As of writing, the three pillars are in very different shape — expect the same pattern unless it's
 been fixed since:
 
-- **Brand — mostly written.** `ac-instagram/SKILL.md` carries the promise, positioning, and voice;
-  `ac-reel-creator/references/brand.md` carries the exact palette and type. Mostly a consolidation
-  job, plus resolving the handle conflict (see `references/audit.md`).
+- **Brand — written and consolidated (2026-07-26).** `system/foundation/brand.md` is now the source of
+  truth: identity, the canonical `@itsac.ai` handle, palette, type, voice, non-negotiables. The skills
+  point at it. One open item — the `ac-wins.com` website was never re-confirmed against the handle
+  change, and is flagged rather than guessed.
 - **Audience — fragments only.** It exists as hashtag groups and search-phrase heuristics
   ("AI tools for small business") and nowhere as an actual description of who this is for. Genuine
   gap; needs Austin.

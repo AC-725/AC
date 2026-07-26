@@ -34,11 +34,15 @@ whether two mentions actually disagree or are just both true in context.
 
 The expensive class. Something already shipped wrong.
 
-Real example, found when this skill was written: `ac-instagram` states the handle is `@ac.wins`
-(primary), listing `@itsac.ai` only as a *backup if unavailable*. But `ac-reel-creator` sets its
-`HANDLE` constant to `@itsac.ai` by default, and its own `run-log.md` records that Day 8 shipped
-with `@itsac.ai` — while `ac-tool-of-the-day` stamps `@ac.wins` on every frame. Same brand, three
-files, two handles, and videos already published under both.
+Worked example — **found and fixed 2026-07-26**, kept here because the shape recurs. `ac-instagram`
+stated the handle was `@ac.wins` (primary), listing `@itsac.ai` only as a *backup if unavailable*. But
+`ac-reel-creator` defaulted its `HANDLE` constant to `@itsac.ai`, and its `run-log.md` recorded Day 8
+shipping that way — while `ac-tool-of-the-day` stamped `@ac.wins` on every frame. Same brand, 33
+restatements across 4 skills, two handles, videos already published under both.
+
+Resolved to `@itsac.ai` in `system/foundation/brand.md`; see `system/skill-changes.md`. The lesson
+worth keeping is the root cause: one of those files offered a *list* of acceptable handles, and a list
+of alternates is what allows two to ship. When you find a fact stated as options, that's the bug.
 
 That's the shape to hunt for: not a typo, but a fact that two skills each believe they own.
 
@@ -84,7 +88,10 @@ One table, worst first. Conflicts before duplicates before stale before overlap.
 
 | # | Class | Fact | Where it disagrees | Proposed fix | Needs Austin? |
 | --- | --- | --- | --- | --- | --- |
-| 1 | Conflict | Instagram handle | `ac-instagram/SKILL.md:29` says `@ac.wins`; `ac-reel-creator/references/brand.md:10` defaults to `@itsac.ai` | Confirm the live account, set it in `system/foundation/brand.md`, point both skills there | **Yes** — which account is real |
+| 1 | Conflict | Instagram handle | `ac-instagram/SKILL.md:29` said `@ac.wins`; `ac-reel-creator/references/brand.md:10` defaulted to `@itsac.ai` | Confirm the live account, set it in `system/foundation/brand.md`, point both skills there | **Yes** — which account is real |
+
+(That row is the 2026-07-26 finding, shown in past tense because it's since been fixed. Write live
+findings in the present tense.)
 
 Rules for the table:
 
