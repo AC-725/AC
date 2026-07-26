@@ -10,3 +10,6 @@
 # Python bytecode from skill scripts
 __pycache__/
 *.pyc
+
+# Packaged .skill bundles — build artifacts, regenerate with system/scripts/reapply_handle.py
+dist-skills/
