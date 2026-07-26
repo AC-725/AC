@@ -28,9 +28,11 @@ been fixed since:
   truth: identity, the canonical `@itsac.ai` handle, palette, type, voice, non-negotiables. The skills
   point at it. One open item — the `ac-wins.com` website was never re-confirmed against the handle
   change, and is flagged rather than guessed.
-- **Audience — fragments only.** It exists as hashtag groups and search-phrase heuristics
-  ("AI tools for small business") and nowhere as an actual description of who this is for. Genuine
-  gap; needs Austin.
+- **Audience — written (2026-07-26).** `system/foundation/audience.md`, confirmed by Austin: five
+  overlapping groups unified by "not technical and doesn't want to be", what they want, and two hard
+  exclusions. Two things still open and marked as such — willingness-to-pay (belongs with Offer) and
+  any platform beyond Instagram. It also records a live tension rather than smoothing it over: owners
+  and aspiring consultants are different buyers.
 - **Offer — effectively missing.** The `ac-wins-*` skills imply a service menu (assessments, quotes,
   invoices, spreadsheets, scheduling, comms) but no price appears anywhere in the system. Biggest gap.
 

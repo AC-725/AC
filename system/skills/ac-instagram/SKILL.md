@@ -44,6 +44,29 @@ of content should reinforce one reputation — **"this person makes AI make
 sense."** No buzzwords, no "this changes everything," no fear-mongering. Just
 one clear, useful idea a day, grounded in real data.
 
+AC's own framing: *"Making everything user friendly. And I am the connector for
+this."* He is the connector between ordinary people and AI that already exists —
+not a builder, not a researcher. Content should read as a connection being made,
+never as a lecture.
+
+## Who you're writing to
+
+**Full definition:** `<repo>/system/foundation/audience.md` — read it before
+writing for a new angle or audience segment.
+
+The short version: they are **not technical and don't want to become technical.**
+That's the one trait shared across general/beginner users, non-technical small
+business owners, solo operators, ops managers inside SMEs, and aspiring AI
+consultants. They want hours back on boring work, reassurance they're not being
+left behind, and something they can use today.
+
+**Not for:** engineers and AI builders (they want to build; this page says don't
+build, just use), or hype-chasers (they want "this changes everything," which is
+the opposite of the promise).
+
+Default when a post can only serve one group: **write for the business owner.**
+Larger ring, clearer buyer — and the aspiring consultant learns by watching.
+
 ## Voice — how AC sounds (read this before writing anything)
 
 The voice is the most important asset here, because the visuals are already
