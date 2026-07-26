@@ -32,15 +32,20 @@ new occurrence as a bug.
 
 ## Website
 
-**`ac-wins.com`** — carried over from before the handle change, and **not re-confirmed against
-`@itsac.ai`.**
+**`itsac.ai`** — moving to match the handle. Austin confirmed the move on 2026-07-26; `ac-wins.com`
+is the old home base.
 
-Do not silently "fix" this to match the handle, and do not invent a new domain. Ask Austin whether
-the bio link and home base stay `ac-wins.com` or move to something matching `itsac.ai`. Until he
-answers, `ac-wins.com` stands as-is.
+Two caveats, both live:
+
+- **Confirm the exact spelling.** This was recorded as `itsac.ai` to match `@itsac.ai`. If the real
+  domain differs (a hyphen, a different TLD, a subdomain), correct it here first — everything else
+  points at this file.
+- **Don't switch the live bio link until the site actually resolves.** "Moving" is a transition, and
+  a bio pointing at a domain that doesn't load costs more traffic than an old domain that does.
+  Check it loads, then switch. A link hub (Linktree / Stan) is a fine interim target.
 
 Note this is distinct from the **AC Wins** client-services business (the `ac-wins-*` skills). Those
-are not Instagram surfaces and are unaffected by the handle change.
+never referenced this domain and are unaffected.
 
 ## Palette — gold is the only accent
 

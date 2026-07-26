@@ -264,4 +264,12 @@ def main() -> int:
 
 
 if __name__ == "__main__":
+    # Restore default SIGPIPE handling so piping into `head` exits quietly instead of raising
+    # BrokenPipeError. Guarded: SIGPIPE does not exist on Windows.
+    try:
+        import signal
+
+        signal.signal(signal.SIGPIPE, signal.SIG_DFL)
+    except (ImportError, AttributeError, ValueError):
+        pass
     sys.exit(main())
