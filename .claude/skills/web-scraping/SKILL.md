@@ -37,7 +37,9 @@ mcp__Exa__web_fetch_exa    urls=["https://…", "https://…"]   maxCharacters=8
 
 ## Firecrawl — JS-heavy pages
 
-Firecrawl runs a real browser, so it sees what a user sees. Provided by the `firecrawl` plugin, driven by the `firecrawl` CLI.
+Firecrawl runs a real browser, so it sees what a user sees. Provided by the `firecrawl` plugin, driven
+by the `firecrawl` command from the **`firecrawl-cli`** npm package (`npm i -g firecrawl-cli`). Note the
+package name: plain `firecrawl` on npm is a different thing and ships no executable.
 
 ```bash
 firecrawl scrape "<url>" --only-main-content -o .firecrawl/page.md
@@ -57,6 +59,24 @@ Signs a page needs Firecrawl rather than Exa fetch:
 - Content appears only after scroll, a click, or a cookie/age gate
 - The URL is a dashboard, feed, or search-results page rather than a document
 
+## Login-walled sites — don't climb the ladder
+
+Instagram, LinkedIn feeds, X/Twitter, Facebook, and most logged-in dashboards serve a login wall to
+anything without a session cookie. No rung of the ladder gets past that: Exa fetch errors out, Exa
+search only ever sees whatever the site chose to make publicly indexable, and Firecrawl renders the
+wall faithfully. Scraping them also runs against their terms of service.
+
+Recognize it early and switch tracks instead of escalating:
+
+- **Your own account's data** → the platform's official API or native analytics export
+  (Instagram Graph API, LinkedIn API, X API). Authenticated, permitted, and returns real numbers
+  rather than whatever survived rendering.
+- **Public posts from any account** → `web_search_exa`. Individual post and reel URLs are often
+  indexed even when the profile page isn't. A handle returning nothing means it isn't indexed —
+  new, private, low-volume, or nonexistent — and that's not something more scraping will fix.
+- **Competitor or market research** → search-first, and accept public-signal coverage rather than
+  a complete follower/engagement dump.
+
 ## Escalation ladder
 
 Work down it and stop as soon as you have the answer — each rung costs more time and credits than the last.
@@ -75,7 +95,7 @@ output or a log.
 | Variable | Needed for | Notes |
 | --- | --- | --- |
 | `EXA_API_KEY` | Direct `api.exa.ai` calls only | **Not** needed for `mcp__Exa__*` — those authenticate through the managed connector |
-| `FIRECRAWL_API_KEY` | All Firecrawl calls | Format `fc-…`. Without it every `firecrawl` command fails |
+| `FIRECRAWL_API_KEY` | Firecrawl, non-interactively | Format `fc-…`. A keyless free tier exists, but unauthenticated runs drop into an interactive login prompt and hang — so an agent needs the variable set |
 
 Set them under Environment variables in the Claude Code web environment settings so the
 SessionStart hook and CLI both see them.
@@ -89,7 +109,11 @@ What that means in practice:
 
 - **Exa via `mcp__Exa__*` works** — the connector runs outside this container, so the block doesn't apply
 - **Direct `curl https://api.exa.ai/…` fails**, even with a valid `EXA_API_KEY`
-- **The `firecrawl` CLI fails**, because it calls `api.firecrawl.dev`
+- **The `firecrawl` CLI fails twice over.** It surfaces `Request failed with status code 405`, which
+  looks like an API error but isn't: the CLI bundles an axios older than 1.16.1 that sends a plain-HTTP
+  proxy request instead of a CONNECT, and the proxy rejects that with 405. Underneath it,
+  `api.firecrawl.dev` is *also* denied at CONNECT with a 403. Fixing the client wouldn't help — the
+  host has to be allowed first. Check `curl -sS "$HTTPS_PROXY/__agentproxy/status"` to see both.
 
 So in a locked-down session, prefer the Exa MCP tools and expect the Firecrawl rungs to be
 unavailable. A 403 on CONNECT is an organization egress-policy denial: report the blocked host,
