@@ -30,6 +30,10 @@
   .tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
   #wm{position:absolute;bottom:74px;left:0;width:100%;text-align:center;
     font-family:'JetBrains Mono';font-weight:500;letter-spacing:6px;font-size:24px;color:rgba(231,199,101,0.5);}
+  #subbar{position:absolute;bottom:300px;left:50%;transform:translateX(-50%);max-width:880px;
+    padding:14px 26px;border-radius:12px;background:rgba(0,0,0,0.55);
+    font-family:'JetBrains Mono';font-weight:400;font-size:33px;line-height:1.35;
+    color:#F4F0E7;text-align:center;opacity:0;z-index:60;white-space:normal;}
 
   .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
     padding:150px 110px 230px;text-align:center;visibility:hidden;}
@@ -119,6 +123,7 @@
   <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
   <div id="scenes"></div>
   <div id="wm"></div>
+  <div id="subbar"></div>
 </div>
 
 <script>
@@ -350,6 +355,19 @@ window.seek=function(t){
     s.el.style.transform=vis>0.002?'scale('+lerp(1.03,1,clamp(st/0.35)).toFixed(3)+')':'none';
     if(vis>0.002)sceneAnim(s,st);
   });
+};
+/* ===== SUBTITLES — optional CONTENT.subs:[{t0,t1,text}] bakes a lower-third caption
+   lane. Text mirrors the VO script verbatim; absent subs = no bar (back-compatible).
+   Windows are free-form; SCENES timings are never touched. ===== */
+const __sub=document.getElementById('subbar');
+if(!(CONTENT.subs&&CONTENT.subs.length)){__sub.style.display='none';}
+const __seekBase=window.seek;
+window.seek=function(t){__seekBase(t);
+  if(CONTENT.subs&&CONTENT.subs.length){
+    const e=CONTENT.subs.find(s=>t>=s.t0&&t<s.t1);
+    if(e){ if(__sub.textContent!==e.text)__sub.textContent=e.text; __sub.style.opacity=1; }
+    else{ __sub.style.opacity=0; }
+  }
 };
 window.seek(0);document.title='ready';
 </script>

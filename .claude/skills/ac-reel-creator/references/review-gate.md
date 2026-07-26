@@ -34,6 +34,8 @@ Give it exactly these inputs:
 - `caption.txt` — caption, SEO first line, hashtags
 - the filled `reel.html` / `tod.html` (the `CONTENT` object is the on-screen copy)
 - `vo_script.md`
+- the `subs` array inside the filled template — subtitle text must match the VO
+  script verbatim, line for line; any divergence is a finding
 - the path to `itsac-instagram/SKILL.md` for the brand rules
 - the self-assessed virality scorecard
 
@@ -60,8 +62,9 @@ Give it exactly these inputs:
 > 2. **Fabrication.** Any claim not supported by a cited source or by
 >    first-party evidence is a BLOCKER. This brand's core rule is that receipts
 >    are real.
-> 3. **Internal consistency.** Do the on-screen copy, caption, VO script, and
->    `script.md` agree on every number and claim? A figure that differs between
+> 3. **Internal consistency.** Do the on-screen copy, caption, VO script,
+>    subtitle track (`CONTENT.subs`), and `script.md` agree on every number and
+>    claim? Subtitles must match the VO verbatim. A figure that differs between
 >    two of them is a BLOCKER.
 > 4. **Brand compliance** against the brand rules file: voice, CTA ladder, post
 >    formula, one gold accent per scene, the type pair.

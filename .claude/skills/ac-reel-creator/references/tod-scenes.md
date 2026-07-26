@@ -71,3 +71,12 @@ to 1080×1920 for crisp text. Keep key elements inside the center 1080×1350 gri
   python3 + numpy, and the Space Grotesk + JetBrains Mono system fonts
   (`fc-list | grep -iE 'space grotesk|jetbrains mono'` to verify; install with
   `.claude/scripts/install-fonts.sh`).
+
+## Subtitles — `subs` (required on every reel)
+
+`subs:[ {t0,t1,text}, ... ]` — free-form timing windows, text **verbatim from the
+VO script**, one entry per VO line. Bakes a lower-third caption bar (mono, warm
+white on a dark pill, above the watermark and Instagram's UI zone). Absent `subs`
+= no bar, but shipping without subtitles is a guardrail violation. The same array
+feeds `assets/make_srt.js` for the `.srt` sidecar, so video captions, VO, and SRT
+cannot drift apart.

@@ -105,3 +105,12 @@ same brand system — thin gold frame + corner ticks, `Breaking · AI` kicker, t
 headline (Space Grotesk, gold accent word), the hero number big, the handle, and the tagline — with
 all key elements centered so they survive Instagram's 4:5 / 1:1 grid crop. Render it with a
 headless-Chromium screenshot at 1080×1920. Keep the palette and fonts in `brand.md`.
+
+## Subtitles — `subs` (required on every reel)
+
+`subs:[ {t0,t1,text}, ... ]` — free-form timing windows, text **verbatim from the
+VO script**, one entry per VO line. Bakes a lower-third caption bar (mono, warm
+white on a dark pill, above the watermark and Instagram's UI zone). Absent `subs`
+= no bar, but shipping without subtitles is a guardrail violation. The same array
+feeds `assets/make_srt.js` for the `.srt` sidecar, so video captions, VO, and SRT
+cannot drift apart.

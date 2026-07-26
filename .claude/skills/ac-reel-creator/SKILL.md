@@ -74,7 +74,9 @@ Per `references/voice-and-caption.md`: on-screen copy for every scene (payoff fi
 one real number per scene, no em-dashes on screen, headline width limits per engine);
 the **caption** whose first line is a plain-language search phrase (social SEO), with
 one big number, a question, a soft CTA; **5 trending-but-rankable hashtags**; the
-**timed voice-over script**; **2 A/B hook variants** (alternate scene-A lines for trial
+**timed voice-over script**; the **subtitle track** (`CONTENT.subs`, one `{t0,t1,text}`
+entry per VO line, text verbatim from the VO script — it bakes onto the video and feeds
+the `.srt`); **2 A/B hook variants** (alternate scene-A lines for trial
 reels); and the **shot-by-shot script**. Every reel must contain a **share trigger**.
 
 ### 5. Fill the template and QA frames
@@ -82,8 +84,8 @@ reels); and the **shot-by-shot script**. Every reel must contain a **share trigg
 mkdir -p run && cd run
 cp SKILL_DIR/assets/reel.template.html reel.html   # or tod.template.html
 ```
-Fill `CONTENT` slot-by-slot per the engine's slot guide; set `THEME` (News) and confirm
-`HANDLE`. QA before any full render:
+Fill `CONTENT` slot-by-slot per the engine's slot guide, **including `subs`**; set
+`THEME` (News) and confirm `HANDLE`. QA before any full render:
 ```bash
 # News:
 node SKILL_DIR/assets/render_frames.js reel.html qa "0,1.7,3.5,4.6,6.6,7.3,8.6,10.3,11.2"
@@ -122,6 +124,8 @@ bash SKILL_DIR/scripts/build_video.sh reel.html AC_<Format>_Day<N>_<slug>.mp4
 The script auto-picks the right audio track per engine. Verify: `ffprobe` duration
 (~11.7s News / ~31.6s TOD) with video+audio; extract the t=0 frame (News: loud open
 survived encoding) or a cue frame (TOD: 6.6s odometer / 14.1s chart) to confirm sync.
+Extract one mid-scene frame and confirm the subtitle bar shows the right line. Build the
+SRT sidecar: `node SKILL_DIR/assets/make_srt.js reel.html AC_<Format>_Day<N>.srt`.
 Also build `--silent` when AC plans a voice-over. Render the cover (TOD: edit
 `cover.html` EDIT markers, screenshot at 2× then lanczos-downscale to 1080×1920; News:
 brand-system cover page). Keep cover key elements inside the center 1080×1350 grid crop.
@@ -129,7 +133,7 @@ brand-system cover page). Keep cover key elements inside the center 1080×1350 g
 ### 8. Grade, deliver, log
 Grade the hook (A–F per `hooks.md`; ship A- or better, one rewrite pass if below) and
 finalize the scorecard **against the step-6.5 reviewer's findings, not by self-assertion**
-— if the reviewer scored a row lower, use its score or say plainly why not. `SendUserFile`: **MP4**, **cover PNG**, **vo_script.md**,
+— if the reviewer scored a row lower, use its score or say plainly why not. `SendUserFile`: **MP4**, **cover PNG**, **.srt**, **vo_script.md**,
 **caption.txt** (SEO line + caption + 5 hashtags, + 繁體中文 version if chosen),
 **script.md**, **ab_hooks.txt**, and a short **posting note** (trial-reel + timing +
 baked-SFX guidance from `algorithm-2026.md`). Present the grade + scorecard so AC sees
@@ -147,6 +151,9 @@ source, theme/look, hook grade, scorecard, files. The log is the series memory �
   Never hardcode a second handle or mix two.
 - **Never change SCENES timings** without updating the matching audio cues
   (`reel_audio.py` / `tod_audio.py`), or the sound desyncs.
+- **Every reel ships with subtitles.** `CONTENT.subs` filled, text verbatim from the VO
+  script, verified on a rendered frame. An empty subtitle lane is a defect, not a default
+  (`make_srt.js` refuses to run without one).
 - **The agent that wrote the copy never grades it alone.** Step 6.5's fresh-context
   review is mandatory; a self-review of one's own words reliably reports clean.
 - **Verify every number** from 1–2 credible sources; match their wording. No hype, no
