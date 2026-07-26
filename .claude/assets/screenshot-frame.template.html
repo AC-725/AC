@@ -1,0 +1,57 @@
+<meta charset="utf-8">
+<style>
+  :root{
+    --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F;
+    --white:#F4F0E7; --stone:#B9B1A1;
+    --verdict-pass:#4ADE80; --verdict-fail:#F87171;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{width:1080px;height:1350px;background:var(--black);
+    display:flex;flex-direction:column;justify-content:center;
+    gap:36px;padding:72px;}
+  .kicker{font-family:'JetBrains Mono';font-weight:700;font-size:26px;
+    letter-spacing:6px;text-transform:uppercase;color:var(--gold);}
+  .frame{position:relative;border:1px solid rgba(231,199,101,0.28);
+    border-radius:12px;overflow:hidden;background:#0E0E0E;}
+  .frame::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,#F4DF95,#C9A23F);}
+  .frame img{display:block;width:100%;height:auto;}
+  .caption{font-family:'JetBrains Mono';font-weight:400;font-size:30px;
+    line-height:1.45;color:var(--stone);}
+  .verdict{align-self:flex-start;font-family:'JetBrains Mono';font-weight:700;
+    font-size:34px;letter-spacing:2px;text-transform:uppercase;
+    padding:10px 22px;border-radius:8px;}
+  .verdict.pass{color:var(--verdict-pass);border:2px solid var(--verdict-pass);}
+  .verdict.fail{color:var(--verdict-fail);border:2px solid var(--verdict-fail);}
+  .verdict.hidden{display:none;}
+  .handle{font-family:'JetBrains Mono';font-weight:500;font-size:26px;
+    letter-spacing:3px;color:rgba(231,199,101,0.55);text-align:center;}
+</style>
+
+<div class="kicker" id="kicker">RECEIPT</div>
+<div class="frame"><img id="shot" alt=""></div>
+<div class="verdict hidden" id="verdict">PASS</div>
+<div class="caption" id="caption">Caption goes here.</div>
+<div class="handle">@itsac.ai</div>
+
+<script>
+  window.__FRAME = window.__FRAME || {
+    image: '',
+    caption: 'Ran the same prompt through 3 tools. Only one kept the schema.',
+    verdict: null,
+    kicker: 'RECEIPT'
+  };
+  (function render(){
+    var f = window.__FRAME;
+    document.getElementById('kicker').textContent = f.kicker || 'RECEIPT';
+    document.getElementById('caption').textContent = f.caption || '';
+    var img = document.getElementById('shot');
+    if (f.image) { img.src = f.image; } else { img.style.height = '620px'; }
+    var v = document.getElementById('verdict');
+    if (f.verdict === 'pass' || f.verdict === 'fail') {
+      v.classList.remove('hidden');
+      v.classList.add(f.verdict);
+      v.textContent = f.verdict === 'pass' ? 'WORKS' : 'FAILED';
+    }
+  })();
+</script>
