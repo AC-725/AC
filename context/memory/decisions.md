@@ -5,6 +5,42 @@ Tags: `[AC]` he decided · `[obs]` observed from an artifact · `[claude]` my in
 
 ---
 
+## 2026-07-31 · TVP retired from all client-facing wording
+
+`[obs]` **The Technology Voucher Programme closed to new applications after 31 December
+2024 and has not reopened.** Verified directly against the ITC cessation announcement
+(info.gov.hk, 13 Dec 2024) and the government SME portal, which now titles the page
+"Technology Voucher Programme (Ceased)". Corroborated independently by a second research
+pass. Historical parameters, for reference only: 3:1 ratio, HK$600,000 cumulative cap,
+average approved grant ~HK$175,800.
+
+The assessment skill had been putting "may be eligible for government co-funding such as
+the Technology Voucher Programme" in **every** client report by default — for nineteen
+months after the scheme closed.
+
+**Fixed 2026-07-31** across four files: `roi-assumptions.md`, `SKILL.md`,
+`report-template-en.md`, `report-template-zh.md`. New wording names the closure, points at
+the enhanced DTSPP (H2 2026, terms unpublished) and BUD Fund, states that savings assume no
+subsidy, and builds in a compliance firewall. A **last-verified date and quarterly
+re-verify trigger** now sits on the section.
+
+`[obs]` Compliance context that drove the firewall wording: on 2026-01-30 the ICAC reported
+Operation Thunder — 33 people, HK$150m+ in technology-subsidy fraud, **including four
+proprietors of IT services suppliers**, AC's own vendor category. Standing rules recorded
+in `roi-assumptions.md`: never run a client's funding application, never source the
+competing quotations, never make funding a selling point, refer in writing.
+
+**Reverses if:** a scheme AC names reopens or changes terms — which is exactly what the
+re-verify date exists to catch.
+
+## 2026-07-31 · All six `ac-wins-*` skills are now version-controlled
+
+`[obs]` Copied into `skills/` in this repo. Previously they existed only in
+`~/.claude/skills/`, which is wiped between remote sessions.
+
+Forced by the TVP fix: a correction that doesn't survive the session isn't a correction.
+This closes the open question raised earlier the same day.
+
 ## 2026-07-31 · Business context lives in the repo
 
 `[obs]` `IDENTITY.md`, `SOUL.md`, `USER.md` moved into `context/` and imported from a new

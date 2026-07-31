@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weekly Schedule</title>
+<style>
+  :root{
+    --ink:#1a1d24; --muted:#6b7280; --line:#e6e8ec; --bg:#ffffff; --panel:#f7f8fa;
+    --accent:#b0852b;               /* AC Wins gold — restrained, client-appropriate */
+    --appt:#2563eb; --deadline:#d97706; --shift:#0d9488;
+    --hi:#dc2626; --med:#d97706; --lo:#64748b;
+    --radius:12px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--panel);color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans TC","PingFang HK","Microsoft JhengHei",Roboto,Helvetica,Arial,sans-serif;
+    line-height:1.45;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:1080px;margin:0 auto;padding:28px 20px 56px}
+  /* Header */
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;
+    border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:22px}
+  .client{font-size:24px;font-weight:700;letter-spacing:-.01em}
+  .week{color:var(--muted);font-size:14px;margin-top:3px}
+  .prep{color:var(--muted);font-size:12px;margin-top:6px}
+  .toggle{display:flex;border:1px solid var(--line);border-radius:999px;overflow:hidden;background:#fff}
+  .toggle button{border:0;background:#fff;padding:7px 14px;font-size:13px;cursor:pointer;color:var(--muted)}
+  .toggle button.on{background:var(--ink);color:#fff}
+  h2.sec{font-size:13px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin:0 0 12px}
+  /* Attention */
+  .attention{background:#fff;border:1px solid var(--line);border-radius:var(--radius);
+    padding:18px 20px;margin-bottom:26px;box-shadow:0 1px 2px rgba(16,24,40,.04)}
+  .att-row{display:flex;gap:11px;padding:8px 0;border-top:1px solid var(--line)}
+  .att-row:first-of-type{border-top:0}
+  .dot{flex:0 0 auto;width:9px;height:9px;border-radius:50%;margin-top:7px}
+  .dot.hi{background:var(--hi)} .dot.med{background:var(--med)} .dot.lo{background:var(--lo)}
+  .att-text{font-size:14.5px}
+  .att-clean{color:var(--shift);font-size:14.5px;font-weight:600}
+  /* Week grid */
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:10px}
+  .day{background:#fff;border:1px solid var(--line);border-radius:var(--radius);min-height:120px;
+    display:flex;flex-direction:column;overflow:hidden}
+  .day.today{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+  .day-h{padding:9px 11px;border-bottom:1px solid var(--line);background:var(--panel)}
+  .day-wd{font-weight:700;font-size:13px}
+  .day-dt{color:var(--muted);font-size:11.5px}
+  .badge-today{display:inline-block;background:var(--accent);color:#fff;font-size:10px;
+    padding:1px 6px;border-radius:999px;margin-left:6px;vertical-align:1px}
+  .items{padding:8px;display:flex;flex-direction:column;gap:7px;flex:1}
+  .item{border-left:3px solid var(--muted);background:var(--panel);border-radius:6px;padding:6px 8px}
+  .item.appt{border-color:var(--appt)} .item.deadline{border-color:var(--deadline)} .item.shift{border-color:var(--shift)}
+  .item.overdue{background:#fef2f2}
+  .it-time{font-size:11px;font-weight:700;color:var(--ink);letter-spacing:.02em}
+  .it-title{font-size:12.5px;margin-top:1px}
+  .it-meta{font-size:11px;color:var(--muted);margin-top:2px}
+  .empty{color:#c2c7d0;font-size:12px;padding:8px;text-align:center}
+  /* Legend */
+  .legend{display:flex;gap:16px;flex-wrap:wrap;margin:22px 0 4px;font-size:12.5px;color:var(--muted)}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .swatch{width:11px;height:11px;border-radius:3px;display:inline-block}
+  /* Roster */
+  .roster{margin-top:30px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  table{border-collapse:collapse;width:100%;font-size:12.5px}
+  th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line)}
+  th{background:var(--panel);font-weight:600;color:var(--muted);font-size:11.5px}
+  td.name{text-align:left;font-weight:600;white-space:nowrap}
+  .mk-off{color:#c2c7d0} .mk-al{color:var(--deadline);font-weight:700} .mk-on{color:var(--shift);font-weight:700}
+  footer{margin-top:34px;color:var(--muted);font-size:11.5px;border-top:1px solid var(--line);padding-top:14px}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;gap:8px}.day{min-height:0}}
+  @media print{
+    body{background:#fff}.toggle{display:none}
+    .day,.attention,.roster{box-shadow:none}
+    .grid{grid-template-columns:repeat(7,1fr)}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <div class="client" id="client"></div>
+      <div class="week" id="week"></div>
+      <div class="prep" id="prep"></div>
+    </div>
+    <div class="toggle" role="group" aria-label="language">
+      <button id="btn-en" onclick="setLang('en')">EN</button>
+      <button id="btn-zh" onclick="setLang('zh')">繁體中文</button>
+    </div>
+  </header>
+
+  <section>
+    <h2 class="sec" id="lbl-attention"></h2>
+    <div class="attention" id="attention"></div>
+  </section>
+
+  <section>
+    <h2 class="sec" id="lbl-week"></h2>
+    <div class="grid" id="grid"></div>
+    <div class="legend" id="legend"></div>
+  </section>
+
+  <section id="roster-wrap">
+    <h2 class="sec" style="margin-top:30px" id="lbl-roster"></h2>
+    <div class="roster"><table id="roster"></table></div>
+  </section>
+
+  <footer id="footer"></footer>
+</div>
+
+<script>
+/* =========================================================================
+   FILL THIS OBJECT ONLY. Everything below it renders automatically.
+   - Every text field is { en: "...", zh: "..." }. Write 繁體中文 natively.
+   - layer: "appt" | "deadline" | "shift"     time: "HH:MM" or {en:"TBC",zh:"待定"}
+   - status: add "overdue" to an item to tint it red.
+   - Delete the sample content and replace with the client's real week.
+   - Leave DATA.staff.rows = [] to hide the roster table.
+   ========================================================================= */
+const DATA = {
+  meta: {
+    client:   { en: "Wing Hing Trading", zh: "永興貿易" },
+    week:     { en: "Week of 21–27 Jul 2026", zh: "2026年7月21日至27日" },
+    tz:       "Asia/Hong_Kong (HKT)",
+    prepared: { en: "Prepared by AC Wins · 20 Jul 2026", zh: "由 AC Wins 製作 · 2026年7月20日" },
+    todayDate:"2026-07-21"          /* ISO; the matching day gets the "today" highlight */
+  },
+  attention: [
+    { level:"hi",  text:{ en:"Overdue: BOC quote was due Fri 18 Jul — still open. Confirm or resend today.",
+                           zh:"逾期：中銀報價原定7月18日（五）交，尚未處理。今日跟進或重發。" } },
+    { level:"hi",  text:{ en:"Thu 24 Jul: only 1 staff rostered for a full shop day — likely under-covered.",
+                           zh:"7月24日（四）：全日只排1人，恐人手不足。" } },
+    { level:"med", text:{ en:"Two site visits clash at 10:00 Tue (Kwai Chung & Fo Tan) — move one.",
+                           zh:"週二上午10:00兩個外訪撞期（葵涌及火炭）— 需調動其一。" } },
+    { level:"lo",  text:{ en:"Fri 14:00 supplier call still marked 'to confirm' — lock the time.",
+                           zh:"週五14:00供應商電話仍待確認 — 請落實時間。" } }
+  ],
+  days: [
+    { wd:{en:"Mon",zh:"週一"}, dt:{en:"21 Jul",zh:"7月21日"}, date:"2026-07-21", items:[
+        { layer:"appt", time:"09:30", title:{en:"Team huddle",zh:"團隊會議"}, meta:{en:"Shop floor",zh:"店面"} },
+        { layer:"deadline", time:{en:"EOD",zh:"下班前"}, title:{en:"Send July invoices",zh:"發出七月發票"}, meta:{en:"Owner: Ada",zh:"負責：Ada"} }
+    ]},
+    { wd:{en:"Tue",zh:"週二"}, dt:{en:"22 Jul",zh:"7月22日"}, date:"2026-07-22", items:[
+        { layer:"appt", time:"10:00", title:{en:"Site visit — Kwai Chung",zh:"外訪 — 葵涌"}, meta:{en:"Ricky",zh:"Ricky"} },
+        { layer:"appt", time:"10:00", title:{en:"Site visit — Fo Tan",zh:"外訪 — 火炭"}, meta:{en:"clash ⚠",zh:"撞期 ⚠"} }
+    ]},
+    { wd:{en:"Wed",zh:"週三"}, dt:{en:"23 Jul",zh:"7月23日"}, date:"2026-07-23", items:[] },
+    { wd:{en:"Thu",zh:"週四"}, dt:{en:"24 Jul",zh:"7月24日"}, date:"2026-07-24", items:[
+        { layer:"shift", time:{en:"Full day",zh:"全日"}, title:{en:"Shop — 1 staff only",zh:"店面 — 只1人"}, meta:{en:"Joe",zh:"Joe"} }
+    ]},
+    { wd:{en:"Fri",zh:"週五"}, dt:{en:"25 Jul",zh:"7月25日"}, date:"2026-07-25", items:[
+        { layer:"appt", time:{en:"14:00 TBC",zh:"14:00 待定"}, title:{en:"Supplier call",zh:"供應商電話"}, meta:{en:"to confirm",zh:"待確認"} },
+        { layer:"deadline", time:"", title:{en:"Rent due",zh:"交租"}, meta:{en:"HK$—",zh:"HK$—"} }
+    ]},
+    { wd:{en:"Sat",zh:"週六"}, dt:{en:"26 Jul",zh:"7月26日"}, date:"2026-07-26", items:[] },
+    { wd:{en:"Sun",zh:"週日"}, dt:{en:"27 Jul",zh:"7月27日"}, date:"2026-07-27", items:[] }
+  ],
+  staff: {
+    header: { en:"Who's working", zh:"當值人員" },
+    cols:   [ {en:"Mon",zh:"一"},{en:"Tue",zh:"二"},{en:"Wed",zh:"三"},{en:"Thu",zh:"四"},{en:"Fri",zh:"五"},{en:"Sat",zh:"六"},{en:"Sun",zh:"日"} ],
+    rows: [
+      { name:{en:"Joe 陳文浩",zh:"陳文浩 Joe"},  days:["on","on","off","on","on","off","off"] },
+      { name:{en:"Ricky 張鎮業",zh:"張鎮業 Ricky"},days:["on","on","on","al","on","off","off"] },
+      { name:{en:"Ada 鄭慧嬋",zh:"鄭慧嬋 Ada"},  days:["on","off","on","off","on","on","off"] }
+    ]
+    /* markers: "on" = working, "off" = rest, "al" = leave, or any short code "as recorded" */
+  }
+};
+
+/* ------------------------- render engine (leave as-is) ------------------- */
+const LABELS = {
+  attention:{en:"Needs attention",zh:"需要注意"},
+  week:{en:"The week",zh:"本週安排"},
+  roster:{en:"Staff roster",zh:"人手編更"},
+  clean:{en:"No clashes or gaps this week — everything's covered.",zh:"本週沒有撞期或空檔 — 一切已安排妥當。"},
+  none:{en:"—",zh:"—"},
+  legend:{appt:{en:"Appointment",zh:"約會/外訪"},deadline:{en:"Deadline",zh:"限期"},shift:{en:"Shift",zh:"更份"}},
+  footer:{en:"Prepared by AC Wins as a draft for the owner's review. Not sent to any third party.",
+          zh:"由 AC Wins 製作，供東主審閱之草稿，並未發送予任何第三方。"}
+};
+let lang = "en";
+function t(v){ if(v==null) return ""; return (typeof v==="object") ? (v[lang]??v.en??"") : v; }
+
+function render(){
+  document.documentElement.lang = (lang==="zh") ? "zh-Hant" : "en";
+  document.getElementById("btn-en").className = lang==="en"?"on":"";
+  document.getElementById("btn-zh").className = lang==="zh"?"on":"";
+  document.getElementById("client").textContent = t(DATA.meta.client);
+  document.getElementById("week").textContent   = t(DATA.meta.week) + " · " + DATA.meta.tz;
+  document.getElementById("prep").textContent   = t(DATA.meta.prepared);
+  document.getElementById("lbl-attention").textContent = t(LABELS.attention);
+  document.getElementById("lbl-week").textContent = t(LABELS.week);
+  document.getElementById("lbl-roster").textContent = t(LABELS.roster);
+
+  // attention
+  const a = document.getElementById("attention");
+  if(!DATA.attention || !DATA.attention.length){
+    a.innerHTML = '<div class="att-clean">'+t(LABELS.clean)+'</div>';
+  } else {
+    a.innerHTML = DATA.attention.map(x =>
+      '<div class="att-row"><span class="dot '+(x.level||'lo')+'"></span><span class="att-text">'+t(x.text)+'</span></div>'
+    ).join("");
+  }
+
+  // week grid
+  const today = DATA.meta.todayDate;
+  document.getElementById("grid").innerHTML = DATA.days.map(d => {
+    const isToday = d.date && d.date===today;
+    const body = (d.items && d.items.length)
+      ? d.items.map(it => {
+          const cls = "item "+(it.layer||"")+((it.status==="overdue")?" overdue":"");
+          const time = t(it.time);
+          return '<div class="'+cls+'">'+
+                   (time?'<div class="it-time">'+time+'</div>':'')+
+                   '<div class="it-title">'+t(it.title)+'</div>'+
+                   (it.meta?'<div class="it-meta">'+t(it.meta)+'</div>':'')+
+                 '</div>';
+        }).join("")
+      : '<div class="empty">'+t(LABELS.none)+'</div>';
+    return '<div class="day'+(isToday?' today':'')+'">'+
+             '<div class="day-h"><span class="day-wd">'+t(d.wd)+'</span>'+
+             (isToday?'<span class="badge-today">'+(lang==="zh"?"今日":"today")+'</span>':'')+
+             '<div class="day-dt">'+t(d.dt)+'</div></div>'+
+             '<div class="items">'+body+'</div></div>';
+  }).join("");
+
+  // legend
+  document.getElementById("legend").innerHTML =
+    ['appt','deadline','shift'].map(k =>
+      '<span><span class="swatch" style="background:var(--'+k+')"></span>'+t(LABELS.legend[k])+'</span>'
+    ).join("");
+
+  // roster
+  const rw = document.getElementById("roster-wrap");
+  if(!DATA.staff || !DATA.staff.rows || !DATA.staff.rows.length){ rw.style.display="none"; }
+  else{
+    rw.style.display="";
+    const head = '<tr><th class="name">'+t(DATA.staff.header)+'</th>'+
+      DATA.staff.cols.map(c=>'<th>'+t(c)+'</th>').join("")+'</tr>';
+    const body = DATA.staff.rows.map(r =>
+      '<tr><td class="name">'+t(r.name)+'</td>'+
+      r.days.map(m=>{
+        const key=(m||"").toString().toLowerCase();
+        if(key==="on")  return '<td class="mk-on">'+(lang==="zh"?"當值":"On")+'</td>';
+        if(key==="off"||key==="n"||key==="") return '<td class="mk-off">'+(lang==="zh"?"休":"–")+'</td>';
+        if(key==="al")  return '<td class="mk-al">'+(lang==="zh"?"假":"AL")+'</td>';
+        return '<td>'+m+'</td>';            // any other code: show "as recorded"
+      }).join("")+'</tr>'
+    ).join("");
+    document.getElementById("roster").innerHTML = head+body;
+  }
+
+  document.getElementById("footer").textContent = t(LABELS.footer);
+}
+function setLang(l){ lang=l; render(); }
+render();
+</script>
+</body>
+</html>

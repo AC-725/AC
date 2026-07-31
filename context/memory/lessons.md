@@ -6,6 +6,34 @@ Tags: `[AC]` he said it · `[obs]` observed from an artifact · `[claude]` infer
 
 ---
 
+## 2026-07-31 · A correct fact with no expiry date rots silently
+
+`[obs]` The TVP line in the assessment skill was **true when written**. The scheme closed
+31 December 2024 and the line stayed in every client report for nineteen months. Nothing
+flagged it, because nothing was watching — it was a fact, not a bug, and facts don't
+announce that they've expired.
+
+**Rule, permanent:** any client-facing claim about an external scheme, price, regulation or
+third-party product carries a **last-verified date** and a **re-verify trigger** written
+next to it. No exceptions for things that feel stable.
+
+`[claude]` The same rot is almost certainly present elsewhere. The HK wage benchmarks in
+`roi-assumptions.md` are seeded defaults of identical vintage, never verified, and
+independent job-board figures now sit *above* them. Every skill should be swept for
+undated external claims, not just this one.
+
+## 2026-07-31 · Auditing found defects in 6 of 6 skills
+
+`[obs]` Every skill audited so far has real defects: 3 in the assessment skill, 27 across
+the other five. **Zero clean.** Three are client-safety issues — a contradictory
+data-handling rule that could publish client staff rosters, silent date corruption in
+spreadsheet cleanup, and roster codes hard-coded against the skill's own guidance.
+
+**Lesson:** these were built fast and never adversarially reviewed. The design doc for the
+assessment skill claims "tested (3 fictional-client runs passed) and spec-reviewed" — and
+it still shipped three defects, including a table that contradicts its own formula. Passing
+your own test runs is not the same as being audited. Sample: 6 skills, 30 defects.
+
 ## 2026-07-31 · Building delivery ahead of demand
 
 `[obs]` Six `ac-wins-*` skills exist (assessment, comms, excel, invoices, quotes,
