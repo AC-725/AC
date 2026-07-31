@@ -6,6 +6,28 @@ Tags: `[AC]` he said it · `[obs]` observed from an artifact · `[claude]` infer
 
 ---
 
+## 2026-07-31 · Numbers already posted on @itsac.ai may not survive scrutiny
+
+`[obs]` Content research surfaced that AC has posted business-AI-adoption figures of **66%
+(Thryv)** and **74% (Bluevine)**. The US Census Bureau's Business Trends and Outlook Survey
+— an actual government instrument, not a vendor survey — puts firm-level AI use at
+**17–20% from Dec 2025 to May 2026**, national rate 19.8% as of 3 May 2026. Verified
+directly at census.gov.
+
+The reconciliation matters more than the gap `[obs]`: the same Census data shows **18% of
+firms unweighted but 32% employment-weighted**, under 20% for firms with ≤4 employees and
+37% for firms with 250+. So vendor surveys aren't simply wrong — they over-sample large
+firms and self-selected respondents.
+
+`[claude]` This is a positioning risk *and* the best content AC has. A page whose whole
+promise is anti-hype cannot carry uncorrected vendor-marketing numbers. But the honest post
+is not "those surveys lied" — it's **"big firms yes, small firms no, and here's why two true
+numbers disagree."** That is the AI-translator positioning doing exactly what it claims to
+do, and it costs AC nothing to admit.
+
+**Rule:** any stat sourced from a vendor survey gets a government or academic cross-check
+before it goes on screen. Vendor surveys measure their own customers.
+
 ## 2026-07-31 · A correct fact with no expiry date rots silently
 
 `[obs]` The TVP line in the assessment skill was **true when written**. The scheme closed
