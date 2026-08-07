@@ -1,0 +1,929 @@
+<title>KIRA Design — Direction Board</title>
+
+<style>
+/* ============================================================
+   KIRA DESIGN — DIRECTION BOARD
+   Board chrome is theme-aware. Comp panels hold fixed colour,
+   because a comp is a picture of a design and must not borrow
+   the host's ground.
+   ============================================================ */
+
+/* ---- BOARD CHROME TOKENS: light (bare :root = complete set) ---- */
+:root {
+  --bg:            #F3EFE7;
+  --bg-raised:     #FAF7F1;
+  --bg-sunk:       #E8E2D6;
+  --fg:            #16120E;
+  --fg-soft:       #6B6156;
+  --fg-faint:      #948878;
+  --rule:          #D6CEBF;
+  --rule-strong:   #B9AF9C;
+  --accent:        #3A5654;
+  --accent-mid:    #5A7B79;
+
+  --font-display: "Didot", "Bodoni 72", "Hoefler Text", "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-sans:    "Avenir Next", "Avenir", "Segoe UI", system-ui, sans-serif;
+  --font-han:     "PingFang HK", "Hiragino Sans TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+
+  --step--1: 0.8125rem;
+  --step-0:  1rem;
+  --step-1:  1.125rem;
+  --step-2:  clamp(1.4rem, 2vw, 1.75rem);
+  --step-3:  clamp(1.9rem, 3.2vw, 2.75rem);
+  --step-4:  clamp(2.6rem, 5vw, 4.5rem);
+  --step-5:  clamp(3.2rem, 8vw, 7rem);
+
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --measure: 63ch;
+}
+
+/* System-dark, unless the viewer explicitly chose light */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg:          #16120E;
+    --bg-raised:   #201A15;
+    --bg-sunk:     #0E0B08;
+    --fg:          #EFEAE0;
+    --fg-soft:     #A29684;
+    --fg-faint:    #7C7264;
+    --rule:        #322A22;
+    --rule-strong: #4A3F34;
+    --accent:      #8FB0AC;
+    --accent-mid:  #5A7B79;
+  }
+}
+
+/* Explicit dark choice wins over a light OS */
+:root[data-theme="dark"] {
+  --bg:          #16120E;
+  --bg-raised:   #201A15;
+  --bg-sunk:     #0E0B08;
+  --fg:          #EFEAE0;
+  --fg-soft:     #A29684;
+  --fg-faint:    #7C7264;
+  --rule:        #322A22;
+  --rule-strong: #4A3F34;
+  --accent:      #8FB0AC;
+  --accent-mid:  #5A7B79;
+}
+
+/* ---- KIRA SITE PALETTE: fixed, does not follow viewer theme ---- */
+:root {
+  --k-ink:        #16120E;
+  --k-char:       #201A15;
+  --k-sunk:       #0E0B08;
+  --k-stone:      #948878;
+  --k-stone-dim:  #6B6156;
+  --k-linen:      #EFEAE0;
+  --k-alabaster:  #FAF7F1;
+  --k-marine:     #5A7B79;
+  --k-marine-lift:#8FB0AC;
+  --k-marine-deep:#3A5654;
+  --k-brass:      #A98A52;
+  --k-walnut:     #4A3324;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-family: var(--font-sans);
+  font-size: var(--step-0);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Fine grain — the physical-paper cue, kept far below decorative */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .035;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+h1, h2, h3 { text-wrap: balance; margin: 0; font-weight: 400; }
+p { margin: 0; max-width: var(--measure); }
+
+.wrap { max-width: 1180px; margin-inline: auto; padding-inline: clamp(1.25rem, 4vw, 3.5rem); }
+
+/* ---------- shared atoms ---------- */
+.eyebrow {
+  font-size: 0.6875rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--fg-faint);
+  font-weight: 500;
+}
+.rule { height: 1px; background: var(--rule); border: 0; margin: 0; }
+
+/* ---------- board masthead ---------- */
+.masthead { padding-block: clamp(3.5rem, 9vw, 7rem) clamp(2rem, 4vw, 3rem); }
+.masthead-grid { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+@media (min-width: 900px) { .masthead-grid { grid-template-columns: 1.35fr 1fr; gap: 4rem; align-items: end; } }
+
+.masthead h1 {
+  font-family: var(--font-display);
+  font-size: var(--step-5);
+  line-height: .95;
+  letter-spacing: -0.02em;
+  margin-block: 1.25rem .75rem;
+}
+.masthead h1 em { font-style: italic; color: var(--accent); }
+.lede { font-size: var(--step-1); color: var(--fg-soft); line-height: 1.55; }
+
+.dials { display: flex; flex-wrap: wrap; gap: 1.75rem; padding-top: 1.5rem; border-top: 1px solid var(--rule); }
+.dial-k { display: block; font-size: 0.6875rem; letter-spacing: .18em; text-transform: uppercase; color: var(--fg-faint); }
+.dial-v { font-family: var(--font-display); font-size: var(--step-2); font-variant-numeric: tabular-nums; }
+.dial-n { font-size: var(--step--1); color: var(--fg-soft); display: block; max-width: 22ch; }
+
+/* ---------- board sections ---------- */
+.sec { padding-block: clamp(3rem, 7vw, 5.5rem); border-top: 1px solid var(--rule); }
+.sec-head { display: grid; gap: .85rem; margin-bottom: 2.5rem; }
+.sec-head h2 {
+  font-family: var(--font-display);
+  font-size: var(--step-3);
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+.sec-head p { color: var(--fg-soft); }
+
+.n { font-family: var(--font-display); color: var(--accent); font-variant-numeric: tabular-nums; }
+
+/* ---------- diagnosis ---------- */
+.diag { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+@media (min-width: 780px) { .diag { grid-template-columns: 1fr 1fr; } }
+.diag-col { background: var(--bg); padding: clamp(1.25rem, 3vw, 2rem); }
+.diag-col h3 { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-faint); margin-bottom: 1.25rem; }
+.diag ul { list-style: none; margin: 0; padding: 0; display: grid; gap: .9rem; }
+.diag li { display: grid; grid-template-columns: 1.5rem 1fr; gap: .5rem; font-size: var(--step--1); line-height: 1.5; }
+.diag li span { color: var(--accent); font-family: var(--font-display); }
+.diag-col.answer { background: var(--bg-raised); }
+
+/* ---------- palette ---------- */
+.swatches { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+.sw { background: var(--bg); padding: 0; }
+.sw-chip { height: 108px; display: block; }
+.sw-meta { padding: .85rem .9rem 1.1rem; display: grid; gap: .2rem; }
+.sw-name { font-size: var(--step--1); letter-spacing: .04em; }
+.sw-hex { font-size: 0.6875rem; color: var(--fg-faint); font-variant-numeric: tabular-nums; letter-spacing: .06em; }
+.sw-use { font-size: 0.6875rem; color: var(--fg-soft); line-height: 1.45; margin-top: .3rem; }
+
+/* ---------- type specimen ---------- */
+.spec { display: grid; gap: 2.25rem; }
+.spec-row { display: grid; gap: .75rem; padding-bottom: 2rem; border-bottom: 1px solid var(--rule); }
+.spec-row:last-child { border-bottom: 0; padding-bottom: 0; }
+.spec-label { display: flex; flex-wrap: wrap; gap: 1.25rem; align-items: baseline; }
+.spec-label .k { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-faint); }
+.spec-label .v { font-size: 0.6875rem; color: var(--fg-soft); }
+.sample-display { font-family: var(--font-display); font-size: var(--step-4); line-height: 1; letter-spacing: -0.02em; }
+.sample-display em { font-style: italic; color: var(--accent); }
+.sample-han { font-family: var(--font-han); font-size: var(--step-3); line-height: 1.35; letter-spacing: .02em; }
+.sample-body { font-size: var(--step-1); line-height: 1.65; color: var(--fg-soft); max-width: var(--measure); }
+.sample-micro { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-faint); }
+
+/* ---------- motion doctrine ---------- */
+.doct { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+@media (min-width: 720px) { .doct { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1040px) { .doct { grid-template-columns: repeat(3, 1fr); } }
+.doct-item { background: var(--bg); padding: 1.4rem 1.35rem 1.6rem; display: grid; gap: .5rem; align-content: start; }
+.doct-item h3 { font-family: var(--font-display); font-size: var(--step-1); line-height: 1.2; }
+.doct-item p { font-size: var(--step--1); color: var(--fg-soft); line-height: 1.55; }
+.doct-item .n { font-size: 0.6875rem; letter-spacing: .1em; }
+
+/* ---------- IA map ---------- */
+.ia { border: 1px solid var(--rule); }
+.ia-top { padding: 1.5rem clamp(1.1rem, 3vw, 2rem); border-bottom: 1px solid var(--rule); background: var(--bg-raised); }
+.ia-top strong { font-family: var(--font-display); font-size: var(--step-2); font-weight: 400; display: block; }
+.ia-top span { font-size: var(--step--1); color: var(--fg-soft); }
+.ia-cols { display: grid; gap: 1px; background: var(--rule); }
+@media (min-width: 820px) { .ia-cols { grid-template-columns: repeat(4, 1fr); } }
+.ia-col { background: var(--bg); padding: 1.35rem clamp(1.1rem, 2vw, 1.5rem) 1.6rem; display: grid; gap: .6rem; align-content: start; }
+.ia-col h3 { font-family: var(--font-display); font-size: var(--step-1); }
+.ia-col .who { font-size: 0.6875rem; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); }
+.ia-col ul { list-style: none; margin: .3rem 0 0; padding: 0; display: grid; gap: .35rem; }
+.ia-col li { font-size: var(--step--1); color: var(--fg-soft); padding-left: .9rem; position: relative; line-height: 1.45; }
+.ia-col li::before { content: ""; position: absolute; left: 0; top: .62em; width: 4px; height: 1px; background: var(--rule-strong); }
+
+/* ============================================================
+   COMPS — fixed palette, explicit paint
+   ============================================================ */
+.comp-frame { border: 1px solid var(--rule); margin-top: 1.75rem; }
+.comp-bar {
+  display: flex; flex-wrap: wrap; gap: .5rem 1.25rem; align-items: baseline;
+  padding: .7rem clamp(.9rem, 2vw, 1.4rem);
+  border-bottom: 1px solid var(--rule);
+  background: var(--bg-sunk);
+}
+.comp-bar .id { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--fg-faint); }
+.comp-bar .note { font-size: 0.6875rem; color: var(--fg-soft); }
+.comp { overflow: hidden; }
+
+/* image placeholder: warm material meeting cold light */
+.plate {
+  position: relative;
+  background:
+    linear-gradient(101deg, rgba(74,51,36,.55) 0%, rgba(22,18,14,.15) 46%, rgba(90,123,121,.42) 100%),
+    radial-gradient(120% 90% at 78% 18%, rgba(143,176,172,.5) 0%, rgba(143,176,172,0) 58%),
+    linear-gradient(178deg, #241C16 0%, #14100C 100%);
+  display: flex; align-items: flex-end;
+  isolation: isolate;
+}
+.plate::after {
+  content: attr(data-spec);
+  position: absolute; left: 0; bottom: 0;
+  padding: .45rem .7rem;
+  font-family: var(--font-sans);
+  font-size: 0.625rem; letter-spacing: .16em; text-transform: uppercase;
+  color: rgba(239,234,224,.42);
+  border-top: 1px solid rgba(239,234,224,.1);
+  border-right: 1px solid rgba(239,234,224,.1);
+  background: rgba(14,11,8,.5);
+}
+
+/* --- comp 1: hero --- */
+.c-hero { background: var(--k-ink); color: var(--k-linen); position: relative; min-height: 520px; display: grid; }
+.c-hero .plate { position: absolute; inset: 0; z-index: 0; }
+.c-hero-nav {
+  position: relative; z-index: 2;
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  padding: 1.4rem clamp(1.1rem, 3vw, 2.5rem);
+}
+.c-mark { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: .3em; color: var(--k-linen); }
+.c-mark sup { font-size: .5rem; letter-spacing: .1em; vertical-align: super; color: var(--k-stone); }
+.c-nav-links { display: none; gap: 1.75rem; }
+@media (min-width: 780px) { .c-nav-links { display: flex; } }
+.c-nav-links span { font-size: 0.6875rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(239,234,224,.72); }
+.c-lang { font-size: 0.6875rem; letter-spacing: .16em; color: var(--k-marine-lift); }
+.c-hero-body {
+  position: relative; z-index: 2;
+  align-self: end;
+  padding: clamp(2rem, 6vw, 4.5rem) clamp(1.1rem, 3vw, 2.5rem) clamp(1.6rem, 3vw, 2.5rem);
+  display: grid; gap: 1.1rem;
+}
+.c-hero h3 {
+  font-family: var(--font-display);
+  font-size: clamp(2.2rem, 6.2vw, 5rem);
+  line-height: .94; letter-spacing: -0.025em;
+  max-width: 15ch;
+  color: var(--k-linen);
+}
+.c-hero h3 em { font-style: italic; color: var(--k-marine-lift); }
+.c-hero .sub { font-size: var(--step-0); color: rgba(239,234,224,.68); max-width: 44ch; }
+.c-hero-meta {
+  display: flex; flex-wrap: wrap; gap: 1.5rem;
+  padding-top: 1.2rem; margin-top: .3rem;
+  border-top: 1px solid rgba(239,234,224,.14);
+}
+.c-hero-meta div { display: grid; gap: .15rem; }
+.c-hero-meta .k { font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase; color: rgba(239,234,224,.4); }
+.c-hero-meta .v { font-size: var(--step--1); color: var(--k-linen); font-variant-numeric: tabular-nums; }
+
+/* --- comp 2: integrated model --- */
+.c-model { background: var(--k-linen); color: var(--k-ink); padding: clamp(2.2rem, 5vw, 4rem) clamp(1.1rem, 3vw, 2.5rem); }
+.c-model .kicker { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--k-marine-deep); }
+.c-model h3 { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.05; margin-block: .9rem 1.6rem; max-width: 20ch; letter-spacing: -0.015em; }
+.c-model h3 em { font-style: italic; color: var(--k-marine-deep); }
+.c-chain { display: grid; gap: 1px; background: rgba(22,18,14,.14); border-top: 1px solid rgba(22,18,14,.14); border-bottom: 1px solid rgba(22,18,14,.14); }
+@media (min-width: 760px) { .c-chain { grid-template-columns: repeat(3, 1fr); } }
+.c-link { background: var(--k-linen); padding: 1.4rem 1.2rem 1.5rem; display: grid; gap: .45rem; align-content: start; }
+.c-link .co { font-family: var(--font-display); font-size: var(--step-1); letter-spacing: .01em; }
+.c-link .ro { font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--k-marine-deep); }
+.c-link p { font-size: var(--step--1); color: var(--k-stone-dim); line-height: 1.55; }
+.c-model .close { font-size: var(--step-0); color: var(--k-ink); margin-top: 1.5rem; max-width: 52ch; }
+
+/* --- comp 3: sector fork --- */
+.c-fork { background: var(--k-ink); display: grid; gap: 1px; }
+@media (min-width: 760px) { .c-fork { grid-template-columns: repeat(3, 1fr); } }
+.c-sector { position: relative; min-height: 300px; display: grid; align-content: end; gap: .5rem; padding: 1.5rem 1.35rem 1.6rem; isolation: isolate; overflow: hidden; }
+.c-sector .plate { position: absolute; inset: 0; z-index: 0; }
+.c-sector .plate::after { content: none; }
+.c-sector::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(14,11,8,.9) 0%, rgba(14,11,8,.45) 45%, rgba(14,11,8,.15) 100%);
+}
+.c-sector > * { position: relative; z-index: 2; }
+.c-sector .cnt { font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--k-marine-lift); font-variant-numeric: tabular-nums; }
+.c-sector h4 { font-family: var(--font-display); font-size: var(--step-2); color: var(--k-linen); font-weight: 400; margin: 0; }
+.c-sector .han { font-family: var(--font-han); font-size: var(--step--1); color: rgba(239,234,224,.55); letter-spacing: .08em; }
+.c-sector p { font-size: var(--step--1); color: rgba(239,234,224,.62); line-height: 1.5; }
+
+/* --- comp 4: project plate --- */
+.c-proj { background: var(--k-alabaster); color: var(--k-ink); }
+.c-proj-top { display: grid; }
+@media (min-width: 860px) { .c-proj-top { grid-template-columns: 1.55fr 1fr; } }
+.c-proj .plate { min-height: 340px; }
+.c-proj-rail { padding: clamp(1.5rem, 3vw, 2.4rem); display: grid; gap: 1.5rem; align-content: start; border-left: 1px solid rgba(22,18,14,.1); }
+.c-proj-rail h4 { font-family: var(--font-display); font-size: var(--step-2); line-height: 1.08; letter-spacing: -0.01em; }
+.c-proj-rail .han { font-family: var(--font-han); font-size: var(--step--1); color: var(--k-stone-dim); letter-spacing: .08em; }
+.c-specs { display: grid; gap: 0; border-top: 1px solid rgba(22,18,14,.14); }
+.c-specs div { display: grid; grid-template-columns: 8.5rem 1fr; gap: 1rem; padding-block: .6rem; border-bottom: 1px solid rgba(22,18,14,.08); }
+.c-specs .k { font-size: 0.625rem; letter-spacing: .18em; text-transform: uppercase; color: var(--k-stone); padding-top: .18em; }
+.c-specs .v { font-size: var(--step--1); font-variant-numeric: tabular-nums; }
+.c-award { display: inline-flex; align-items: center; gap: .55rem; font-size: 0.6875rem; letter-spacing: .12em; text-transform: uppercase; color: var(--k-marine-deep); }
+.c-award::before { content: ""; width: 1.6rem; height: 1px; background: var(--k-marine-deep); }
+
+/* --- comp 5: material detail --- */
+.c-mat { background: var(--k-char); color: var(--k-linen); padding: clamp(2.2rem, 5vw, 3.6rem) clamp(1.1rem, 3vw, 2.5rem); }
+.c-mat .kicker { font-size: 0.6875rem; letter-spacing: .22em; text-transform: uppercase; color: var(--k-marine-lift); }
+.c-mat h3 { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.06; margin-block: .8rem 2rem; max-width: 22ch; letter-spacing: -0.015em; }
+.c-mat h3 em { font-style: italic; color: var(--k-marine-lift); }
+.c-mats { display: grid; grid-template-columns: repeat(auto-fit, minmax(132px, 1fr)); gap: 1.5rem 1.25rem; }
+.c-mat-item { display: grid; gap: .6rem; }
+.c-mat-chip { aspect-ratio: 1 / 1; border: 1px solid rgba(239,234,224,.14); }
+.c-mat-item .nm { font-size: var(--step--1); color: var(--k-linen); }
+.c-mat-item .ds { font-size: 0.625rem; letter-spacing: .1em; color: rgba(239,234,224,.48); line-height: 1.5; }
+
+/* --- comp 6: enquiry --- */
+.c-enq { background: var(--k-linen); color: var(--k-ink); padding: clamp(2.2rem, 5vw, 3.8rem) clamp(1.1rem, 3vw, 2.5rem); display: grid; gap: 2rem; }
+@media (min-width: 880px) { .c-enq { grid-template-columns: 1fr 1fr; gap: 3.5rem; align-items: start; } }
+.c-enq h3 { font-family: var(--font-display); font-size: var(--step-3); line-height: 1.04; letter-spacing: -0.015em; max-width: 16ch; }
+.c-enq h3 em { font-style: italic; color: var(--k-marine-deep); }
+.c-enq .why { font-size: var(--step--1); color: var(--k-stone-dim); margin-top: 1rem; line-height: 1.6; }
+.c-form { display: grid; gap: 0; }
+.c-field { display: grid; gap: .45rem; padding-block: .85rem; border-bottom: 1px solid rgba(22,18,14,.16); }
+.c-field .lb { font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--k-stone); }
+.c-field .in { font-size: var(--step-0); color: var(--k-stone-dim); }
+.c-chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+.c-chip { font-size: 0.6875rem; letter-spacing: .1em; padding: .35rem .8rem; border: 1px solid rgba(22,18,14,.22); color: var(--k-stone-dim); }
+.c-chip.on { background: var(--k-ink); color: var(--k-linen); border-color: var(--k-ink); }
+.c-submit { margin-top: 1.4rem; display: inline-flex; align-items: center; justify-content: space-between; gap: 1.5rem; background: var(--k-ink); color: var(--k-linen); padding: .95rem 1.1rem .95rem 1.35rem; }
+.c-submit span { font-size: 0.6875rem; letter-spacing: .2em; text-transform: uppercase; }
+.c-submit .ar { color: var(--k-marine-lift); }
+.c-direct { margin-top: 1.2rem; font-size: var(--step--1); color: var(--k-stone-dim); line-height: 1.7; }
+.c-direct b { font-weight: 400; color: var(--k-ink); }
+
+/* ---------- asks ---------- */
+.asks { display: grid; gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+@media (min-width: 760px) { .asks { grid-template-columns: 1fr 1fr; } }
+.ask { background: var(--bg); padding: 1.35rem 1.35rem 1.55rem; display: grid; gap: .45rem; align-content: start; }
+.ask h3 { font-family: var(--font-display); font-size: var(--step-1); }
+.ask p { font-size: var(--step--1); color: var(--fg-soft); line-height: 1.55; }
+.ask .tag { font-size: 0.625rem; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); }
+
+footer { padding-block: 3rem 4rem; border-top: 1px solid var(--rule); }
+footer p { font-size: var(--step--1); color: var(--fg-faint); }
+
+/* ---------- reveal ---------- */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity .8s var(--ease), transform .8s var(--ease); }
+.rv.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  * { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+</style>
+
+<main>
+
+<!-- ============ MASTHEAD ============ -->
+<header class="masthead">
+  <div class="wrap masthead-grid">
+    <div>
+      <p class="eyebrow">KIRA Design Ltd · 企劃設計有限公司 — Website Revamp</p>
+      <h1>Warm material,<br><em>cold light.</em></h1>
+      <p class="lede">A direction board, not a mockup. Everything here is live CSS — real type at real sizes, the actual palette, the real grid. React to it and I'll build the site on top of it.</p>
+    </div>
+    <div class="dials">
+      <div>
+        <span class="dial-k">Variance</span>
+        <span class="dial-v">7</span>
+        <span class="dial-n">Asymmetric, but never novelty for its own sake.</span>
+      </div>
+      <div>
+        <span class="dial-k">Motion</span>
+        <span class="dial-v">4</span>
+        <span class="dial-n">Deliberately low. You called the current animations bad.</span>
+      </div>
+      <div>
+        <span class="dial-k">Density</span>
+        <span class="dial-v">5</span>
+        <span class="dial-n">Raised. Empty minimalism is the thing we're fixing.</span>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ DIAGNOSIS ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">01</span> &nbsp;The read</p>
+      <h2>The old site wasn't too minimal. It was minimal <em style="font-family:var(--font-display);font-style:italic;color:var(--accent)">about nothing.</em></h2>
+      <p>Restraint only reads as confidence when there's something being withheld. Strip a page of ornament but give it nothing to say about craft, materials, or delivery, and it reads as a template with good margins. Every fix below is aimed at a specific thing you told me.</p>
+    </div>
+
+    <div class="diag rv">
+      <div class="diag-col">
+        <h3>What you said</h3>
+        <ul>
+          <li><span>—</span><div>"Minimal, but it does not bring out the <em>Interior Design</em> advantage"</div></li>
+          <li><span>—</span><div>"Bad animations"</div></li>
+          <li><span>—</span><div>"Looks dated / generic"</div></li>
+          <li><span>—</span><div>"Work isn't shown well"</div></li>
+          <li><span>—</span><div>"Doesn't generate enquiries"</div></li>
+          <li><span>—</span><div>"Slow / bad on mobile"</div></li>
+        </ul>
+      </div>
+      <div class="diag-col answer">
+        <h3>What this direction does about it</h3>
+        <ul>
+          <li><span>→</span><div>The site is <b style="font-weight:400;color:var(--fg)">designed the way you design a room</b> — material palette, light, proportion, sequence, detail. The advantage becomes self-evident instead of claimed.</div></li>
+          <li><span>→</span><div>One easing curve, one reveal, nothing loops. A motion doctrine you can hold a build to (§05).</div></li>
+          <li><span>→</span><div>A palette taken from real materials and your own sea-facing work — not a stock luxury theme.</div></li>
+          <li><span>→</span><div>Projects become <b style="font-weight:400;color:var(--fg)">plates with evidence</b> — developer, scope, area, year, award — not thumbnails in a grid.</div></li>
+          <li><span>→</span><div>A qualifying enquiry form that routes developer briefs and private clients differently.</div></li>
+          <li><span>→</span><div>Compressed source images handled by design: dark grounds, controlled crops, no full-bleed hero video.</div></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PALETTE ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">02</span> &nbsp;Palette</p>
+      <h2>Taken from the rooms, not from a theme.</h2>
+      <p>Your signature projects are all water-facing — Grand Marine, Mayfair By The Sea, Victoria Voyage, Marinella, the Tsing Yi duplex. In person they all read the same way: warm walnut, stone and brass wrapped around full-height glass full of cold grey-green harbour. So the neutrals run warm and the single accent runs cold. That tension <em style="font-family:var(--font-display);font-style:italic">is</em> the brand.</p>
+    </div>
+
+    <div class="swatches rv">
+      <div class="sw">
+        <span class="sw-chip" style="background:#16120E"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Espresso</span><span class="sw-hex">#16120E</span>
+          <span class="sw-use">Primary ground. Warm near-black, never a cold neutral. Flatters compressed photography.</span>
+        </div>
+      </div>
+      <div class="sw">
+        <span class="sw-chip" style="background:#4A3324"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Walnut</span><span class="sw-hex">#4A3324</span>
+          <span class="sw-use">Material blocks and joinery details. Used as surface, rarely as type.</span>
+        </div>
+      </div>
+      <div class="sw">
+        <span class="sw-chip" style="background:#948878"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Stone</span><span class="sw-hex">#948878</span>
+          <span class="sw-use">Secondary text and metadata. Warm limestone grey.</span>
+        </div>
+      </div>
+      <div class="sw">
+        <span class="sw-chip" style="background:#EFEAE0"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Linen</span><span class="sw-hex">#EFEAE0</span>
+          <span class="sw-use">The "light room" ground. Arrives as an event, not as the default.</span>
+        </div>
+      </div>
+      <div class="sw">
+        <span class="sw-chip" style="background:#5A7B79"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Marine</span><span class="sw-hex">#5A7B79</span>
+          <span class="sw-use">The one accent. Harbour under overcast light. Hairlines, small caps, single words.</span>
+        </div>
+      </div>
+      <div class="sw">
+        <span class="sw-chip" style="background:#A98A52"></span>
+        <div class="sw-meta">
+          <span class="sw-name">Brass</span><span class="sw-hex">#A98A52</span>
+          <span class="sw-use">Reserved. Awards and honours only — so it stays meaningful when it appears.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ TYPOGRAPHY ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">03</span> &nbsp;Typography</p>
+      <h2>A high-contrast serif against a warm humanist sans.</h2>
+      <p>The display face carries the luxury so nothing else has to. Thin hairlines and heavy stems give you the same contrast your interiors run on. The sans stays quiet and warm underneath it.</p>
+    </div>
+
+    <div class="spec rv">
+      <div class="spec-row">
+        <div class="spec-label">
+          <span class="k">Display</span>
+          <span class="v">Production: Canela Deck or GT Sectra Display &nbsp;·&nbsp; shown here in a system Didone fallback</span>
+        </div>
+        <div class="sample-display">Spaces built for the <em>way you live</em></div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">
+          <span class="k">Display · 繁體中文</span>
+          <span class="v">Production: Noto Serif TC or 源流明體, weight-matched to the Latin display</span>
+        </div>
+        <div class="sample-han">為生活方式而設計的空間</div>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">
+          <span class="k">Body</span>
+          <span class="v">Production: Söhne or Suisse Int'l &nbsp;·&nbsp; 繁中 in PingFang HK</span>
+        </div>
+        <p class="sample-body">Every project begins with dialogue and discovery — understanding how a family actually moves through a home before a single line is drawn. With our own construction and furnishing companies, that first conversation runs unbroken through to handover.</p>
+      </div>
+
+      <div class="spec-row">
+        <div class="spec-label">
+          <span class="k">Micro</span>
+          <span class="v">Metadata, labels, spec rails · 0.22em tracking · tabular figures</span>
+        </div>
+        <p class="sample-micro">Tsing Yi &nbsp;·&nbsp; 2,685 sq ft &nbsp;·&nbsp; Completed 2023 &nbsp;·&nbsp; Residential</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ MOTION ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">04</span> &nbsp;Motion doctrine</p>
+      <h2>You said the animations were bad. Here's the rule set that prevents it.</h2>
+      <p>Bad motion on luxury sites is almost never too little — it's too many kinds at once. This is a doctrine a developer can be held to.</p>
+    </div>
+
+    <div class="doct rv">
+      <div class="doct-item">
+        <span class="n">01</span>
+        <h3>One curve, everywhere</h3>
+        <p><code style="font-size:.75rem">cubic-bezier(.22, 1, .36, 1)</code> — the soft-close drawer. No <code style="font-size:.75rem">linear</code>, no <code style="font-size:.75rem">ease-in-out</code>, no exceptions.</p>
+      </div>
+      <div class="doct-item">
+        <span class="n">02</span>
+        <h3>One property, one direction</h3>
+        <p>Reveals are opacity plus a 14px rise. Never scale, blur, rotate and slide at once — that combination is the thing that reads as cheap.</p>
+      </div>
+      <div class="doct-item">
+        <span class="n">03</span>
+        <h3>Nothing loops</h3>
+        <p>No infinite animation anywhere on the site. No bouncing scroll cues, no drifting gradients, no ken-burns on stills.</p>
+      </div>
+      <div class="doct-item">
+        <span class="n">04</span>
+        <h3>Room pace, not UI pace</h3>
+        <p>600–900ms. The speed of walking into a space and letting your eye settle — not a 200ms button state.</p>
+      </div>
+      <div class="doct-item">
+        <span class="n">05</span>
+        <h3>Motion reveals, never decorates</h3>
+        <p>If an animation isn't disclosing content or confirming an action, it gets cut. That single test removes most of what's wrong now.</p>
+      </div>
+      <div class="doct-item">
+        <span class="n">06</span>
+        <h3>Mobile gets less</h3>
+        <p>Scroll-linked effects off below 768px, <code style="font-size:.75rem">prefers-reduced-motion</code> fully honoured. Directly addresses the mobile complaint.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ IA ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">05</span> &nbsp;Structure</p>
+      <h2>Four audiences, one homepage, no compromise.</h2>
+      <p>You need developers, private clients, hospitality and press. Rather than dilute the homepage for all four, it leads with what every one of them respects — integrated delivery and awarded work — then forks by sector within the first scroll. Each buyer self-selects in a single gesture.</p>
+    </div>
+
+    <div class="ia rv">
+      <div class="ia-top">
+        <strong>Homepage</strong>
+        <span>Integrated delivery + awarded work. Shared ground for all four audiences.</span>
+      </div>
+      <div class="ia-cols">
+        <div class="ia-col">
+          <span class="who">Developers</span>
+          <h3>Commercial</h3>
+          <ul>
+            <li>Showflats &amp; sales offices</li>
+            <li>Clubhouses &amp; lobbies</li>
+            <li>Client roster: Henderson, Wheelock, Chinachem, Grand Ming</li>
+            <li>Delivery record &amp; programme</li>
+          </ul>
+        </div>
+        <div class="ia-col">
+          <span class="who">Private clients</span>
+          <h3>Residential</h3>
+          <ul>
+            <li>The Grand Marine Duplex</li>
+            <li>The Knightsbridge</li>
+            <li>The Palazzo · Marinella House</li>
+            <li>Oasis Kai Tak — Roof Duplex &amp; Garden Mansion</li>
+          </ul>
+        </div>
+        <div class="ia-col">
+          <span class="who">Hotel groups</span>
+          <h3>Hospitality</h3>
+          <ul>
+            <li>Hotel projects — <em style="color:var(--accent);font-style:normal">need your list</em></li>
+            <li>Reframes clubhouse &amp; lobby work as hospitality-grade</li>
+            <li>Operator-facing: programme, phasing, FF&amp;E</li>
+          </ul>
+        </div>
+        <div class="ia-col">
+          <span class="who">Talent &amp; press</span>
+          <h3>Studio</h3>
+          <ul>
+            <li>Kim Wong — Design Director</li>
+            <li>The three companies, explained</li>
+            <li>Awards &amp; press</li>
+            <li>Careers</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ COMPS ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">06</span> &nbsp;Sections</p>
+      <h2>The homepage, built.</h2>
+      <p>Live CSS at real proportions. Image areas are marked with the exact crop and role they need — that's the honest state of things until I have your photography.</p>
+    </div>
+
+    <!-- HERO -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 1 — Hero</span>
+        <span class="note">Image-as-canvas. Type sits low-left, not the default left-text / right-image split.</span>
+      </div>
+      <div class="comp c-hero">
+        <div class="plate" data-spec="Full-bleed still · The Grand Marine Duplex, living room toward sea · 2400×1400 min"></div>
+        <div class="c-hero-nav">
+          <span class="c-mark">KIRA<sup>®</sup></span>
+          <div class="c-nav-links">
+            <span>Residential</span><span>Commercial</span><span>Hospitality</span><span>Studio</span><span>Contact</span>
+          </div>
+          <span class="c-lang">EN / 繁體</span>
+        </div>
+        <div class="c-hero-body">
+          <h3>We design it, build it, and <em>furnish it.</em></h3>
+          <p class="sub">Hong Kong interiors delivered end to end — one team from first conversation to handover, with no contractor in between.</p>
+          <div class="c-hero-meta">
+            <div><span class="k">Recognition</span><span class="v">Top 100 Interior Designers, World 2025</span></div>
+            <div><span class="k">Practice</span><span class="v">20+ years</span></div>
+            <div><span class="k">Companies</span><span class="v">Design · Build · Furnish</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTEGRATED MODEL -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 2 — The integrated model</span>
+        <span class="note">Your strongest commercial asset, currently buried. This is the developer-converting section.</span>
+      </div>
+      <div class="comp c-model">
+        <p class="kicker">Why nothing gets lost between drawing and site</p>
+        <h3>Most studios hand your drawings to <em>someone else.</em></h3>
+        <div class="c-chain">
+          <div class="c-link">
+            <span class="ro">Design</span>
+            <span class="co">KIRA Design Ltd</span>
+            <p>Concept, spatial planning and detailed design. Where the brief is set and the decisions are made.</p>
+          </div>
+          <div class="c-link">
+            <span class="ro">Build</span>
+            <span class="co">Times Creative Construction</span>
+            <p>Our own contracting arm. The people building it answer to the people who drew it.</p>
+          </div>
+          <div class="c-link">
+            <span class="ro">Furnish</span>
+            <span class="co">MOï Home Collection</span>
+            <p>Furniture and lighting in-house — so the finished room matches the render.</p>
+          </div>
+        </div>
+        <p class="close">Single accountability, single programme, no gap for a variation order to live in.</p>
+      </div>
+    </div>
+
+    <!-- SECTOR FORK -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 3 — Sector fork</span>
+        <span class="note">Where four audiences separate. Bilingual labels shown in position.</span>
+      </div>
+      <div class="comp c-fork">
+        <div class="c-sector">
+          <div class="plate"></div>
+          <span class="cnt">06 projects</span>
+          <h4>Residential</h4>
+          <span class="han">住宅設計</span>
+          <p>Private homes and duplexes for families and individuals.</p>
+        </div>
+        <div class="c-sector">
+          <div class="plate"></div>
+          <span class="cnt">08 projects</span>
+          <h4>Commercial</h4>
+          <span class="han">商業空間</span>
+          <p>Showflats, sales offices, clubhouses and lobbies for Hong Kong's major developers.</p>
+        </div>
+        <div class="c-sector">
+          <div class="plate"></div>
+          <span class="cnt">Your list needed</span>
+          <h4>Hospitality</h4>
+          <span class="han">酒店項目</span>
+          <p>Hotels and hospitality-grade residences.</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT PLATE -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 4 — Project plate</span>
+        <span class="note">The fix for "work isn't shown well." A plate with evidence, not a thumbnail.</span>
+      </div>
+      <div class="comp c-proj">
+        <div class="c-proj-top">
+          <div class="plate" data-spec="Lead image · 3:2 · full-height glass toward harbour"></div>
+          <div class="c-proj-rail">
+            <div>
+              <h4>The Grand Marine Duplex</h4>
+              <span class="han">海之戀 · 複式單位</span>
+            </div>
+            <div class="c-specs">
+              <div><span class="k">Location</span><span class="v">Tsing Yi, Hong Kong</span></div>
+              <div><span class="k">Area</span><span class="v">2,685 sq ft</span></div>
+              <div><span class="k">Completed</span><span class="v">2023</span></div>
+              <div><span class="k">Scope</span><span class="v">Design · Build · FF&amp;E</span></div>
+              <div><span class="k">Sector</span><span class="v">Residential</span></div>
+            </div>
+            <span class="c-award">Luxury Lifestyle Awards 2024</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MATERIAL -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 5 — Material &amp; detail</span>
+        <span class="note">This is the section that makes the "interior design advantage" visible. Nothing on the current site does this job.</span>
+      </div>
+      <div class="comp c-mat">
+        <p class="kicker">The part clients feel but can't name</p>
+        <h3>Interior design is invisible until you <em>point at it.</em></h3>
+        <div class="c-mats">
+          <div class="c-mat-item">
+            <span class="c-mat-chip" style="background:linear-gradient(155deg,#5E4231,#3A2618)"></span>
+            <span class="nm">Book-matched walnut</span>
+            <span class="ds">Grain mirrored across the joint so the wall reads as one board.</span>
+          </div>
+          <div class="c-mat-item">
+            <span class="c-mat-chip" style="background:linear-gradient(140deg,#EFEAE0,#C8C0B2 55%,#DED7C9)"></span>
+            <span class="nm">Honed limestone</span>
+            <span class="ds">Matte, so afternoon glare off the water doesn't blow out the floor.</span>
+          </div>
+          <div class="c-mat-item">
+            <span class="c-mat-chip" style="background:linear-gradient(160deg,#C4A468,#8A6E38 60%,#B79A5C)"></span>
+            <span class="nm">Brushed brass</span>
+            <span class="ds">Unlacquered, left to patinate. It gets better, not worse.</span>
+          </div>
+          <div class="c-mat-item">
+            <span class="c-mat-chip" style="background:linear-gradient(170deg,#8FB0AC,#5A7B79 60%,#41605E)"></span>
+            <span class="nm">Sea glass</span>
+            <span class="ds">Low-iron glazing — the harbour stays grey-green instead of turning bottle-green.</span>
+          </div>
+          <div class="c-mat-item">
+            <span class="c-mat-chip" style="background:linear-gradient(150deg,#2A231C,#171310)"></span>
+            <span class="nm">Concealed cove</span>
+            <span class="ds">Light source hidden; you see the wall lit, never the fitting.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENQUIRY -->
+    <div class="comp-frame rv">
+      <div class="comp-bar">
+        <span class="id">Section 6 — Enquiry</span>
+        <span class="note">The fix for "doesn't generate enquiries." Qualifies and routes instead of dumping into one inbox.</span>
+      </div>
+      <div class="comp c-enq">
+        <div>
+          <h3>Start with a <em>conversation.</em></h3>
+          <p class="why">Three questions, not twelve. A developer brief and a private residence go to different people here, so the first field is the one that routes it. Everything else is optional — the point is to open a thread, not to complete a form.</p>
+          <p class="c-direct">
+            <b>+852 2981 2838</b><br>
+            <b>admin@kiradesign.com.hk</b><br>
+            WhatsApp — because half of Hong Kong business happens there.
+          </p>
+        </div>
+        <div class="c-form">
+          <div class="c-field">
+            <span class="lb">This project is</span>
+            <div class="c-chips">
+              <span class="c-chip on">A private home</span>
+              <span class="c-chip">A development</span>
+              <span class="c-chip">A hotel</span>
+              <span class="c-chip">Something else</span>
+            </div>
+          </div>
+          <div class="c-field">
+            <span class="lb">Name</span>
+            <span class="in">姓名 / Name</span>
+          </div>
+          <div class="c-field">
+            <span class="lb">How to reach you</span>
+            <span class="in">Email or WhatsApp</span>
+          </div>
+          <div class="c-field">
+            <span class="lb">Anything you'd like us to know</span>
+            <span class="in">Optional</span>
+          </div>
+          <div class="c-submit">
+            <span>Send enquiry</span>
+            <span class="ar">↗</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============ ASKS ============ -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head rv">
+      <p class="eyebrow"><span class="n">07</span> &nbsp;What I need from you</p>
+      <h2>Five things, and I can build the whole site.</h2>
+      <p>None of these block the direction — tell me the concept is right and I'll start. These block <em style="font-family:var(--font-display);font-style:italic">finishing</em> it.</p>
+    </div>
+
+    <div class="asks rv">
+      <div class="ask">
+        <span class="tag">Blocking</span>
+        <h3>Screenshots of the current site</h3>
+        <p>This sandbox's network blocks kiradesign.com.hk, so I've never actually seen it. I reconstructed the sitemap from search. Screenshots let me audit properly and tell you exactly what to keep.</p>
+      </div>
+      <div class="ask">
+        <span class="tag">Blocking</span>
+        <h3>The hotel projects</h3>
+        <p>You said you have hospitality work to show, but none of it is publicly indexed. Names, locations, years and scope — then Hospitality becomes a real third route instead of a placeholder.</p>
+      </div>
+      <div class="ask">
+        <span class="tag">Blocking</span>
+        <h3>The logo</h3>
+        <p>The wordmark is staying, so I need the file — ideally SVG. Everything here uses a stand-in. Its proportions and weight will tune the whole type system.</p>
+      </div>
+      <div class="ask">
+        <span class="tag">Useful</span>
+        <h3>Whatever photography exists</h3>
+        <p>Even the web-compressed versions off the current site. I'd rather design against your real images than guess at crops.</p>
+      </div>
+      <div class="ask">
+        <span class="tag">Useful</span>
+        <h3>Chinese project names</h3>
+        <p>The site is bilingual, so every project needs its 繁體中文 name. I've guessed 海之戀 for Grand Marine — correct me.</p>
+      </div>
+      <div class="ask">
+        <span class="tag">Decision</span>
+        <h3>Where this gets built</h3>
+        <p>Static site in this repo, or does it need a CMS your team can edit? That changes the stack, not the design.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p>Direction board · KIRA Design Ltd website revamp · Prepared for review. Colours, type scale and spacing shown here are the actual production values.</p>
+  </div>
+</footer>
+
+</main>
+
+<script>
+(function () {
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var items = document.querySelectorAll(".rv");
+  if (reduce || !("IntersectionObserver" in window)) {
+    items.forEach(function (el) { el.classList.add("in"); });
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (e) {
+      if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+    });
+  }, { rootMargin: "0px 0px -8% 0px", threshold: 0.06 });
+  items.forEach(function (el) { io.observe(el); });
+})();
+</script>
