@@ -1,0 +1,1072 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KIRA Design Ltd — Interiors designed, built and furnished in Hong Kong</title>
+<meta name="description" content="KIRA Design Ltd (企劃設計有限公司) — Hong Kong luxury interior design delivered end to end, with our own construction and furnishing companies. Top 100 Interior Designers of the World 2025.">
+
+<style>
+/* ══════════════════════════════════════════════════════════════
+   KIRA DESIGN LTD
+   Concept: 紅牆 — The Red Wall
+   Palette taken from the studio itself: lacquer red wall, black
+   lettering, pale oak slats, and the orange "I" from the wordmark.
+   ══════════════════════════════════════════════════════════════ */
+
+:root {
+  /* ---- ground ---- */
+  --ink:        #131110;   /* warm black — the reception lettering */
+  --ink-2:      #1D1917;   /* raised surface */
+  --ink-3:      #2A2422;   /* hairline on dark */
+
+  /* ---- the red wall ---- */
+  --lacquer:      #A02C1C;
+  --lacquer-deep: #79200F;
+  --lacquer-lift: #C4432F;
+
+  /* ---- the spark: the orange I ---- */
+  --vermilion:  #E8621C;
+
+  /* ---- timber & metal ---- */
+  --oak:        #C9A984;
+  --oak-deep:   #9A7A55;
+  --champagne:  #C6A87C;
+
+  /* ---- paper ---- */
+  --paper:      #F5F1EA;
+  --paper-2:    #FBF9F5;
+  --paper-sunk: #E9E3D8;
+
+  /* ---- text ---- */
+  --on-dark:       #F2EDE4;
+  --on-dark-soft:  #A99C8D;
+  --on-light:      #131110;
+  --on-light-soft: #6B6259;
+
+  /* ---- type ---- */
+  --display: "Avenir Next", "Futura", "Century Gothic", "Trebuchet MS", system-ui, sans-serif;
+  --serif:   "Didot", "Bodoni 72", "Hoefler Text", Georgia, "Times New Roman", serif;
+  --han:     "PingFang HK", "Hiragino Sans TC", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+
+  --t-micro: 0.6875rem;
+  --t-sm:    0.8125rem;
+  --t-0:     1rem;
+  --t-1:     1.0625rem;
+  --t-2:     clamp(1.35rem, 1.9vw, 1.65rem);
+  --t-3:     clamp(1.8rem, 3.1vw, 2.6rem);
+  --t-4:     clamp(2.4rem, 5.2vw, 4.2rem);
+  --t-5:     clamp(2.9rem, 8.5vw, 7.5rem);
+
+  /* ---- motion doctrine: one curve, everywhere ---- */
+  --ease: cubic-bezier(.22, 1, .36, 1);
+  --dur:  .78s;
+
+  --gut:     clamp(1.15rem, 4.2vw, 4.5rem);
+  --bay:     clamp(3.5rem, 8vw, 7.5rem);
+  --measure: 62ch;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+
+body {
+  margin: 0;
+  background: var(--ink);
+  color: var(--on-dark);
+  font-family: var(--display);
+  font-size: var(--t-0);
+  font-weight: 400;
+  line-height: 1.62;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+:lang(zh), [lang="zh-Hant"] { font-family: var(--han); }
+
+h1, h2, h3, h4 { margin: 0; font-weight: 300; text-wrap: balance; letter-spacing: -0.015em; }
+p  { margin: 0; }
+ul { margin: 0; padding: 0; list-style: none; }
+a  { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+
+:focus-visible {
+  outline: 2px solid var(--vermilion);
+  outline-offset: 3px;
+}
+
+.wrap { max-width: 1340px; margin-inline: auto; padding-inline: var(--gut); }
+.narrow { max-width: 980px; margin-inline: auto; padding-inline: var(--gut); }
+
+.skip {
+  position: absolute; left: -9999px; top: 0; z-index: 200;
+  background: var(--vermilion); color: #fff; padding: .8rem 1.2rem;
+  font-size: var(--t-sm); letter-spacing: .12em; text-transform: uppercase;
+}
+.skip:focus { left: 0; }
+
+/* ─── shared atoms ─────────────────────────────────────────── */
+.eyebrow {
+  font-size: var(--t-micro);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+.on-dark .eyebrow  { color: var(--on-dark-soft); }
+.on-light .eyebrow { color: var(--on-light-soft); }
+
+/* the "spark" — one serif-italic word per headline, rhyming with
+   the single orange letter in the wordmark */
+.spark { font-family: var(--serif); font-style: italic; font-weight: 400; letter-spacing: -0.01em; }
+.on-dark  .spark { color: var(--champagne); }
+.on-light .spark { color: var(--lacquer); }
+
+/* oak batten texture — drawn from the studio's slatted joinery */
+.battens {
+  background-image: repeating-linear-gradient(
+    90deg,
+    var(--oak) 0 7px,
+    var(--oak-deep) 7px 8px,
+    #7E6142 8px 9px,
+    var(--oak) 9px 16px
+  );
+}
+
+/* image slot — honest placeholder until real photography lands */
+.slot {
+  position: relative;
+  background:
+    radial-gradient(115% 85% at 72% 22%, rgba(198,168,124,.36) 0%, rgba(198,168,124,0) 62%),
+    linear-gradient(158deg, #38291E 0%, #1B1512 52%, #241A14 100%);
+  overflow: hidden;
+}
+.slot::after {
+  content: attr(data-slot);
+  position: absolute; left: 0; bottom: 0;
+  padding: .42rem .68rem;
+  font-size: 0.625rem; letter-spacing: .17em; text-transform: uppercase;
+  color: rgba(242,237,228,.4);
+  background: rgba(19,17,16,.62);
+  border-top: 1px solid rgba(242,237,228,.11);
+  border-right: 1px solid rgba(242,237,228,.11);
+}
+
+/* ─── nav ──────────────────────────────────────────────────── */
+.nav {
+  position: fixed; inset: 0 0 auto 0; z-index: 100;
+  display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  padding: 1.05rem var(--gut);
+  background: transparent;
+  transition: background var(--dur) var(--ease), border-color var(--dur) var(--ease);
+  border-bottom: 1px solid transparent;
+}
+.nav.stuck {
+  background: rgba(19,17,16,.93);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-bottom-color: var(--ink-3);
+}
+.mark {
+  font-size: 1.32rem; font-weight: 300; letter-spacing: .34em;
+  color: var(--on-dark); line-height: 1; white-space: nowrap;
+}
+.mark i { font-style: normal; color: var(--vermilion); }
+.mark small {
+  display: block; font-size: .44rem; letter-spacing: .38em;
+  color: var(--on-dark-soft); margin-top: .3rem; font-weight: 400;
+}
+.nav-links { display: none; gap: 2.1rem; }
+@media (min-width: 940px) { .nav-links { display: flex; } }
+.nav-links a {
+  font-size: var(--t-micro); letter-spacing: .2em; text-transform: uppercase;
+  color: rgba(242,237,228,.78); padding-block: .3rem;
+  border-bottom: 1px solid transparent;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.nav-links a:hover { color: var(--on-dark); border-bottom-color: var(--vermilion); }
+.nav-right { display: flex; align-items: center; gap: 1.1rem; }
+.lang {
+  font-family: inherit; font-size: var(--t-micro); letter-spacing: .16em;
+  background: none; border: 1px solid var(--ink-3); color: var(--on-dark-soft);
+  padding: .42rem .72rem; cursor: pointer;
+  transition: color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.lang:hover { color: var(--vermilion); border-color: var(--vermilion); }
+.lang b { font-weight: 400; color: var(--on-dark); }
+
+/* ─── hero: the red wall ───────────────────────────────────── */
+.hero {
+  position: relative; min-height: 100svh;
+  display: grid; grid-template-columns: 1fr;
+  background: var(--lacquer);
+  isolation: isolate;
+}
+@media (min-width: 1024px) { .hero { grid-template-columns: 1fr 21rem; } }
+
+.hero::before {
+  content: ""; position: absolute; inset: 0; z-index: 0;
+  background:
+    radial-gradient(85% 62% at 22% 12%, rgba(196,67,47,.85) 0%, rgba(160,44,28,0) 68%),
+    linear-gradient(172deg, #AE3220 0%, #8E2415 58%, #741D0F 100%);
+}
+/* film grain — physical, not digital */
+.hero::after {
+  content: ""; position: absolute; inset: 0; z-index: 1; pointer-events: none;
+  opacity: .05;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+}
+
+.hero-body {
+  position: relative; z-index: 3;
+  align-self: end;
+  padding: 8rem var(--gut) clamp(2.2rem, 5vw, 4rem);
+  display: grid; gap: 1.5rem;
+}
+.hero h1 {
+  font-size: var(--t-5); line-height: .93; font-weight: 200;
+  color: #FFF8F0; max-width: 16ch;
+}
+.hero h1 .spark { color: #F6C9A8; }
+.hero .sub {
+  font-size: var(--t-1); color: rgba(255,248,240,.8);
+  max-width: 46ch; line-height: 1.58; font-weight: 300;
+}
+
+.hero-chain {
+  display: flex; flex-wrap: wrap; gap: 0 2.4rem;
+  padding-top: 1.5rem; margin-top: .4rem;
+  border-top: 1px solid rgba(255,248,240,.24);
+}
+.hero-chain div { display: grid; gap: .12rem; padding-block: .55rem; }
+.hero-chain .r { font-size: 0.625rem; letter-spacing: .24em; text-transform: uppercase; color: rgba(255,248,240,.55); }
+.hero-chain .c { font-size: var(--t-sm); color: #FFF8F0; font-weight: 300; }
+
+/* the doorway of light in the red wall */
+.hero-door { position: relative; z-index: 2; display: none; }
+@media (min-width: 1024px) { .hero-door { display: block; } }
+.hero-door .slot { position: absolute; inset: 0; }
+.hero-door::before {
+  content: ""; position: absolute; z-index: 3; inset: 0 auto 0 0; width: 9px;
+  background-image: repeating-linear-gradient(90deg,
+    var(--oak) 0 7px, var(--oak-deep) 7px 8px, #7E6142 8px 9px, var(--oak) 9px 16px);
+  opacity: .9;
+}
+
+.scroll-cue {
+  position: absolute; z-index: 3; right: var(--gut); bottom: clamp(2.2rem, 5vw, 4rem);
+  display: none; align-items: center; gap: .6rem;
+  font-size: 0.625rem; letter-spacing: .24em; text-transform: uppercase;
+  color: rgba(255,248,240,.6);
+}
+@media (min-width: 1024px) { .scroll-cue { display: flex; } }
+.scroll-cue span { width: 2.6rem; height: 1px; background: rgba(255,248,240,.45); }
+
+/* ─── honours rail: awards OFF the photography ─────────────── */
+.honours { background: var(--ink); border-bottom: 1px solid var(--ink-3); }
+.honours-grid {
+  display: grid; grid-template-columns: 1fr; gap: 0;
+}
+@media (min-width: 700px)  { .honours-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1080px) { .honours-grid { grid-template-columns: repeat(4, 1fr); } }
+.honour {
+  padding: 1.9rem 1.5rem 2rem 0;
+  display: grid; gap: .35rem; align-content: start;
+  border-top: 1px solid var(--ink-3);
+}
+.honour .yr {
+  font-family: var(--serif); font-size: var(--t-2); color: var(--champagne);
+  font-variant-numeric: tabular-nums; line-height: 1;
+}
+.honour .aw { font-size: var(--t-sm); color: var(--on-dark); font-weight: 300; line-height: 1.4; }
+.honour .pr { font-size: var(--t-micro); color: var(--on-dark-soft); letter-spacing: .04em; }
+
+/* ─── section scaffolding ──────────────────────────────────── */
+.bay { padding-block: var(--bay); }
+.on-light { background: var(--paper); color: var(--on-light); }
+.on-dark  { background: var(--ink);   color: var(--on-dark); }
+.on-lacquer { background: var(--lacquer); color: #FFF8F0; }
+
+.head { display: grid; gap: 1.15rem; margin-bottom: clamp(2.2rem, 4.5vw, 3.6rem); }
+.head h2 { font-size: var(--t-3); line-height: 1.06; max-width: 19ch; }
+.head p  { max-width: var(--measure); line-height: 1.62; font-weight: 300; }
+.on-light .head p { color: var(--on-light-soft); }
+.on-dark  .head p { color: var(--on-dark-soft); }
+
+/* ─── integrated model ─────────────────────────────────────── */
+.chain { display: grid; gap: 0; border-top: 1px solid rgba(19,17,16,.16); }
+@media (min-width: 860px) { .chain { grid-template-columns: repeat(3, 1fr); } }
+.chain-link {
+  padding: 1.9rem 1.6rem 2.1rem 0;
+  display: grid; gap: .5rem; align-content: start;
+  border-bottom: 1px solid rgba(19,17,16,.1);
+}
+@media (min-width: 860px) {
+  .chain-link { border-bottom: 0; border-right: 1px solid rgba(19,17,16,.1); padding-left: 1.6rem; }
+  .chain-link:first-child { padding-left: 0; }
+  .chain-link:last-child  { border-right: 0; }
+}
+.chain-link .step {
+  font-size: 0.625rem; letter-spacing: .26em; text-transform: uppercase;
+  color: var(--lacquer); font-weight: 500;
+}
+.chain-link .co { font-size: var(--t-2); font-weight: 300; line-height: 1.15; }
+.chain-link p { font-size: var(--t-sm); color: var(--on-light-soft); line-height: 1.6; margin-top: .3rem; }
+.chain-close {
+  margin-top: 2.4rem; font-size: var(--t-2); font-weight: 300;
+  line-height: 1.35; max-width: 30ch;
+}
+
+/* ─── work: plates, not thumbnails ─────────────────────────── */
+.plate { display: grid; gap: 0; margin-bottom: clamp(2.5rem, 5vw, 4.5rem); }
+@media (min-width: 900px) {
+  .plate { grid-template-columns: 1.62fr 1fr; align-items: stretch; }
+  .plate.flip .plate-img  { order: 2; }
+  .plate.flip .plate-rail { order: 1; border-left: 0; border-right: 1px solid var(--ink-3); }
+}
+.plate-img { min-height: clamp(240px, 46vw, 500px); }
+.plate-rail {
+  padding: clamp(1.5rem, 3vw, 2.4rem);
+  display: grid; gap: 1.5rem; align-content: start;
+  border: 1px solid var(--ink-3); border-top: 0;
+}
+@media (min-width: 900px) { .plate-rail { border: 0; border-left: 1px solid var(--ink-3); } }
+.plate-rail h3 { font-size: var(--t-2); line-height: 1.12; font-weight: 300; }
+.plate-rail .han { font-family: var(--han); font-size: var(--t-sm); color: var(--on-dark-soft); letter-spacing: .07em; }
+.plate-rail .client {
+  font-size: var(--t-micro); letter-spacing: .2em; text-transform: uppercase; color: var(--champagne);
+}
+.specs { display: grid; border-top: 1px solid var(--ink-3); }
+.specs div {
+  display: grid; grid-template-columns: 7.5rem 1fr; gap: .9rem;
+  padding-block: .58rem; border-bottom: 1px solid rgba(42,36,34,.72);
+}
+.specs .k { font-size: 0.625rem; letter-spacing: .19em; text-transform: uppercase; color: var(--on-dark-soft); padding-top: .2em; }
+.specs .v { font-size: var(--t-sm); font-variant-numeric: tabular-nums; font-weight: 300; }
+.plate-note { font-size: var(--t-sm); color: var(--on-dark-soft); line-height: 1.6; }
+.plate-award {
+  display: inline-flex; align-items: center; gap: .6rem;
+  font-size: var(--t-micro); letter-spacing: .13em; text-transform: uppercase; color: var(--champagne);
+}
+.plate-award::before { content: ""; width: 1.7rem; height: 1px; background: var(--champagne); flex: none; }
+
+/* ─── sectors ──────────────────────────────────────────────── */
+.sectors { display: grid; gap: 1px; background: var(--ink-3); }
+@media (min-width: 620px)  { .sectors { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1080px) { .sectors { grid-template-columns: repeat(4, 1fr); } }
+.sector {
+  position: relative; min-height: 310px; isolation: isolate; overflow: hidden;
+  display: grid; align-content: end; gap: .42rem;
+  padding: 1.5rem 1.35rem 1.6rem;
+  background: var(--ink);
+}
+.sector .slot { position: absolute; inset: 0; z-index: 0; }
+.sector .slot::after { content: none; }
+.sector::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top, rgba(19,17,16,.94) 6%, rgba(19,17,16,.46) 52%, rgba(19,17,16,.12) 100%);
+  transition: background var(--dur) var(--ease);
+}
+.sector:hover::after { background: linear-gradient(to top, rgba(19,17,16,.9) 6%, rgba(19,17,16,.34) 58%, rgba(19,17,16,.06) 100%); }
+.sector > * { position: relative; z-index: 2; }
+.sector .cnt { font-size: 0.625rem; letter-spacing: .22em; text-transform: uppercase; color: var(--vermilion); font-variant-numeric: tabular-nums; }
+.sector h3 { font-size: var(--t-2); font-weight: 300; color: var(--on-dark); }
+.sector .han { font-family: var(--han); font-size: var(--t-sm); color: rgba(242,237,228,.6); letter-spacing: .09em; }
+.sector p { font-size: var(--t-sm); color: rgba(242,237,228,.62); line-height: 1.5; margin-top: .25rem; }
+.sector .go {
+  margin-top: .7rem; font-size: var(--t-micro); letter-spacing: .18em; text-transform: uppercase;
+  color: var(--on-dark); display: inline-flex; align-items: center; gap: .5rem;
+}
+.sector .go em { font-style: normal; color: var(--vermilion); transition: transform var(--dur) var(--ease); display: inline-block; }
+.sector:hover .go em { transform: translateX(5px); }
+
+/* ─── materials ────────────────────────────────────────────── */
+.mats { display: grid; grid-template-columns: repeat(auto-fit, minmax(146px, 1fr)); gap: 1.7rem 1.35rem; }
+.mat { display: grid; gap: .65rem; }
+.mat-chip { aspect-ratio: 4 / 5; border: 1px solid rgba(19,17,16,.14); }
+.mat .nm { font-size: var(--t-sm); font-weight: 400; }
+.mat .ds { font-size: var(--t-micro); color: var(--on-light-soft); line-height: 1.55; letter-spacing: .01em; }
+
+/* ─── clients ──────────────────────────────────────────────── */
+.clients { display: grid; gap: 1px; background: rgba(19,17,16,.14); border-block: 1px solid rgba(19,17,16,.14); }
+@media (min-width: 620px)  { .clients { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 1000px) { .clients { grid-template-columns: repeat(3, 1fr); } }
+.client {
+  background: var(--paper); padding: 1.5rem 1.3rem;
+  display: grid; gap: .22rem; align-content: center; min-height: 6.6rem;
+}
+.client .nm { font-size: var(--t-1); font-weight: 300; line-height: 1.25; }
+.client .ds { font-size: var(--t-micro); letter-spacing: .16em; text-transform: uppercase; color: var(--on-light-soft); }
+
+/* ─── studio ───────────────────────────────────────────────── */
+.studio { display: grid; gap: 2.4rem; }
+@media (min-width: 900px) { .studio { grid-template-columns: 1fr 1.15fr; gap: clamp(2.4rem, 5vw, 4.5rem); align-items: start; } }
+.studio .slot { min-height: clamp(280px, 40vw, 460px); }
+.studio-copy { display: grid; gap: 1.15rem; align-content: start; }
+.studio-copy h2 { font-size: var(--t-3); line-height: 1.07; max-width: 17ch; }
+.studio-copy p { color: var(--on-dark-soft); line-height: 1.68; font-weight: 300; max-width: 52ch; }
+.studio-sig { display: grid; gap: .18rem; padding-top: 1.3rem; border-top: 1px solid var(--ink-3); margin-top: .6rem; }
+.studio-sig .n  { font-size: var(--t-1); font-weight: 300; }
+.studio-sig .r  { font-size: var(--t-micro); letter-spacing: .2em; text-transform: uppercase; color: var(--champagne); }
+
+/* ─── enquiry ──────────────────────────────────────────────── */
+.enq { display: grid; gap: 2.6rem; position: relative; z-index: 2; }
+@media (min-width: 900px) { .enq { grid-template-columns: 1fr 1.05fr; gap: clamp(2.6rem, 6vw, 5.5rem); align-items: start; } }
+.enq h2 { font-size: var(--t-3); line-height: 1.05; max-width: 14ch; color: #FFF8F0; }
+.enq h2 .spark { color: #F6C9A8; }
+.enq .why { font-size: var(--t-sm); color: rgba(255,248,240,.8); line-height: 1.68; margin-top: 1.1rem; max-width: 42ch; font-weight: 300; }
+.enq-direct { margin-top: 1.8rem; padding-top: 1.4rem; border-top: 1px solid rgba(255,248,240,.26); display: grid; gap: .42rem; }
+.enq-direct a, .enq-direct span { font-size: var(--t-1); color: #FFF8F0; font-weight: 300; }
+.enq-direct a { border-bottom: 1px solid rgba(255,248,240,.3); width: fit-content; transition: border-color var(--dur) var(--ease); }
+.enq-direct a:hover { border-bottom-color: #FFF8F0; }
+.enq-direct .lb { font-size: var(--t-micro); letter-spacing: .2em; text-transform: uppercase; color: rgba(255,248,240,.6); }
+
+.form { display: grid; gap: 0; }
+.field { display: grid; gap: .55rem; padding-block: 1.05rem; border-bottom: 1px solid rgba(255,248,240,.26); }
+.field > .lb { font-size: 0.625rem; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,248,240,.62); }
+.field input, .field textarea {
+  font-family: inherit; font-size: var(--t-1); font-weight: 300;
+  background: none; border: 0; color: #FFF8F0; padding: 0; width: 100%;
+  line-height: 1.5; resize: vertical;
+}
+.field input::placeholder, .field textarea::placeholder { color: rgba(255,248,240,.42); }
+.field input:focus, .field textarea:focus { outline: 0; }
+.field:focus-within > .lb { color: #FFF8F0; }
+
+.chips { display: flex; flex-wrap: wrap; gap: .45rem; }
+.chip { position: relative; }
+.chip input { position: absolute; opacity: 0; pointer-events: none; }
+.chip span {
+  display: block; cursor: pointer;
+  font-size: var(--t-sm); letter-spacing: .06em; font-weight: 300;
+  padding: .46rem .92rem; border: 1px solid rgba(255,248,240,.36); color: rgba(255,248,240,.86);
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease), border-color var(--dur) var(--ease);
+}
+.chip input:checked + span { background: #FFF8F0; color: var(--lacquer); border-color: #FFF8F0; }
+.chip input:focus-visible + span { outline: 2px solid #FFF8F0; outline-offset: 2px; }
+
+.submit {
+  margin-top: 1.7rem; width: 100%; cursor: pointer;
+  font-family: inherit; font-size: var(--t-micro); letter-spacing: .22em; text-transform: uppercase;
+  display: flex; align-items: center; justify-content: space-between; gap: 1.5rem;
+  background: var(--ink); color: var(--on-dark); border: 1px solid var(--ink);
+  padding: 1.05rem 1.15rem 1.05rem 1.4rem;
+  transition: background var(--dur) var(--ease), color var(--dur) var(--ease);
+}
+.submit em { font-style: normal; color: var(--vermilion); transition: transform var(--dur) var(--ease); display: inline-block; }
+.submit:hover { background: #FFF8F0; color: var(--lacquer); border-color: #FFF8F0; }
+.submit:hover em { transform: translateX(5px); color: var(--lacquer); }
+
+.routed { font-size: var(--t-micro); color: rgba(255,248,240,.68); margin-top: .95rem; line-height: 1.6; }
+
+/* ─── footer ───────────────────────────────────────────────── */
+.foot { background: var(--ink); padding-block: clamp(2.8rem, 5vw, 4.2rem) 2.2rem; border-top: 1px solid var(--ink-3); }
+.foot-grid { display: grid; gap: 2.2rem; }
+@media (min-width: 820px) { .foot-grid { grid-template-columns: 1.4fr 1fr 1fr; gap: 3rem; } }
+.foot h4 { font-size: var(--t-micro); letter-spacing: .22em; text-transform: uppercase; color: var(--on-dark-soft); margin-bottom: 1rem; font-weight: 500; }
+.foot li { margin-bottom: .48rem; }
+.foot li a, .foot li span { font-size: var(--t-sm); color: rgba(242,237,228,.76); font-weight: 300; }
+.foot li a:hover { color: var(--vermilion); }
+.foot .co-line { font-size: var(--t-sm); color: var(--on-dark-soft); line-height: 1.72; max-width: 34ch; margin-top: 1.1rem; font-weight: 300; }
+.foot-base {
+  margin-top: 2.6rem; padding-top: 1.5rem; border-top: 1px solid var(--ink-3);
+  display: flex; flex-wrap: wrap; gap: .6rem 1.6rem; justify-content: space-between;
+}
+.foot-base span { font-size: var(--t-micro); color: var(--on-dark-soft); letter-spacing: .04em; }
+
+/* ─── reveal: one property, one direction, nothing loops ───── */
+.rv { opacity: 0; transform: translateY(14px); transition: opacity var(--dur) var(--ease), transform var(--dur) var(--ease); }
+.rv.in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; }
+}
+/* mobile gets less motion — directly addresses the "slow on mobile" complaint */
+@media (max-width: 767px) {
+  .rv { opacity: 1; transform: none; transition: none; }
+  .nav { transition: none; }
+}
+</style>
+</head>
+
+<body>
+<a class="skip" href="#main" data-en="Skip to content" data-zh="跳至主要內容">Skip to content</a>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="nav" id="nav">
+  <a class="mark" href="#top" aria-label="KIRA Design Ltd — home">
+    K<i>I</i>RA<small>DESIGN LTD</small>
+  </a>
+  <div class="nav-links">
+    <a href="#work"     data-en="Work"        data-zh="項目">Work</a>
+    <a href="#sectors"  data-en="Sectors"     data-zh="範疇">Sectors</a>
+    <a href="#model"    data-en="How we work" data-zh="服務模式">How we work</a>
+    <a href="#studio"   data-en="Studio"      data-zh="關於我們">Studio</a>
+    <a href="#contact"  data-en="Contact"     data-zh="聯絡我們">Contact</a>
+  </div>
+  <div class="nav-right">
+    <button class="lang" id="lang" type="button" aria-label="Switch language">
+      <b>EN</b> / 繁體
+    </button>
+  </div>
+</nav>
+
+<main id="main">
+<span id="top"></span>
+
+<!-- ═══════════ HERO — THE RED WALL ═══════════ -->
+<header class="hero">
+  <div class="hero-body">
+    <h1
+      data-en-html='We design it, build it, and <span class="spark">furnish it.</span>'
+      data-zh-html='我們設計，我們建造，<span class="spark">我們陳設。</span>'>
+      We design it, build it, and <span class="spark">furnish it.</span>
+    </h1>
+    <p class="sub"
+       data-en="Hong Kong interiors delivered end to end — one team from the first conversation to handover, with no contractor in between."
+       data-zh="香港室內設計，由首次對話到交付一氣呵成 — 同一團隊全程負責，中間沒有第三方承建商。">
+      Hong Kong interiors delivered end to end — one team from the first conversation to handover, with no contractor in between.
+    </p>
+    <div class="hero-chain">
+      <div>
+        <span class="r" data-en="Design"  data-zh="設計">Design</span>
+        <span class="c">KIRA Design Ltd</span>
+      </div>
+      <div>
+        <span class="r" data-en="Build"   data-zh="建造">Build</span>
+        <span class="c">Times Creative Construction</span>
+      </div>
+      <div>
+        <span class="r" data-en="Furnish" data-zh="陳設">Furnish</span>
+        <span class="c">MOï Home Collection</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-door" aria-hidden="true">
+    <div class="slot" data-slot="Reception — lacquer wall & oak joinery · 900×1600"></div>
+  </div>
+  <div class="scroll-cue" aria-hidden="true">
+    <span></span><span data-en="Scroll" data-zh="向下捲動" style="width:auto;height:auto;background:none">Scroll</span>
+  </div>
+</header>
+
+<!-- ═══════════ HONOURS — off the photography ═══════════ -->
+<section class="honours on-dark" aria-labelledby="honours-h">
+  <div class="wrap">
+    <h2 id="honours-h" class="eyebrow" style="padding-block:1.7rem .3rem"
+        data-en="Recognition" data-zh="獎項及榮譽">Recognition</h2>
+    <div class="honours-grid">
+      <div class="honour">
+        <span class="yr">2025</span>
+        <span class="aw" data-en="Top 100 Interior Designers of the World" data-zh="全球百大室內設計師">Top 100 Interior Designers of the World</span>
+        <span class="pr">Luxury Lifestyle Awards</span>
+      </div>
+      <div class="honour">
+        <span class="yr">2025</span>
+        <span class="aw" data-en="Global Design Awards" data-zh="環球設計大獎">Global Design Awards</span>
+        <span class="pr">The Knightsbridge</span>
+      </div>
+      <div class="honour">
+        <span class="yr">2024</span>
+        <span class="aw" data-en="Best Luxury Apartment Interior Design, Hong Kong" data-zh="香港最佳豪華住宅室內設計">Best Luxury Apartment Interior Design, Hong Kong</span>
+        <span class="pr">The Grand Marine Duplex</span>
+      </div>
+      <div class="honour">
+        <span class="yr">2022</span>
+        <span class="aw" data-en="Best Luxury Commercial Interior Design, Hong Kong" data-zh="香港最佳豪華商業室內設計">Best Luxury Commercial Interior Design, Hong Kong</span>
+        <span class="pr">Asia Pacific Property Awards</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ THE INTEGRATED MODEL ═══════════ -->
+<section class="bay on-light" id="model">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="eyebrow" data-en="How we work" data-zh="服務模式">How we work</p>
+      <h2 data-en-html='Most studios hand your drawings to <span class="spark">someone else.</span>'
+          data-zh-html='大部分設計公司，會把圖紙交給<span class="spark">別人執行。</span>'>
+        Most studios hand your drawings to <span class="spark">someone else.</span>
+      </h2>
+      <p data-en="We own all three companies, so the people building it answer to the people who drew it. One programme, one point of accountability, and no gap for a variation order to live in."
+         data-zh="三間公司同屬一體，施工團隊直接向設計團隊負責。單一工程進度、單一問責點，不留任何變更工程的空隙。">
+        We own all three companies, so the people building it answer to the people who drew it. One programme, one point of accountability, and no gap for a variation order to live in.
+      </p>
+    </div>
+
+    <div class="chain rv">
+      <div class="chain-link">
+        <span class="step" data-en="01 — Design" data-zh="01 — 設計">01 — Design</span>
+        <span class="co">KIRA Design Ltd</span>
+        <p data-en="Concept, spatial planning and detailed design. Every project starts with dialogue — how a family actually moves through a home, before a single line is drawn."
+           data-zh="概念、空間規劃與深化設計。每個項目均由對話開始 — 先了解一家人如何在空間中生活，才落第一筆。">
+          Concept, spatial planning and detailed design. Every project starts with dialogue — how a family actually moves through a home, before a single line is drawn.
+        </p>
+      </div>
+      <div class="chain-link">
+        <span class="step" data-en="02 — Build" data-zh="02 — 建造">02 — Build</span>
+        <span class="co">Times Creative Construction Ltd</span>
+        <p data-en="Our own contracting arm. Site works, joinery and finishes run to the same standard the drawings were held to, on a programme we control."
+           data-zh="自家承建公司。工程施工、木工與飾面均按圖紙同一標準執行，工程進度完全由我們掌控。">
+          Our own contracting arm. Site works, joinery and finishes run to the same standard the drawings were held to, on a programme we control.
+        </p>
+      </div>
+      <div class="chain-link">
+        <span class="step" data-en="03 — Furnish" data-zh="03 — 陳設">03 — Furnish</span>
+        <span class="co">MOï Home Collection Ltd</span>
+        <p data-en="Furniture, lighting and art curated in-house — so the finished room matches the one you were shown, down to the fitting."
+           data-zh="傢俬、燈飾與藝術陳設由自家團隊策劃 — 落成後的空間，與當初呈現的效果分毫不差。">
+          Furniture, lighting and art curated in-house — so the finished room matches the one you were shown, down to the fitting.
+        </p>
+      </div>
+    </div>
+
+    <p class="chain-close rv"
+       data-en-html='One conversation, carried <span class="spark">all the way through.</span>'
+       data-zh-html='一次對話，<span class="spark">貫徹到底。</span>'>
+      One conversation, carried <span class="spark">all the way through.</span>
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════ SELECTED WORK ═══════════ -->
+<section class="bay on-dark" id="work">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="eyebrow" data-en="Selected work" data-zh="精選項目">Selected work</p>
+      <h2 data-en-html='Three rooms, shown <span class="spark">properly.</span>'
+          data-zh-html='三個空間，<span class="spark">完整呈現。</span>'>
+        Three rooms, shown <span class="spark">properly.</span>
+      </h2>
+      <p data-en="Not a grid of thumbnails. Each project carries its developer, area, scope and year — the evidence a client actually needs before they call."
+         data-zh="不是一堆縮圖。每個項目均列明發展商、面積、服務範圍及年份 — 客戶真正需要的資料。">
+        Not a grid of thumbnails. Each project carries its developer, area, scope and year — the evidence a client actually needs before they call.
+      </p>
+    </div>
+
+    <!-- Project 1 -->
+    <article class="plate rv">
+      <div class="plate-img slot" data-slot="Living room toward sea · 3:2 · 2400px wide min"></div>
+      <div class="plate-rail">
+        <div>
+          <span class="client">Grand Ming Group</span>
+          <h3>The Grand Marine Duplex</h3>
+          <span class="han">海之戀 · 複式單位</span>
+        </div>
+        <div class="specs">
+          <div><span class="k" data-en="Location"  data-zh="地點">Location</span><span class="v" data-en="Tsing Yi, Hong Kong" data-zh="香港青衣">Tsing Yi, Hong Kong</span></div>
+          <div><span class="k" data-en="Area"      data-zh="面積">Area</span><span class="v">2,685 sq ft</span></div>
+          <div><span class="k" data-en="Completed" data-zh="完成年份">Completed</span><span class="v">2023</span></div>
+          <div><span class="k" data-en="Scope"     data-zh="服務範圍">Scope</span><span class="v" data-en="Design · Build · FF&amp;E" data-zh="設計 · 建造 · 傢俬陳設">Design · Build · FF&amp;E</span></div>
+          <div><span class="k" data-en="Sector"    data-zh="類別">Sector</span><span class="v" data-en="Residential" data-zh="住宅">Residential</span></div>
+        </div>
+        <p class="plate-note"
+           data-en="A 2,685 sq ft duplex facing open water. Full-height glazing frames the sea from both levels, and custom furniture was drawn around each family member rather than the floor plan."
+           data-zh="2,685平方呎複式單位，面向開揚海景。落地玻璃於兩層均把海景納入室內，訂製傢俬按每位家庭成員的生活習慣度身設計，而非遷就平面圖。">
+          A 2,685 sq ft duplex facing open water. Full-height glazing frames the sea from both levels, and custom furniture was drawn around each family member rather than the floor plan.
+        </p>
+        <span class="plate-award">Luxury Lifestyle Awards 2024</span>
+      </div>
+    </article>
+
+    <!-- Project 2 -->
+    <article class="plate flip rv">
+      <div class="plate-img slot" data-slot="Dining toward display joinery · 3:2 · 2400px wide min"></div>
+      <div class="plate-rail">
+        <div>
+          <span class="client">Henderson Property Agency Ltd</span>
+          <h3>The Knightsbridge</h3>
+          <span class="han">爵士花園</span>
+        </div>
+        <div class="specs">
+          <div><span class="k" data-en="Location"  data-zh="地點">Location</span><span class="v" data-en="Hong Kong" data-zh="香港">Hong Kong</span></div>
+          <div><span class="k" data-en="Completed" data-zh="完成年份">Completed</span><span class="v">2024</span></div>
+          <div><span class="k" data-en="Scope"     data-zh="服務範圍">Scope</span><span class="v" data-en="Design · Build · FF&amp;E · Art" data-zh="設計 · 建造 · 傢俬陳設 · 藝術">Design · Build · FF&amp;E · Art</span></div>
+          <div><span class="k" data-en="Sector"    data-zh="類別">Sector</span><span class="v" data-en="Residential" data-zh="住宅">Residential</span></div>
+        </div>
+        <p class="plate-note"
+           data-en="Sculpted display joinery carries the room, lit from within so the objects read before the shelving does. Champagne metal and warm stone hold the palette together."
+           data-zh="雕塑感的展示櫃主導整個空間，內置燈光令陳列品先於櫃體被看見。香檳金屬與暖調石材將整體色調統一。">
+          Sculpted display joinery carries the room, lit from within so the objects read before the shelving does. Champagne metal and warm stone hold the palette together.
+        </p>
+        <span class="plate-award">Global Design Awards 2025</span>
+      </div>
+    </article>
+
+    <!-- Project 3 -->
+    <article class="plate rv">
+      <div class="plate-img slot" data-slot="Main lobby, full height · 3:2 · 2400px wide min"></div>
+      <div class="plate-rail">
+        <div>
+          <span class="client">Grand Ming Group</span>
+          <h3>The Grands — Main Lobby &amp; Clubhouse</h3>
+          <span class="han">尚珒溋 · 大堂及會所</span>
+        </div>
+        <div class="specs">
+          <div><span class="k" data-en="Location"  data-zh="地點">Location</span><span class="v" data-en="Hong Kong" data-zh="香港">Hong Kong</span></div>
+          <div><span class="k" data-en="Completed" data-zh="完成年份">Completed</span><span class="v">2023</span></div>
+          <div><span class="k" data-en="Scope"     data-zh="服務範圍">Scope</span><span class="v" data-en="Design · Build · FF&amp;E" data-zh="設計 · 建造 · 傢俬陳設">Design · Build · FF&amp;E</span></div>
+          <div><span class="k" data-en="Sector"    data-zh="類別">Sector</span><span class="v" data-en="Commercial" data-zh="商業">Commercial</span></div>
+        </div>
+        <p class="plate-note"
+           data-en="Hospitality-grade arrival for a residential development — the lobby, clubhouse, sales office and show flat drawn as one continuous sequence rather than four separate briefs."
+           data-zh="以酒店級標準打造的住宅入口體驗 — 大堂、會所、售樓處與示範單位以一條連貫的動線設計，而非四份獨立的設計要求。">
+          Hospitality-grade arrival for a residential development — the lobby, clubhouse, sales office and show flat drawn as one continuous sequence rather than four separate briefs.
+        </p>
+        <span class="plate-award">Asia Pacific Property Awards</span>
+      </div>
+    </article>
+  </div>
+</section>
+
+<!-- ═══════════ SECTORS ═══════════ -->
+<section class="bay on-dark" id="sectors" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="eyebrow" data-en="Sectors" data-zh="服務範疇">Sectors</p>
+      <h2 data-en-html='Four kinds of client, <span class="spark">four ways in.</span>'
+          data-zh-html='四類客戶，<span class="spark">四條路徑。</span>'>
+        Four kinds of client, <span class="spark">four ways in.</span>
+      </h2>
+    </div>
+
+    <div class="sectors rv">
+      <a class="sector" href="#work">
+        <div class="slot"></div>
+        <span class="cnt" data-en="06 projects" data-zh="06 個項目">06 projects</span>
+        <h3 data-en="Residential" data-zh="住宅">Residential</h3>
+        <span class="han">住宅設計</span>
+        <p data-en="Private homes and duplexes, drawn around how a family actually lives."
+           data-zh="私人住宅及複式單位，按家庭真實生活方式設計。">Private homes and duplexes, drawn around how a family actually lives.</p>
+        <span class="go" data-en-html='View work <em>&rarr;</em>' data-zh-html='瀏覽項目 <em>&rarr;</em>'>View work <em>&rarr;</em></span>
+      </a>
+
+      <a class="sector" href="#work">
+        <div class="slot"></div>
+        <span class="cnt" data-en="08 projects" data-zh="08 個項目">08 projects</span>
+        <h3 data-en="Commercial" data-zh="商業">Commercial</h3>
+        <span class="han">商業空間</span>
+        <p data-en="Show flats, sales offices, clubhouses and lobbies for Hong Kong's major developers."
+           data-zh="為香港各大發展商設計示範單位、售樓處、會所及大堂。">Show flats, sales offices, clubhouses and lobbies for Hong Kong's major developers.</p>
+        <span class="go" data-en-html='View work <em>&rarr;</em>' data-zh-html='瀏覽項目 <em>&rarr;</em>'>View work <em>&rarr;</em></span>
+      </a>
+
+      <a class="sector" href="#contact">
+        <div class="slot"></div>
+        <span class="cnt" data-en="Hotels" data-zh="酒店">Hotels</span>
+        <h3 data-en="Hospitality" data-zh="酒店項目">Hospitality</h3>
+        <span class="han">酒店設計</span>
+        <p data-en="Hotels and hospitality-grade residences, delivered on an operator's programme."
+           data-zh="酒店及酒店級住宅，按營運方的工程進度交付。">Hotels and hospitality-grade residences, delivered on an operator's programme.</p>
+        <span class="go" data-en-html='View work <em>&rarr;</em>' data-zh-html='瀏覽項目 <em>&rarr;</em>'>View work <em>&rarr;</em></span>
+      </a>
+
+      <a class="sector" href="#materials">
+        <div class="slot"></div>
+        <span class="cnt" data-en="Curated in-house" data-zh="自家策劃">Curated in-house</span>
+        <h3 data-en="Art Collection" data-zh="藝術陳設">Art Collection</h3>
+        <span class="han">藝術陳設</span>
+        <p data-en="Art sourced and placed as part of the design, not bought in afterwards."
+           data-zh="藝術品由設計階段一併選配，並非事後添置。">Art sourced and placed as part of the design, not bought in afterwards.</p>
+        <span class="go" data-en-html='Explore <em>&rarr;</em>' data-zh-html='了解更多 <em>&rarr;</em>'>Explore <em>&rarr;</em></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ MATERIALS ═══════════ -->
+<section class="bay on-light" id="materials">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="eyebrow" data-en="Material &amp; craft" data-zh="材料與工藝">Material &amp; craft</p>
+      <h2 data-en-html='Interior design is invisible until you <span class="spark">point at it.</span>'
+          data-zh-html='室內設計是隱形的，<span class="spark">除非有人指出來。</span>'>
+        Interior design is invisible until you <span class="spark">point at it.</span>
+      </h2>
+      <p data-en="Every project begins on a material board like this one. Naming the decisions is how a client comes to see what they're paying for."
+         data-zh="每個項目均由材料板開始。把每個決定說清楚，客戶才會明白自己付出的價值所在。">
+        Every project begins on a material board like this one. Naming the decisions is how a client comes to see what they're paying for.
+      </p>
+    </div>
+
+    <div class="mats rv">
+      <div class="mat">
+        <span class="mat-chip battens"></span>
+        <span class="nm" data-en="Fluted oak" data-zh="坑紋橡木">Fluted oak</span>
+        <span class="ds" data-en="Vertical battens that lengthen a low ceiling and soften every echo in the room."
+              data-zh="垂直木條拉高樓底比例，同時柔化室內回音。">Vertical battens that lengthen a low ceiling and soften every echo in the room.</span>
+      </div>
+      <div class="mat">
+        <span class="mat-chip" style="background:linear-gradient(152deg,#6A4A34,#3E2919 58%,#573925)"></span>
+        <span class="nm" data-en="Book-matched walnut" data-zh="對稱拼花胡桃木">Book-matched walnut</span>
+        <span class="ds" data-en="Grain mirrored across the joint, so the wall reads as one board instead of four."
+              data-zh="紋理於接縫處對稱鏡射，令整幅牆看起來像一塊完整木板。">Grain mirrored across the joint, so the wall reads as one board instead of four.</span>
+      </div>
+      <div class="mat">
+        <span class="mat-chip" style="background:linear-gradient(140deg,#F1EDE5,#CFC7B7 52%,#E4DCCC)"></span>
+        <span class="nm" data-en="Honed limestone" data-zh="啞光石灰石">Honed limestone</span>
+        <span class="ds" data-en="Matte, so afternoon glare off the water never blows out the floor."
+              data-zh="啞光處理，令下午由海面反射的強光不會令地面過曝。">Matte, so afternoon glare off the water never blows out the floor.</span>
+      </div>
+      <div class="mat">
+        <span class="mat-chip" style="background:linear-gradient(160deg,#D8C08E,#A98A52 56%,#C6A87C)"></span>
+        <span class="nm" data-en="Champagne metal" data-zh="香檳金屬">Champagne metal</span>
+        <span class="ds" data-en="Warmer than brass, quieter than gold. It holds a warm-lit room together."
+              data-zh="比黃銅溫潤，比金色低調，能把暖光空間整體統一。">Warmer than brass, quieter than gold. It holds a warm-lit room together.</span>
+      </div>
+      <div class="mat">
+        <span class="mat-chip" style="background:linear-gradient(146deg,#3A3733,#22201E 48%,#4A4642)"></span>
+        <span class="nm" data-en="Speckled granite" data-zh="麻石">Speckled granite</span>
+        <span class="ds" data-en="A dark anchor underfoot. Every warm palette needs one cold, heavy thing."
+              data-zh="腳下的深色定錨。每個暖色調空間，都需要一件冷而重的東西。">A dark anchor underfoot. Every warm palette needs one cold, heavy thing.</span>
+      </div>
+      <div class="mat">
+        <span class="mat-chip" style="background:linear-gradient(158deg,#A02C1C,#79200F 62%,#C4432F)"></span>
+        <span class="nm" data-en="Lacquer red" data-zh="漆紅">Lacquer red</span>
+        <span class="ds" data-en="The wall you meet first in our studio. Auspicious, and impossible to forget."
+              data-zh="步入我們工作室第一眼見到的牆。既吉祥，也令人難忘。">The wall you meet first in our studio. Auspicious, and impossible to forget.</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ CLIENTS ═══════════ -->
+<section class="bay on-light" style="padding-top:0">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="eyebrow" data-en="Clients" data-zh="合作客戶">Clients</p>
+      <h2 data-en-html='Trusted by the developers who <span class="spark">build Hong Kong.</span>'
+          data-zh-html='香港各大發展商<span class="spark">的長期夥伴。</span>'>
+        Trusted by the developers who <span class="spark">build Hong Kong.</span>
+      </h2>
+    </div>
+    <div class="clients rv">
+      <div class="client"><span class="nm">Henderson Property Agency</span><span class="ds" data-en="The Knightsbridge" data-zh="爵士花園">The Knightsbridge</span></div>
+      <div class="client"><span class="nm">Grand Ming Group</span><span class="ds" data-en="Grand Marine · The Grands" data-zh="海之戀 · 尚珒溋">Grand Marine · The Grands</span></div>
+      <div class="client"><span class="nm">Chinachem Group</span><span class="ds" data-en="Zendo House" data-zh="尚達">Zendo House</span></div>
+      <div class="client"><span class="nm">Wheelock Properties</span><span class="ds" data-en="Residential &amp; commercial" data-zh="住宅及商業項目">Residential &amp; commercial</span></div>
+      <div class="client"><span class="nm">Poly Property</span><span class="ds" data-en="Chill Residence" data-zh="逸瓏">Chill Residence</span></div>
+      <div class="client"><span class="nm">K&amp;K Property</span><span class="ds">foto+</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ STUDIO ═══════════ -->
+<section class="bay on-dark" id="studio">
+  <div class="wrap studio">
+    <div class="slot rv" data-slot="Kim Wong, or the studio reception · 4:5 portrait"></div>
+    <div class="studio-copy rv">
+      <p class="eyebrow" data-en="Studio" data-zh="關於我們">Studio</p>
+      <h2 data-en-html='Twenty years of getting it <span class="spark">built.</span>'
+          data-zh-html='二十年來，<span class="spark">把設計真正建成。</span>'>
+        Twenty years of getting it <span class="spark">built.</span>
+      </h2>
+      <p data-en="KIRA Design Ltd (企劃設計有限公司) is a Hong Kong interior design practice working across private residences, show flats, sales offices, clubhouses and hospitality — for the city's major developers and for private clients who prefer not to be named."
+         data-zh="企劃設計有限公司 (KIRA Design Ltd) 是一間香港室內設計公司，業務涵蓋私人住宅、示範單位、售樓處、會所及酒店項目 — 服務對象包括本地各大發展商，以及不願具名的私人客戶。">
+        KIRA Design Ltd (企劃設計有限公司) is a Hong Kong interior design practice working across private residences, show flats, sales offices, clubhouses and hospitality — for the city's major developers and for private clients who prefer not to be named.
+      </p>
+      <p data-en="What separates us is not a house style. It is that we also own the construction company and the furnishing company, so nothing is lost in the handover between drawing and site."
+         data-zh="我們的分別，不在於某種固定風格，而在於我們同時擁有承建公司與陳設公司 — 由圖紙到工地，中間不會有任何流失。">
+        What separates us is not a house style. It is that we also own the construction company and the furnishing company, so nothing is lost in the handover between drawing and site.
+      </p>
+      <div class="studio-sig">
+        <span class="n">Kim Wong</span>
+        <span class="r" data-en="Founder &amp; Design Director" data-zh="創辦人及設計總監">Founder &amp; Design Director</span>
+        <span class="r" style="color:var(--on-dark-soft);letter-spacing:.06em;text-transform:none" data-en="Member, Hong Kong Interior Design Association" data-zh="香港室內設計協會會員">Member, Hong Kong Interior Design Association</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ ENQUIRY ═══════════ -->
+<section class="bay on-lacquer" id="contact" style="position:relative;isolation:isolate">
+  <div class="wrap enq">
+    <div class="rv">
+      <p class="eyebrow" style="color:rgba(255,248,240,.66)" data-en="Enquiries" data-zh="查詢">Enquiries</p>
+      <h2 data-en-html='Start with a <span class="spark">conversation.</span>'
+          data-zh-html='由一次<span class="spark">對話開始。</span>'>
+        Start with a <span class="spark">conversation.</span>
+      </h2>
+      <p class="why"
+         data-en="Three questions, not twelve. A developer brief and a private residence go to different people here, so the first answer is the one that routes it. Everything after that is optional."
+         data-zh="只有三條問題，不是十二條。發展商項目與私人住宅由不同同事跟進，所以第一個答案決定了它交到誰手上。其餘資料均可選填。">
+        Three questions, not twelve. A developer brief and a private residence go to different people here, so the first answer is the one that routes it. Everything after that is optional.
+      </p>
+      <div class="enq-direct">
+        <span class="lb" data-en="Or reach us directly" data-zh="或直接聯絡我們">Or reach us directly</span>
+        <a href="tel:+85229812838">+852 2981 2838</a>
+        <a href="mailto:admin@kiradesign.com.hk">admin@kiradesign.com.hk</a>
+      </div>
+    </div>
+
+    <form class="form rv" id="enquiry" novalidate>
+      <div class="field">
+        <span class="lb" data-en="This project is" data-zh="項目類型">This project is</span>
+        <div class="chips" role="radiogroup" aria-label="Project type">
+          <label class="chip"><input type="radio" name="kind" value="home" checked><span data-en="A private home" data-zh="私人住宅">A private home</span></label>
+          <label class="chip"><input type="radio" name="kind" value="development"><span data-en="A development" data-zh="發展項目">A development</span></label>
+          <label class="chip"><input type="radio" name="kind" value="hotel"><span data-en="A hotel" data-zh="酒店項目">A hotel</span></label>
+          <label class="chip"><input type="radio" name="kind" value="other"><span data-en="Something else" data-zh="其他">Something else</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label class="lb" for="f-name" data-en="Name" data-zh="姓名">Name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" data-en-ph="Your name" data-zh-ph="您的姓名" placeholder="Your name" required>
+      </div>
+      <div class="field">
+        <label class="lb" for="f-reach" data-en="How to reach you" data-zh="聯絡方式">How to reach you</label>
+        <input id="f-reach" name="reach" type="text" autocomplete="email" data-en-ph="Email or WhatsApp" data-zh-ph="電郵或 WhatsApp" placeholder="Email or WhatsApp" required>
+      </div>
+      <div class="field">
+        <label class="lb" for="f-note" data-en="Anything you'd like us to know" data-zh="其他想告訴我們的事">Anything you'd like us to know</label>
+        <textarea id="f-note" name="note" rows="2" data-en-ph="Optional" data-zh-ph="選填" placeholder="Optional"></textarea>
+      </div>
+      <button class="submit" type="submit">
+        <span data-en="Send enquiry" data-zh="提交查詢">Send enquiry</span>
+        <em>&rarr;</em>
+      </button>
+      <p class="routed" id="routed"
+         data-en="Goes to our residential team. Usually answered within one working day."
+         data-zh="將交由住宅項目團隊處理，一般於一個工作天內回覆。">
+        Goes to our residential team. Usually answered within one working day.
+      </p>
+    </form>
+  </div>
+</section>
+
+</main>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer class="foot">
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="mark" href="#top" aria-label="KIRA Design Ltd">K<i>I</i>RA<small>DESIGN LTD</small></a>
+        <p class="co-line"
+           data-en="KIRA Design Ltd · 企劃設計有限公司 — interior design, construction and furnishing, delivered by one team in Hong Kong."
+           data-zh="企劃設計有限公司 · KIRA Design Ltd — 室內設計、工程建造及傢俬陳設，由香港同一團隊全程負責。">
+          KIRA Design Ltd · 企劃設計有限公司 — interior design, construction and furnishing, delivered by one team in Hong Kong.
+        </p>
+      </div>
+      <div>
+        <h4 data-en="Sectors" data-zh="服務範疇">Sectors</h4>
+        <ul>
+          <li><a href="#work"     data-en="Residential"    data-zh="住宅">Residential</a></li>
+          <li><a href="#work"     data-en="Commercial"     data-zh="商業">Commercial</a></li>
+          <li><a href="#contact"  data-en="Hospitality"    data-zh="酒店項目">Hospitality</a></li>
+          <li><a href="#materials" data-en="Art Collection" data-zh="藝術陳設">Art Collection</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 data-en="Contact" data-zh="聯絡我們">Contact</h4>
+        <ul>
+          <li><a href="tel:+85229812838">+852 2981 2838</a></li>
+          <li><a href="mailto:admin@kiradesign.com.hk">admin@kiradesign.com.hk</a></li>
+          <li><span data-en="Hong Kong" data-zh="香港">Hong Kong</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="foot-base">
+      <span>© <span id="yr">2026</span> KIRA Design Ltd · 企劃設計有限公司</span>
+      <span>Times Creative Construction Ltd · MOï Home Collection Ltd</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  "use strict";
+
+  /* ── nav: gains ground once you leave the red wall ── */
+  var nav = document.getElementById("nav");
+  var onScroll = function () {
+    if (window.scrollY > 40) { nav.classList.add("stuck"); }
+    else { nav.classList.remove("stuck"); }
+  };
+  onScroll();
+  window.addEventListener("scroll", onScroll, { passive: true });
+
+  /* ── reveal: opacity + one direction, nothing loops ── */
+  var reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var small  = window.matchMedia("(max-width: 767px)").matches;
+  var items  = document.querySelectorAll(".rv");
+
+  if (reduce || small || !("IntersectionObserver" in window)) {
+    Array.prototype.forEach.call(items, function (el) { el.classList.add("in"); });
+  } else {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); }
+      });
+    }, { rootMargin: "0px 0px -7% 0px", threshold: 0.05 });
+    Array.prototype.forEach.call(items, function (el) { io.observe(el); });
+  }
+
+  /* ── bilingual: EN / 繁體 ── */
+  var lang = "en";
+  var btn  = document.getElementById("lang");
+
+  function apply(next) {
+    lang = next;
+    var isZh = next === "zh";
+
+    document.documentElement.lang = isZh ? "zh-Hant" : "en";
+    btn.innerHTML = isZh ? 'EN / <b>繁體</b>' : '<b>EN</b> / 繁體';
+
+    document.querySelectorAll("[data-en]").forEach(function (el) {
+      var v = el.getAttribute(isZh ? "data-zh" : "data-en");
+      if (v !== null) { el.textContent = v; }
+    });
+    document.querySelectorAll("[data-en-html]").forEach(function (el) {
+      var v = el.getAttribute(isZh ? "data-zh-html" : "data-en-html");
+      if (v !== null) { el.innerHTML = v; }
+    });
+    document.querySelectorAll("[data-en-ph]").forEach(function (el) {
+      var v = el.getAttribute(isZh ? "data-zh-ph" : "data-en-ph");
+      if (v !== null) { el.placeholder = v; }
+    });
+  }
+
+  btn.addEventListener("click", function () { apply(lang === "en" ? "zh" : "en"); });
+
+  /* ── enquiry routing: the first answer decides who reads it ── */
+  var routes = {
+    en: {
+      home:        "Goes to our residential team. Usually answered within one working day.",
+      development: "Goes to Kim Wong and the commercial team, with our delivery record attached.",
+      hotel:       "Goes to Kim Wong directly. Tell us the operator and the programme dates.",
+      other:       "Goes to the studio. We'll point it to the right person."
+    },
+    zh: {
+      home:        "將交由住宅項目團隊處理，一般於一個工作天內回覆。",
+      development: "將交由 Kim Wong 及商業項目團隊處理，並附上我們的往績記錄。",
+      hotel:       "將直接交由 Kim Wong 處理。請告知營運方及工程時間表。",
+      other:       "將交由工作室處理，我們會轉介予合適同事跟進。"
+    }
+  };
+  var routed = document.getElementById("routed");
+  document.querySelectorAll('input[name="kind"]').forEach(function (r) {
+    r.addEventListener("change", function () {
+      var copy = routes[lang][r.value];
+      routed.textContent = copy;
+      routed.setAttribute("data-" + lang, copy);
+      routed.setAttribute("data-" + (lang === "en" ? "zh" : "en"), routes[lang === "en" ? "zh" : "en"][r.value]);
+    });
+  });
+
+  /* ── form: wired to a real endpoint at build time ── */
+  document.getElementById("enquiry").addEventListener("submit", function (e) {
+    e.preventDefault();
+    routed.textContent = lang === "zh"
+      ? "多謝您的查詢 — 這是設計示範，尚未連接後端。"
+      : "Thank you — this is a design prototype and is not yet wired to a backend.";
+  });
+
+  document.getElementById("yr").textContent = new Date().getFullYear();
+})();
+</script>
+</body>
+</html>
