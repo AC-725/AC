@@ -140,9 +140,13 @@ img { max-width: 100%; display: block; }
   background:
     radial-gradient(115% 85% at 72% 22%, rgba(198,168,124,.36) 0%, rgba(198,168,124,0) 62%),
     linear-gradient(158deg, #38291E 0%, #1B1512 52%, #241A14 100%);
+  /* must follow the shorthand — `background` resets both of these */
+  background-size: cover;
+  background-position: center;
   overflow: hidden;
 }
-.slot::after {
+/* the caption chip only exists where a slot still awaits real photography */
+.slot[data-slot]::after {
   content: attr(data-slot);
   position: absolute; left: 0; bottom: 0;
   padding: .42rem .68rem;
@@ -208,7 +212,8 @@ img { max-width: 100%; display: block; }
 .hero::before {
   content: ""; position: absolute; inset: 0; z-index: 0;
   background:
-    radial-gradient(85% 62% at 22% 12%, rgba(196,67,47,.85) 0%, rgba(160,44,28,0) 68%),
+    linear-gradient(104deg, rgba(19,17,16,.72) 0%, rgba(19,17,16,.30) 38%, rgba(122,31,15,.42) 100%),
+    url("assets/sections/01-hero.jpg") center/cover no-repeat,
     linear-gradient(172deg, #AE3220 0%, #8E2415 58%, #741D0F 100%);
 }
 /* film grain — physical, not digital */
@@ -545,7 +550,7 @@ img { max-width: 100%; display: block; }
     </div>
   </div>
   <div class="hero-door" aria-hidden="true">
-    <div class="slot" data-slot="Reception — lacquer wall & oak joinery · 900×1600"></div>
+    <div class="slot" style="background-image:url('assets/sections/07-studio.jpg')"></div>
   </div>
   <div class="scroll-cue" aria-hidden="true">
     <span></span><span data-en="Scroll" data-zh="向下捲動" style="width:auto;height:auto;background:none">Scroll</span>
@@ -735,7 +740,7 @@ img { max-width: 100%; display: block; }
 
     <div class="sectors rv">
       <a class="sector" href="#work">
-        <div class="slot"></div>
+        <div class="slot" style="background-image:url('assets/sections/04-work-lead.jpg')"></div>
         <span class="cnt" data-en="06 projects" data-zh="06 個項目">06 projects</span>
         <h3 data-en="Residential" data-zh="住宅">Residential</h3>
         <span class="han">住宅設計</span>
@@ -745,7 +750,7 @@ img { max-width: 100%; display: block; }
       </a>
 
       <a class="sector" href="#work">
-        <div class="slot"></div>
+        <div class="slot" style="background-image:url('assets/sections/03-model.jpg')"></div>
         <span class="cnt" data-en="08 projects" data-zh="08 個項目">08 projects</span>
         <h3 data-en="Commercial" data-zh="商業">Commercial</h3>
         <span class="han">商業空間</span>
@@ -755,7 +760,7 @@ img { max-width: 100%; display: block; }
       </a>
 
       <a class="sector" href="#contact">
-        <div class="slot"></div>
+        <div class="slot" style="background-image:url('assets/sections/08-contact.jpg')"></div>
         <span class="cnt" data-en="Hotels" data-zh="酒店">Hotels</span>
         <h3 data-en="Hospitality" data-zh="酒店項目">Hospitality</h3>
         <span class="han">酒店設計</span>
@@ -765,7 +770,7 @@ img { max-width: 100%; display: block; }
       </a>
 
       <a class="sector" href="#materials">
-        <div class="slot"></div>
+        <div class="slot" style="background-image:url('assets/sections/05-materials.jpg')"></div>
         <span class="cnt" data-en="Curated in-house" data-zh="自家策劃">Curated in-house</span>
         <h3 data-en="Art Collection" data-zh="藝術陳設">Art Collection</h3>
         <span class="han">藝術陳設</span>
@@ -857,7 +862,7 @@ img { max-width: 100%; display: block; }
 <!-- ═══════════ STUDIO ═══════════ -->
 <section class="bay on-dark" id="studio">
   <div class="wrap studio">
-    <div class="slot rv" data-slot="Kim Wong, or the studio reception · 4:5 portrait"></div>
+    <div class="slot rv" style="background-image:url('assets/sections/07-studio.jpg')" data-slot="Replace with a portrait of Kim Wong · 4:5"></div>
     <div class="studio-copy rv">
       <p class="eyebrow" data-en="Studio" data-zh="關於我們">Studio</p>
       <h2 data-en-html='Twenty years of getting it <span class="spark">built.</span>'

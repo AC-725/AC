@@ -7,3 +7,6 @@
 .env.*
 !.env.example
 ac-studio.skill
+
+# Generated site assets are committed deliberately — see kiradesign/ART-DIRECTION.md
+!kiradesign/assets/
