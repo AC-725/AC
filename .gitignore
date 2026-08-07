@@ -10,3 +10,5 @@ ac-studio.skill
 
 # Generated site assets are committed deliberately — see kiradesign/ART-DIRECTION.md
 !kiradesign/assets/
+kiradesign/node_modules/
+kiradesign/deck/preview/
