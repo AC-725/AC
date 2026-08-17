@@ -90,11 +90,11 @@ Read only what the task needs.
 
 | AC asks for | Load |
 | --- | --- |
-| A reel / video / TOD / AI News / "day N" | `hooks.md` + `algorithm-2026.md`, then the engine's scene guide + `themes.md` |
+| A reel / video / TOD / AI News / "day N" | `hooks.md` + `storytelling.md` + `algorithm-2026.md`, then the engine's scene guide + `themes.md` |
 | A "Spine" reel / a headline-and-progress-dots look | `spine-reel.md` |
 | Subtitles / captions on a video | `subtitles.md` (mandatory on every video) |
 | A longer / retimed cut ("24s version") | `variants.md` |
-| A carousel, slide deck, static graphic | `carousel.md` + `themes.md` |
+| A carousel, slide deck, static graphic | `carousel.md` + `storytelling.md` + `themes.md` |
 | A Prompt Drop (the Saturday prompt pack) | `prompt-drop.md`, then `carousel.md` |
 | Which theme / how the frames look | `themes.md`, then `brand.md` |
 | A post, caption, or "what should I post" | `content.md` |
@@ -102,6 +102,7 @@ Read only what the task needs.
 | Growth, reach, weekly plan, engagement | `growth.md` |
 | Hashtags | `content.md` (hashtag banks) |
 | Finding a story, verifying a number | `research.md` |
+| The story feels flat / devices / "why is nobody staying" | `storytelling.md` |
 | Palette, type, the laws | `brand.md` |
 | Anything is overlapping or looks off | `qa-audit.md` |
 
@@ -155,8 +156,9 @@ three also carry the baked-in **subtitle engine** — SUBS is written on the bea
 `references/subtitles.md`).
 
 ### 0. Read the playbooks
-`references/hooks.md` (retention + hook grading) and `references/algorithm-2026.md`
-(ranking signals + virality scorecard). Everything below assumes both.
+`references/hooks.md` (retention + hook grading), `references/storytelling.md` (the six
+devices + the story pass) and `references/algorithm-2026.md` (ranking signals + virality
+scorecard). Everything below assumes all three.
 
 ### 1. Greet AC and route
 Open by name ("AC — ...") and ask via `AskUserQuestion`: **Tool of the Day or AI News
@@ -200,6 +202,11 @@ trending-but-rankable hashtags**; **2 A/B hook variants**; and the cover slots. 
 reel needs a **share trigger** — v2: a NAMED person-type + motive, plus the stake and
 arousal rows (hooks.md v2). Style law: `references/voice-and-caption.md`.
 Check the log's recent SEO lines and CTAs — never repeat back-to-back.
+
+Close the writing with the **story pass** (`references/storytelling.md`): six devices,
+one honest line each — hook, emotion, open loops, curiosity gap, pattern interrupt,
+pacing. Any row you can't fill means the story is thin — fix it before step 5, because
+no amount of template polish rescues a beat sheet that fails the pass.
 
 ### 5. Fill the template, then AUDIT
 ```bash
@@ -251,9 +258,9 @@ present. News: run the first-frame checklist on t=0.
 
 ### 6. CHECKPOINT with AC — before the final render
 Present the chosen story + sources, on-screen copy per scene, 1–2 QA frames, the caption +
-hashtags, the VO script, the cover draft, the **layout audit result**, and the **virality
-scorecard** from `algorithm-2026.md` (x/10, one line per row). Below 8 → revise before
-presenting. Then wait for his go, or apply tweaks and re-audit. Proceed unprompted only if
+hashtags, the VO script, the cover draft, the **layout audit result**, the **story pass**
+(six devices, one line per row — `storytelling.md`), and the **virality scorecard** from
+`algorithm-2026.md` (x/10, one line per row). Below 8 → revise before presenting. Then wait for his go, or apply tweaks and re-audit. Proceed unprompted only if
 the session is clearly unattended, and say so plainly.
 
 This checkpoint is where most of the quality comes from. Skipping it ships content that
@@ -339,6 +346,10 @@ Formatting tics that make it read like AC: one big number per post, line breaks 
 sentences for mobile, a question near the end, and ~30 words max for any line going *on a
 graphic*.
 
+The six devices bind here too — a carousel or static post runs the same **story pass**
+(`references/storytelling.md`) before it ships: the sub line pulls each swipe (open
+loops), slide 4 is the turn (the interrupt), one breath per slide (pacing).
+
 ### Where the depth lives
 - **`foundation.md`** — profile and bio, layout system, post anatomy, the six Story
   Highlights, launch checklist. *How the page looks and is set up.*
@@ -349,6 +360,8 @@ graphic*.
 - **`research.md`** — how to find a story and verify its number. A static post is anchored
   to one real stat exactly like a reel is.
 - **`carousel.md`** — the deck engine, the six saved layouts, the light theme.
+- **`storytelling.md`** — the six devices (hooks, emotional triggers, open loops,
+  curiosity gaps, pattern interrupts, pacing) and the story pass every piece runs.
 
 ---
 

@@ -11,8 +11,10 @@ Rules live in references/voice-and-caption.md and references/subtitles.md.
 - **The number:** · **Primary source (link + their wording):**
 - **Second number / chip:** · **Source:**
 - **AC's angle (the reframe):**
-- **Stake left open after the payoff** (what the reel resolves — hooks.md v2 rule 2):
-- **Arousal — what the viewer feels** (surprise | indignation | relief | awe | empathy):
+- **Stake left open after the payoff** (the macro open loop the piece resolves — hooks.md rule 2):
+- **Arousal — what the viewer feels** (surprise | indignation | relief | awe | empathy | trust — storytelling.md register):
+- **Default assumption the number breaks** (the curiosity gap; can't write one → no post — storytelling.md #4):
+- **Pattern interrupt — where + what** (ONE, mid-piece, scene C–D / slide 4 — storytelling.md #5):
 - **Send target — NAMED person-type + motive** (Gift | Mirror | Idea | Gossip | Mood):
 - **Engine / theme:** [News | TOD] base | crest | column | margin — or [Spine] (fixed, not theme-rotated) · **Hook style:** thesis-first | concrete-image | direct-callout | identity/Gift | dated-prediction | receipts
 - **Bilingual (繁體中文)?** yes | no
@@ -50,6 +52,10 @@ building the PDF: `python3 SKILL_DIR/scripts/vo_budget.py vo_spec.json [--engine
 | E | | | | |
 | F (TOD) | | | | |
 | G (TOD) | | | | |
+
+When the sheet is full, run the **story pass** (references/storytelling.md): six devices,
+one honest line each. A row you have to talk your way through fails — fix the story, not
+the wording, before filling the template.
 
 ## Caption
 

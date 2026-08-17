@@ -59,6 +59,11 @@ Present the score with one line per row in the pre-render checkpoint, and again 
 final delivery. If the share-trigger row scores 0, that is the first thing to fix: name
 the person the viewer will think of.
 
+**2026-08-17:** the watch-time row now reads against the six-device **story pass**
+(`references/storytelling.md`) — open loops paid, curiosity gap calibrated, one pattern
+interrupt placed, pacing that decelerates into the rule. A draft that fails the story
+pass cannot take those 2 points, whatever the render gates say.
+
 ## Posting playbook (include a short note with every delivery)
 
 - Post when AC's audience is on (check IG Insights; consistency beats clock-perfection).

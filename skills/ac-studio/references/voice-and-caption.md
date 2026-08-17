@@ -37,6 +37,8 @@ search queries (social SEO). Then:
 
 Formatting: one big number, line breaks every 1–2 sentences, a question near the end to
 pull comments, end the CTA with the handle from the template's `HANDLE` constant.
+The question is the caption's **comment loop** — the one strand deliberately left open
+past the end (storytelling.md #3): offer a choice, never withhold an answer.
 
 **Bilingual option (ask each run):** if AC wants HK reach, also ship the caption in
 繁體中文 — natural, conversational HK tone, not a literal translation; keep the numbers,

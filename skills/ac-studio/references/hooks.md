@@ -8,6 +8,11 @@ six hook styles instead of three, a burned-phrase blacklist, loop engineering, a
 validation loop against Instagram's own Skip Rate. Diagnosis that forced the rewrite: 8 reels,
 562 views, 0 comments, 0 shares, 1 send — hooks that grade A on stop can grade F on send.
 
+**Where this file sits (2026-08-17):** the hook is device 1 of six. The other five —
+emotional triggers, open loops, curiosity gaps, pattern interrupts, pacing — live in
+`references/storytelling.md` with the story pass that checks all six on the beat sheet.
+This file stays the deeper law for the first three seconds; nothing there overrides it.
+
 A short reel is won or lost on three decisions: **does frame one stop the scroll, does the
 payoff come first, and does anything stay open after it lands.** On Instagram in 2026 the
 algorithm rewards watch-time/completion and, above all for non-follower reach,
