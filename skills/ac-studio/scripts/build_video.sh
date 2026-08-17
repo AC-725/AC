@@ -12,7 +12,11 @@ SILENT="${3:-}"
 HERE="$(cd "$(dirname "$0")" && pwd)"
 ASSETS="$(cd "$HERE/../assets" && pwd)"
 WORK="$(pwd)"
-FRAMES="$WORK/_frames"
+# Unique per-invocation frames/wav names: concurrent builds in the same working
+# dir no longer clobber each other. produce.sh relies on this to run cuts in parallel.
+TAG="$$_$(basename "$OUT" .mp4)"
+FRAMES="$WORK/_frames_$TAG"
+trap 'rm -rf "$FRAMES"' EXIT
 
 # Engine detection: only the TOD timeline has a scene G.
 if grep -q "{id:'G'" "$HTML"; then AUDIO="$ASSETS/tod_audio.py"; else AUDIO="$ASSETS/reel_audio.py"; fi
@@ -30,13 +34,18 @@ if [ "$SILENT" == "--silent" ]; then
     -shortest -c:a aac -b:a 128k -movflags +faststart "$OUT"
 else
   echo "==> 2/3 Synthesizing sound design"
-  python3 "$AUDIO" "$WORK/master.wav"
+  # AUDIO_ARGS (optional env var) passes retime flags through, e.g.
+  #   AUDIO_ARGS='--scenes A=0,B=5.2,C=10.3,D=15.4,E=19.7 --dur 24'
+  # See references/variants.md.
+  WAV="$WORK/master_$TAG.wav"
+  # shellcheck disable=SC2086
+  python3 "$AUDIO" "$WAV" ${AUDIO_ARGS:-}
   echo "==> 3/3 Encoding + muxing"
-  ffmpeg -y -framerate 30 -i "$FRAMES/f%05d.jpg" -i "$WORK/master.wav" \
+  ffmpeg -y -framerate 30 -i "$FRAMES/f%05d.jpg" -i "$WAV" \
     -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 18 -preset slow -r 30 \
     -c:a aac -b:a 192k -movflags +faststart -shortest "$OUT"
 fi
 
-rm -rf "$FRAMES"
+rm -rf "$FRAMES"; rm -f "$WORK/master_$TAG.wav"
 echo "==> Done: $OUT"
 ffprobe -v error -show_entries format=duration:stream=codec_type,width,height -of default=noprint_wrappers=1 "$OUT" || true

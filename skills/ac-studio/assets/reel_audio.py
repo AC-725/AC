@@ -1,16 +1,38 @@
 """
 AC — Reel Creator · sound design synth (synced SFX layer, not a music bed).
-Cues placed at the fixed scene timestamps in reel.template.html:
-  A 0.0   B 2.6   C 5.0   D 7.5   E 9.6   (total ~11.4s)
-If you change SCENES timings in the template, update the cues below or sound desyncs.
+
+Cues are defined RELATIVE to each scene's start, so the track retimes itself:
+  default scene starts  A 0.0  B 2.6  C 5.0  D 7.5  E 9.6   (DUR 11.7s)
+match reel.template.html's SCENES block. If you retime SCENES in the template
+(see references/variants.md), pass the new starts here — do NOT edit the cues:
+
+  python3 reel_audio.py master.wav --scenes A=0,B=5.2,C=10.3,D=15.4,E=19.7 --dur 24
+
+Within-scene offsets stay fixed (intro animations keep their attack; longer
+scenes simply hold), which matches how the template stretches.
 Requires numpy:  pip install numpy --break-system-packages
-Usage: python reel_audio.py [out.wav]
+Usage: python3 reel_audio.py [out.wav] [--scenes A=..,B=..,C=..,D=..,E=..] [--dur S]
 """
 import numpy as np, wave, sys
 
-SR=48000; DUR=11.7; N=int(SR*DUR)
+# ---- args ----
+OUT='master.wav'; SCN={'A':0.0,'B':2.6,'C':5.0,'D':7.5,'E':9.6}; DUR=11.7
+args=sys.argv[1:]
+i=0
+while i<len(args):
+    a=args[i]
+    if a=='--scenes':
+        i+=1
+        for kv in args[i].split(','):
+            k,v=kv.split('='); SCN[k.strip().upper()]=float(v)
+    elif a=='--dur':
+        i+=1; DUR=float(args[i])
+    else:
+        OUT=a
+    i+=1
+
+SR=48000; N=int(SR*DUR)
 master=np.zeros((N,2))
-OUT=sys.argv[1] if len(sys.argv)>1 else 'master.wav'
 
 def env_exp(n,tau): return np.exp(-(np.arange(n)/SR)/tau)
 def attack(x,ms=3):
@@ -53,33 +75,35 @@ WH,CL,TK,PO,IM,RI,DI,ST=s_whoosh(),s_click(),s_tick(),s_pop(),s_impact(),s_riser
 
 def place(snd,t,gain=1.0,pan=0.0,haas=0.0):
     i=int(t*SR)
-    if i>=N: return
+    if i>=N or i<0: return
     seg=snd[:max(0,N-i)]; l=gain*(1-max(0,pan)); r=gain*(1+min(0,pan))
     master[i:i+len(seg),0]+=seg*l
     if haas>0:
         j=i+int(haas*SR); s2=snd[:max(0,N-j)]; master[j:j+len(s2),1]+=s2*r
     else: master[i:i+len(seg),1]+=seg*r
 
-# ---- CUES (absolute seconds) ----
-# A — loud open: punch on the thesis, then $2.5B counts up and locks
-place(IM,0.02,0.5); place(WH,0.05,0.45,haas=0.012)
-tt=0.5; dt=0.14
-while tt<1.5: place(TK,tt,0.30); dt=max(0.03,dt*0.84); tt+=dt
-place(IM,1.52,0.55); place(DI,1.6,0.32)
-# B — reframe: whoosh in, strike on BUILD, pop on USE
-place(WH,2.6,0.5,haas=0.012)
-place(s_whoosh(0.3),3.12,0.4)                 # strike swipe
-place(PO,3.55,0.5)                            # USE pops
-place(TK,4.1,0.28); place(TK,4.32,0.26)
-# C — proof: 6,000 counts up, impact, Amazon stamp
-place(WH,5.0,0.5,haas=0.012); place(RI,5.15,0.4)
-tt=5.3
-while tt<6.4: place(TK,tt,0.26); tt+=0.11
-place(IM,6.42,0.6); place(ST,6.66,0.7)        # Amazon stamp
-# D — the rule / callback: hit on "Start using it."
-place(WH,7.5,0.5,haas=0.012); place(IM,7.86,0.52); place(DI,8.42,0.4)
+A,B,C,D,E=SCN['A'],SCN['B'],SCN['C'],SCN['D'],SCN['E']
+
+# ---- CUES (relative to scene starts) ----
+# A — loud open: punch on the thesis, then the big number counts up and locks
+place(IM,A+0.02,0.5); place(WH,A+0.05,0.45,haas=0.012)
+tt=A+0.5; dt=0.14
+while tt<A+1.5: place(TK,tt,0.30); dt=max(0.03,dt*0.84); tt+=dt
+place(IM,A+1.52,0.55); place(DI,A+1.6,0.32)
+# B — reframe: whoosh in, strike on the old reading, pop on the new one
+place(WH,B,0.5,haas=0.012)
+place(s_whoosh(0.3),B+0.52,0.4)               # strike swipe
+place(PO,B+0.95,0.5)                          # the flip pops
+place(TK,B+1.5,0.28); place(TK,B+1.72,0.26)
+# C — proof: stat counts up, impact, source stamp
+place(WH,C,0.5,haas=0.012); place(RI,C+0.15,0.4)
+tt=C+0.3
+while tt<C+1.4: place(TK,tt,0.26); tt+=0.11
+place(IM,C+1.42,0.6); place(ST,C+1.66,0.7)    # source stamp
+# D — the rule / callback: hit on the takeaway
+place(WH,D,0.5,haas=0.012); place(IM,D+0.36,0.52); place(DI,D+0.92,0.4)
 # E — CTA + loop
-place(WH,9.6,0.34); place(DI,9.72,0.5); place(PO,10.05,0.45); place(TK,10.85,0.3)
+place(WH,E,0.34); place(DI,E+0.12,0.5); place(PO,E+0.45,0.45); place(TK,E+1.25,0.3)
 
 # ambient air bed (very low)
 t=np.arange(N)/SR
@@ -94,4 +118,4 @@ master=np.tanh(master*1.05)/np.tanh(1.05)*0.95
 data=(np.clip(master,-1,1)*32767).astype(np.int16)
 with wave.open(OUT,'w') as w:
     w.setnchannels(2); w.setsampwidth(2); w.setframerate(SR); w.writeframes(data.tobytes())
-print('wrote',OUT,round(len(data)/SR,2),'s')
+print('wrote',OUT,round(len(data)/SR,2),'s · scenes',{k:SCN[k] for k in 'ABCDE'})
