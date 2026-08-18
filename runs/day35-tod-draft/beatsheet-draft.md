@@ -31,6 +31,10 @@ Hostinger KILLED (no free tier — paid hosting bundle). AI phone receptionist K
 | 2 | **Storytelling** ("turn [small] into [bigger]") | "Here's how you turn one podcast into a week of reels." | 13 | `One podcast.` / `A week of reels.` | A- | B+ (Gift — the podcast friend) |
 | 3 | **Curiosity** ("everyone says X, nobody shows how") | "Everyone says post clips daily. Nobody shows you how." | 14 | `Post daily.` / `Here's how.` | B+ | B (Mirror) |
 
+**AC PICKED #1 · Controversy (2026-08-18).** #2 Storytelling and #3 Curiosity are the
+A/B trial-reel variants. Bank logged: Controversy — Wednesday's run must offer from
+the other banks first.
+
 All three: the 60 odometers on screen under the headline with label
 "free processing minutes, every month" — the number is the screen's job, the
 promise is the voice's job. Recommendation: **#1** (strongest stop AND send).
