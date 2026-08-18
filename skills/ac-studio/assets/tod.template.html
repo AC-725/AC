@@ -12,32 +12,85 @@
   ============================================================================
 -->
 <style>
+/* ===== DISPLAY FACES — one per theme, shared with the news engine.
+   The .ttf files ship in ./fonts next to this file. Keep them together. ===== */
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+@font-face{font-family:'DispCrest';src:url('fonts/BricolageGrotesque-Bold.ttf');}
+@font-face{font-family:'DispColumn';src:url('fonts/Italiana-Regular.ttf');}
+@font-face{font-family:'DispMargin';src:url('fonts/InstrumentSerif-Italic.ttf');}
   :root{
     --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
     --white:#F4F0E7; --stone:#B9B1A1; --grey:#6f6a60;
   }
   *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
-  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
-  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;
-    background:
-      radial-gradient(circle at 50% 42%, rgba(231,199,101,0.07), rgba(231,199,101,0) 46%),
-      radial-gradient(ellipse at 50% 45%, #16130E 0%, #0B0B0A 58%, #070706 100%);}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+  /* FLAT GROUND. One value. No gradient, no glow, no grain, no mark. */
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;--disp:'Lora';}
   #frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.34);}
-  .tick{position:absolute;width:44px;height:44px;}
+  #goldfield{display:none;position:absolute;left:0;right:0;top:0;height:220px;z-index:1;
+    background:linear-gradient(180deg,#EFD68A 0%,#E3C061 62%,#D3AC49 100%);}
+
+  /* ===== PROGRESS INDICATOR — full bleed, and it is the theme's block ===== */
+  #progress{position:absolute;border-radius:0;z-index:3;pointer-events:none;overflow:hidden;
+    background:rgba(231,199,101,0.16);}
+  #progress i{display:block;width:0;height:0;border-radius:0;}
+
+/* ==================================================================
+   THE FOUR THEMES · shared with the news engine. Same names, same block
+   positions, same faces, so the two formats read as one system.
+   TOD ADAPTATION: COLUMN uses a gold HEADER FIELD (262px) rather than the
+   news engine's gold half, because TOD's scenes carry built components
+   (browser mock, build cards, chart) that cannot invert to black-on-gold.
+   ================================================================== */
+  #stage.t-base  {--disp:'DispBase';}
+  #stage.t-base #progress{left:0;right:0;bottom:0;height:26px;}
+  #stage.t-base #progress i{height:100%;background:linear-gradient(90deg,#F4DF95,#C9A23F);}
+  #stage.t-base .tick.bl,#stage.t-base .tick.br{opacity:1;}
+
+  #stage.t-crest {--disp:'DispCrest';}
+  #stage.t-crest #progress{left:0;right:0;top:0;height:82px;background:rgba(231,199,101,0.17);}
+  #stage.t-crest #progress i{height:100%;background:linear-gradient(90deg,#EFD68A,#D3AC49);}
+  #stage.t-crest #frame{top:118px;}
+  #stage.t-crest .tick.tl,#stage.t-crest .tick.tr{opacity:1;top:106px;}
+  #stage.t-crest .scene{padding-top:240px;}
+
+  #stage.t-column{--disp:'DispColumn';}
+  #stage.t-column #goldfield{display:block;}
+  #stage.t-column #frame{top:262px;}
+  #stage.t-column #progress{left:0;top:0;bottom:0;width:14px;
+    background:linear-gradient(180deg,rgba(10,10,10,0.22) 0 220px,rgba(231,199,101,0.14) 220px);}
+  #stage.t-column #progress i{width:100%;background-repeat:no-repeat;background-size:14px 1920px;
+    background-image:linear-gradient(180deg,#0A0A0A 0 220px,#F4DF95 220px);}
+  #stage.t-column .tick.tl{opacity:1;border-color:rgba(10,10,10,0.72);z-index:2;}
+  #stage.t-column .tick.bl{opacity:1;}
+  #stage.t-column .scene{padding-top:300px;}
+
+  #stage.t-margin{--disp:'DispMargin';}
+  #stage.t-margin #progress{right:0;top:0;bottom:0;width:22px;}
+  #stage.t-margin #progress i{width:100%;background:linear-gradient(180deg,#F4DF95,#C9A23F);}
+  #stage.t-margin .tick.tr,#stage.t-margin .tick.br{opacity:1;}
+  .tick{position:absolute;width:44px;height:44px;opacity:0;}
   .tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
   .tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
   .tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
   .tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
-  #wm{position:absolute;bottom:74px;left:0;width:100%;text-align:center;
+  #wm{position:absolute;bottom:645px;left:0;width:100%;text-align:center;
     font-family:'Poppins';font-weight:500;letter-spacing:6px;font-size:24px;color:rgba(231,199,101,0.5);}
 
   .scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
-    padding:150px 110px 230px;text-align:center;visibility:hidden;}
+    padding:190px 110px 800px;text-align:center;visibility:hidden;}
   .el{opacity:0;will-change:transform,opacity;}
+  /* Scene A's kicker + prompt bar are LIVE on frame 0 — never faded in. Audio cues
+     are untouched (whoosh 0.05 / pop 0.20 / typing 0.40), only entrance opacity. */
+  /* Day 27: the HEADLINE joins the live set. Day 24 made frame 0 non-black, but the
+     payoff still animated in at 3.0s, so every TOD opened on an empty prompt bar and
+     spent its most valuable second saying nothing. Frame one is now loud AND carries
+     the payoff; the typing and card-build run underneath it as proof, not as tease. */
+  #A .kicker,#A .promptbar[data-live],#A .h1{opacity:1 !important;transform:none !important;}
 
   .kicker{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:7px;color:var(--gold);text-transform:uppercase;}
   .kicker .dot{color:rgba(231,199,101,0.5);margin:0 10px;}
-  .h1{font-family:'Lora';font-weight:600;font-size:82px;line-height:1.1;color:var(--white);letter-spacing:-0.5px;}
+  .h1{font-family:var(--disp),'Lora';font-weight:600;font-size:82px;line-height:1.1;color:var(--white);letter-spacing:-0.5px;}
   .h1.sm{font-size:70px;}
   .gold{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
     -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 14px rgba(231,199,101,0.16));}
@@ -64,7 +117,7 @@
   .cardline{position:absolute;right:34px;height:16px;border-radius:8px;background:rgba(244,240,231,0.16);}
 
   #B{gap:30px;}
-  .odometer{font-family:'Lora';font-weight:700;font-size:172px;line-height:1;letter-spacing:-3px;}
+  .odometer{font-family:var(--disp),'Lora';font-weight:700;font-size:172px;line-height:1;letter-spacing:-3px;}
   .stamp{font-family:'Poppins';font-weight:700;font-size:56px;letter-spacing:4px;color:var(--gold);
     border:3px solid var(--gold);border-radius:14px;padding:12px 34px;transform:rotate(-7deg);text-transform:uppercase;
     box-shadow:0 0 40px rgba(231,199,101,0.15);}
@@ -89,7 +142,7 @@
   .chk{position:absolute;right:158px;bottom:338px;}
 
   #E{gap:0;}
-  .dots{display:flex;gap:18px;margin-bottom:60px;}
+  .dots{display:flex;gap:18px;margin-top:12px;margin-bottom:60px;}
   .pdot{width:20px;height:20px;border-radius:50%;border:2px solid rgba(231,199,101,0.5);}
   .steps{display:flex;flex-direction:column;gap:44px;width:860px;}
   .step{display:flex;align-items:center;gap:30px;text-align:left;}
@@ -106,18 +159,32 @@
 
   #G{gap:22px;}
   .mono{width:150px;height:150px;position:relative;display:flex;align-items:center;justify-content:center;
-    font-family:'Lora';font-weight:600;font-size:74px;color:var(--gold);}
+    font-family:var(--disp),'Lora';font-weight:600;font-size:74px;color:var(--gold);}
   .mono svg{position:absolute;inset:0;}
-  .handle{font-family:'Lora';font-weight:600;font-size:80px;}
+  .handle{font-family:var(--disp),'Lora';font-weight:600;font-size:80px;}
   .saverow{display:flex;align-items:center;gap:20px;}
   .loopcur{font-family:'Poppins';font-weight:500;font-size:30px;letter-spacing:3px;color:rgba(231,199,101,0.6);}
+
+  /* ===== TYPED SUBTITLE — the mandatory last-step caption, animated by seek() =====
+     TOD is busy up top (prompt bar, self-building site), so the caption rides the lower
+     band by default; VERIFY per theme in the audit and move to the clear zone if it
+     collides. Gold on dark; the light-flip sends it to ink. See references/subtitles.md. */
+  #subline{position:absolute;left:0;right:0;bottom:708px;text-align:center;padding:0 150px;
+    font-family:'Poppins';font-weight:500;font-size:30px;letter-spacing:0.3px;line-height:1.4;
+    opacity:0;z-index:6;pointer-events:none;}
+  #subtxt{color:var(--gold);}
+  #subcar{display:inline-block;width:3px;height:25px;vertical-align:-3px;margin-left:5px;
+    background:var(--gold);border-radius:2px;}
 </style>
 </head>
 <body>
 <div id="stage">
+  <div id="goldfield"></div>
   <div id="frame"></div>
   <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
   <div id="scenes"></div>
+  <div id="progress"><i></i></div>
+  <div id="subline"><span id="subtxt"></span><span id="subcar"></span></div>
   <div id="wm"></div>
 </div>
 
@@ -150,6 +217,11 @@ function icon(name,size,cls){return '<svg class="ic '+(cls||'')+'" width="'+size
    everywhere (e.g. '@itsac.ai'). Keep it in sync with cover.template.html. ===== */
 const HANDLE='@itsac.ai';
 
+/* ===== THEME — structural, shared with the news engine.
+   'base' (bar bottom) · 'crest' (band top) · 'column' (gold header, bar left)
+   · 'margin' (bar right) ===== */
+const THEME='base';
+
 /* =========================================================================
    ============================  CONTENT  ==================================
    The ONLY block to edit for a new Tool of the Day. Keep copy tight
@@ -161,7 +233,7 @@ const CONTENT={
   hook:{ kicker:'Tool of the Day', typed:'a booking page for my salon',
          line1:'One sentence in.', line2:'A real website out.' },
   // B — the oversized number + news stamp
-  number:{ kicker:'And it’s everywhere', value:6000000, suffix:'+',
+  number:{ kicker:'And it’s everywhere', value:6000000, prefix:'', suffix:'+',
            label:'sites built with <b style="color:var(--white);font-weight:600">Canva Code 2.0</b>',
            stamp:'Now Free', stampSub:'even free accounts' },
   // C — what you can build (4 icon cards: {icon, label})
@@ -191,9 +263,19 @@ const CONTENT={
 
 /* ===== SCENE TIMINGS (fixed — audio cues in synth_audio.py match these) ===== */
 const SCENES=[
-  {id:'A',start:0.0,dur:5.0},{id:'B',start:4.85,dur:4.15},{id:'C',start:8.85,dur:3.95},
-  {id:'D',start:12.65,dur:4.85},{id:'E',start:17.35,dur:6.65},{id:'F',start:23.85,dur:3.45},
-  {id:'G',start:27.15,dur:4.05}
+  /* RETIMED 2026-08-11 (Day 27) to pay down the motion debt logged on Day 24.
+     Old map: A0(5.0) B4.85(4.15) C8.85(3.95) D12.65(4.85) E17.35(6.65) F23.85(3.45)
+     G27.15(4.05) = 31.6s. Every scene finished animating 1.4-3.2s before it ended;
+     that dead tail was ~15s of the runtime and it is where gate 4 was failing.
+     Each duration is now (last beat + a short tail). Scene A is cut to 3.40 so the
+     A->B transition lands INSIDE gate 3's 2.6-3.6s scroll-decision window - with the
+     headline live on frame 0, A has said everything by 2.75. Gate 3 went FAIL -> PASS.
+     tod_audio.py is remapped to match. The deltas are PER SCENE, not one constant:
+       A 0.00 · B -1.60 · C -2.30 · D -2.95 · E -4.60 · F -6.75 · G -7.40
+     Change one and you must change the other, or the sound desyncs. */
+  {id:'A',start:0.0,dur:3.40},{id:'B',start:3.25,dur:3.45},{id:'C',start:6.55,dur:3.30},
+  {id:'D',start:9.70,dur:3.20},{id:'E',start:12.75,dur:4.50},{id:'F',start:17.10,dur:2.90},
+  {id:'G',start:19.75,dur:3.30}
 ];
 
 /* ===== BUILD SCENE DOM FROM CONTENT ===== */
@@ -202,14 +284,14 @@ const root=document.getElementById('scenes');
 const C=CONTENT;
 root.innerHTML=`
 <div class="scene" id="A">
-  ${el('kicker',C.hook.kicker,'0,0.5,fade')}
-  <div class="promptbar el" data-a="0.15,0.5,pop"><span class="chev">&rsaquo;</span><span class="ptext"></span><span class="pcur"></span></div>
-  <div class="card el" data-a="1.85,0.4,pop">
-    <div class="cardbar" data-c="1.95"><i></i><i></i><i></i></div>
-    <div class="cardhero" data-c="2.15"></div>
-    <div class="cardline" data-c="2.4" style="top:230px;width:300px;"></div>
-    <div class="cardline" data-c="2.55" style="top:262px;width:220px;"></div>
-    <div class="cardbtn" data-c="2.75"></div>
+  ${el('kicker',C.hook.kicker)}
+  <div class="promptbar el" data-live="1"><span class="chev">&rsaquo;</span><span class="ptext"></span><span class="pcur"></span></div>
+  <div class="card el" data-a="1.25,0.4,pop">
+    <div class="cardbar" data-c="1.35"><i></i><i></i><i></i></div>
+    <div class="cardhero" data-c="1.55"></div>
+    <div class="cardline" data-c="1.80" style="top:230px;width:300px;"></div>
+    <div class="cardline" data-c="1.95" style="top:262px;width:220px;"></div>
+    <div class="cardbtn" data-c="2.15"></div>
   </div>
   <div style="height:6px"></div>
   ${el('h1 sm',C.hook.line1,'3.0,0.6,up')}
@@ -221,17 +303,17 @@ root.innerHTML=`
   <div class="odometer gold" id="odo">0</div>
   ${el('sub',C.number.label,'1.85,0.5,rise')}
   <div style="height:14px"></div>
-  ${el('stamp',C.number.stamp,'2.6,0.45,stamp')}
+  ${el('stamp',C.number.stamp,'2.15,0.45,stamp')}
   ${el('sub',C.number.stampSub,'2.95,0.5,rise').replace('class="sub el"','class="sub el" style="font-size:32px"')}
 </div>
 <div class="scene" id="C">
   ${el('kicker',C.build.kicker,'0,0.5,fade')}
   <div style="height:10px"></div>
   <div class="grid">
-    ${C.build.cards.map((c,i)=>`<div class="gcard el" data-a="${0.35+i*0.35},0.5,pop">${icon(c.icon,86)}<div class="lab">${c.label}</div></div>`).join('')}
+    ${C.build.cards.map((c,i)=>`<div class="gcard el" data-a="${0.35+i*0.55},0.5,pop">${icon(c.icon,86)}<div class="lab">${c.label}</div></div>`).join('')}
   </div>
   <div style="height:20px"></div>
-  ${el('sub',C.build.footer,'1.7,0.5,rise').replace('class="sub el"','class="sub el" style="color:var(--white);font-weight:500"')}
+  ${el('sub',C.build.footer,'2.35,0.5,rise').replace('class="sub el"','class="sub el" style="color:var(--white);font-weight:500"')}
 </div>
 <div class="scene" id="D">
   ${el('kicker',C.chart.kicker,'0,0.5,fade')}
@@ -242,7 +324,7 @@ root.innerHTML=`
     <div class="bar new" id="newbar"></div>
     <div class="pv old" id="oldval">$0</div>
     <div class="pv new" id="newval" style="opacity:0">${C.chart.newText}</div>
-    <svg class="ic chk el" id="chk" width="74" height="74" viewBox="0 0 100 100" data-a="1.45,0.5,pop">${ICONS.check}</svg>
+    <svg class="ic chk el" id="chk" width="74" height="74" viewBox="0 0 100 100" data-a="1.95,0.5,pop">${ICONS.check}</svg>
     ${el('cl old',C.chart.oldLabel,'1.5,0.5,rise')}
     ${el('cs old',C.chart.oldSub,'1.6,0.5,rise')}
     ${el('cl new',C.chart.newLabel,'1.5,0.5,rise')}
@@ -256,7 +338,7 @@ root.innerHTML=`
   ${el('kicker',C.steps.kicker,'0,0.5,fade')}
   <div class="dots"><div class="pdot" id="d1"></div><div class="pdot" id="d2"></div><div class="pdot" id="d3"></div></div>
   <div class="steps">
-    ${C.steps.items.map((s,i)=>`<div class="step el" data-a="${0.4+i*1.7},0.5,left"><div class="icb">${icon(s.icon,52)}</div><div class="stx">${s.html}</div></div>`).join('')}
+    ${C.steps.items.map((s,i)=>`<div class="step el" data-a="${0.4+i*1.10},0.5,left"><div class="icb">${icon(s.icon,52)}</div><div class="stx">${s.html}</div></div>`).join('')}
   </div>
 </div>
 <div class="scene" id="F">
@@ -281,7 +363,10 @@ root.innerHTML=`
 `;
 
 /* ===== ENGINE ===== */
+document.getElementById('stage').className='t-'+THEME;
 document.getElementById('wm').textContent=HANDLE.toUpperCase();
+const __prog=document.querySelector('#progress i');
+const __VBAR=(THEME==='column'||THEME==='margin');
 function clamp(p){return Math.min(1,Math.max(0,p));}
 function eOut(p){p=clamp(p);return 1-Math.pow(1-p,3);}
 function eBack(p){p=clamp(p);const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2);}
@@ -307,7 +392,7 @@ const oldbar=document.getElementById('oldbar'),newbar=document.getElementById('n
 const oldval=document.getElementById('oldval'),newval=document.getElementById('newval');
 const dots=[document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3')];
 const slash=document.getElementById('slash'),pdfic=document.getElementById('pdfic'),loopc=document.getElementById('loopc');
-const TYPETXT=C.hook.typed, NUM=C.number.value, NUMSUF=C.number.suffix||'', OLDV=C.chart.oldValue;
+const TYPETXT=C.hook.typed, NUM=C.number.value, NUMSUF=C.number.suffix||'', NUMPRE=C.number.prefix||'', OLDV=C.chart.oldValue;
 
 function sceneAnim(s,lt){
   s.anims.forEach(n=>applyA(n,lt));
@@ -318,7 +403,7 @@ function sceneAnim(s,lt){
     cardParts.forEach(c=>popC(c,lt,parseFloat(c.dataset.c)));
   } else if(s.id==='B'){
     const p=eExpo((lt-0.3)/1.35),v=Math.min(NUM,Math.round(p*NUM));
-    odo.textContent=v.toLocaleString('en-US')+(p>=1?NUMSUF:'');
+    odo.textContent=NUMPRE+v.toLocaleString('en-US')+(p>=1?NUMSUF:'');
     odo.style.opacity=clamp((lt-0.3)/0.3);
     odo.style.transform='scale('+lerp(0.9,1,eOut((lt-0.3)/0.5)).toFixed(3)+')';
   } else if(s.id==='D'){
@@ -341,13 +426,55 @@ function sceneAnim(s,lt){
     if(loopc&&lt>1.8)loopc.style.opacity=(Math.floor(lt*2.2)%2===0)?0.8:0.25;
   }
 }
+/* ===== SUBTITLES — THE MANDATORY LAST STEP. One glanceable caption per scene (A–G),
+   matched to the VO. Short fragments only; no em-dashes; shorten hard so each reads in the
+   time it holds. Leave "" to skip a scene. Themed gold (dark) / ink (light-flip). Position
+   + clearance are checked by qa_layout.sh and the eyeball pass. See references/subtitles.md
+   and references/tod-scenes.md for what each scene shows. */
+const SUBS=[
+  "",  // A
+  "",  // B
+  "",  // C
+  "",  // D
+  "",  // E
+  "",  // F
+  ""   // G
+];
+const _subL=document.getElementById('subline'),_subT=document.getElementById('subtxt'),_subC=document.getElementById('subcar');
+function subTick(t){
+  if(!_subL) return;
+  let i=-1; for(let k=0;k<SCENES.length;k++){ if(t>=SCENES[k].start-0.0001) i=k; }
+  if(i<0){ _subL.style.opacity=0; return; }
+  const s=SCENES[i], lt=t-s.start, txt=SUBS[i]||'';
+  if(!txt){ _subL.style.opacity=0; return; }
+  const n=Math.floor(clamp((lt-0.3)/2.0)*txt.length);
+  _subT.textContent=txt.slice(0,Math.max(0,n));
+  const typing=n>0&&n<txt.length;
+  _subC.style.opacity=typing?1:((Math.floor(t*2.2)%2===0)?1:0.12);
+  const fin=clamp(lt/0.35),fout=clamp((s.dur-lt)/0.35);
+  _subL.style.opacity=clamp(Math.min(fin,fout));
+}
 window.__TOTAL=Math.max(...SCENES.map(s=>s.start+s.dur));
 window.seek=function(t){
+  subTick(t);
+  if(__prog){const pc=(clamp(t/window.__TOTAL)*100).toFixed(2)+'%';
+    if(__VBAR){__prog.style.height=pc;__prog.style.width='100%';}
+    else{__prog.style.width=pc;__prog.style.height='100%';}}
   SCENES.forEach(s=>{
     const st=t-s.start,IN=0.24,OUT=0.24;let vis=0;
-    if(st>=-0.0001&&st<=s.dur){if(st<IN)vis=st/IN;else if(st>s.dur-OUT)vis=(s.dur-st)/OUT;else vis=1;}
+    /* FRAME-ONE LAW: the first scene has NO fade-in. It is live at full strength on
+       frame 0 (hard cut in), because a fade from black spends the most valuable
+       half-second saying nothing. Every later scene keeps its 0.24s cross-fade. */
+    if(st>=-0.0001&&st<=s.dur){if(st<IN&&s.start>0.0001)vis=st/IN;else if(st>s.dur-OUT)vis=(s.dur-st)/OUT;else vis=1;}
     vis=clamp(vis);s.el.style.opacity=vis;s.el.style.visibility=vis>0.002?'visible':'hidden';
-    s.el.style.transform=vis>0.002?'scale('+lerp(1.03,1,clamp(st/0.35)).toFixed(3)+')':'none';
+    /* settle, then a slow continuous PUSH-IN (ported from the News engine's Day 30
+       fix on 2026-08-18, Day 35): TOD settled in 0.35s then sat truly static, which
+       was the whole of the gate-4 motion debt logged since Day 24. Result on Day 35:
+       8 static stretches -> 5, worst 2.10s -> 1.60s. The remainder is small-element
+       animation below freezedetect's floor - the documented engine ceiling. */
+    const settle=lerp(1.03,1,clamp(st/0.35));
+    const push=1+0.03*clamp((st-0.35)/Math.max(0.35,s.dur-0.35));
+    s.el.style.transform=vis>0.002?'scale('+(settle*push).toFixed(4)+')':'none';
     if(vis>0.002)sceneAnim(s,st);
   });
 };
