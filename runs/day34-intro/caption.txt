@@ -73,9 +73,11 @@ WORDING GATES (load-bearing — also apply to comment replies)
 
 POSTING NOTE
 --------------------------------------------------------------------
-· SHIP THE TRAILER CUT (AC_Intro_Trailer_stickfigure_subs_silent.mp4):
-  silent + subtitled, 18.5s — add a trending track in the IG app on top
-  (AC's call, 2026-08-18). The SFX-bed and fully-silent cuts are backups.
+· SHIP: AC_Intro_Trailer_stickfigure_MUSIC.mp4 (18.5s, BIA "WE ON GO"
+  muxed with fade-out — AC's pick, 2026-08-18). Backups: _silent (add music
+  in-app instead) and the SFX-bed cut. Subtitles dropped on this engine by
+  design: the giant words ARE the captions. VO (optional, over the silent
+  cut): AC_Day34_Trailer_VO.pdf — 4s deliberate silence over the b-roll.
 · Pin this reel to the profile top once posted — it's the introduction.
 · Post at the audience peak per IG Insights; reply to early comments in
   the first hour (every "PLAIN" gets the DM + a one-line human reply).

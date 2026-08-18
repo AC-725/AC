@@ -1,0 +1,22 @@
+{
+  "day": 34,
+  "title": "The introduction trailer · figure-as-Simon cut",
+  "cut": "18.5s · trailer engine · 14 shots",
+  "file": "AC_Intro_Trailer_stickfigure_silent.mp4",
+  "meta": "31 words · 47 syllables · ~3.2 syl/sec spoken (4s deliberate silence)",
+  "scenes": [
+    {"t": "0.0s", "id": "A · address", "line": "To every AI guru.", "cue": "Calm, direct. You're not talking to the viewer yet. They're eavesdropping."},
+    {"t": "2.0s", "id": "B · montage", "line": "Most AI advice is an ad.", "cue": "One word lands per cut on screen. Say it flat and let the cuts do the drama."},
+    {"t": "5.0s", "id": "C · receipts", "line": "So we checked. Fourteen free tools. Six were really trials.", "cue": "The receipts. Hit 'six'."},
+    {"t": "8.6s", "id": "· b-roll", "line": "(SILENCE — 4 seconds. The music carries the pose shots.)", "cue": "Do not fill this. The quiet IS the confidence."},
+    {"t": "12.6s", "id": "D · the law", "line": "Our rule is simple. No source, no post.", "cue": "Slow down. This is the page's law."},
+    {"t": "15.4s", "id": "E · sign-off", "line": "AI in plain English. Comment PLAIN.", "cue": "Slowest line in the reel. A door opening, not a pitch."}
+  ],
+  "clean_read": "To every AI guru. Most AI advice is an ad. So we checked. Fourteen free tools. Six were really trials. ... Our rule is simple. No source, no post. AI in plain English. Comment PLAIN.",
+  "notes": [
+    "Record over the fully-silent cut. If the BIA track plays under the VO, duck it hard during the spoken windows.",
+    "The b-roll silence (8.6-12.6s) mirrors the source reel's music-only stretch. Leave it empty.",
+    "PLAIN is spoken as the word, not spelled."
+  ],
+  "gate": "The 14/6 is our own check (Day 28) and the tone is a warning delivered calmly. Never speed up the open."
+}

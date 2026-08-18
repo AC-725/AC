@@ -61,6 +61,7 @@ Read only what the task needs — loading all of it wastes context and blurs foc
 | AC asks for | Lane | Load |
 | --- | --- | --- |
 | A reel / video / TOD / AI News / "day N" | **A — Studio** | `hooks.md` + `algorithm-2026.md`, then the engine's slot guide |
+| A trailer / montage / "like the Squibb video" / figure-as-creator cut | **A — Studio** | `trailer-scenes.md` (engine: `assets/trailer.template.html`) |
 | A post, caption, or "what should I post" | **B — Protocol** | `content.md` |
 | Bio, profile, link-in-bio, Highlights, graphic check | **B — Protocol** | `foundation.md` |
 | Growth, reach, weekly plan, engagement routine | **B — Protocol** | `growth.md` |
