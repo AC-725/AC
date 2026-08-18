@@ -66,3 +66,25 @@ warning is only credible on this page because the check is shown, not claimed.
 Both receipt numbers are self-sourced from logged, verified runs (Day 28 free-tier
 check; Day 25 killed-stat hunt) — recycling them here is deliberate: an introduction's
 proof *should* be the page's own track record.
+
+## v3 — the shipped cut (AC's direction, 2026-08-18)
+
+AC rejected the house News-engine look for this one: the deliverable is a
+**shot-for-shot mirror of the recording** with the canonical AC stick figure playing
+Simon (per his reference: clean head, no hair strands). `trailer.html`, 18.5s, 14 shots:
+
+- S01 address shot — figure talking, caps caption "THIS IS A MESSAGE TO EVERY AI GURU"
+  (his red-caption beat, in brand gold)
+- S02–S06 one-word montage: MOST / AI / ADVICE / IS AN / AD. — Gloock caps above the
+  posed figure, gold-panel lighting flips standing in for his white-backdrop shots
+- S07–S09 receipts: WE CHECKED. / 14 "FREE" TOOLS (cash-fan shot — gold cards fanned at
+  the hand, his money shot) / 6 WERE TRIALS.
+- S10–S11 wordless b-roll poses with a lighting flip (his moody stance beats)
+- S12–S13 the law: NO SOURCE, / NO POST. (inverted)
+- S14 wide wave-out: handle + COMMENT PLAIN · STARTER KIT + loop line
+- The tone-flip gag (second figure, "he thinks he's famous / it's a stick figure page")
+  was built and CUT at AC's checkpoint call.
+
+Audio: AC lays a trending track in the IG app — primary deliverable is the
+**silent subtitled cut**; SFX-bed and fully-silent cuts ship as backups.
+Audio map (bed variants): A=0 B=2.0 C=5.0 D=12.6 E=15.4 · dur 18.5.
