@@ -1,0 +1,71 @@
+<!doctype html><html><head><meta charset='utf-8'><style>
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+:root{--gold:#E7C765;--gold-deep:#C9A23F;--gold-light:#F4DF95;--white:#F4F0E7;--stone:#B9B1A1;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+#stage{position:relative;width:1080px;height:1920px;background:#0A0A0A;overflow:hidden;}
+#frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.38);z-index:3;}
+.tick{position:absolute;width:44px;height:44px;z-index:3;}
+.tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.fst{fill:none;stroke:var(--gold);stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round;}
+.fth{fill:none;stroke:var(--gold);stroke-width:4.6;stroke-linecap:round;}
+.fsun{fill:var(--gold);stroke:none;}.fcar{fill:var(--gold);stroke:none;}
+.inv .fst,.inv .fth{stroke:#0A0A0A;}.inv .fsun,.inv .fcar{fill:#0A0A0A;}
+.col{position:absolute;left:0;right:0;top:285px;bottom:285px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:34px;text-align:center;padding:0 96px;z-index:2;}
+.kick{font-family:'Poppins';font-weight:600;font-size:30px;letter-spacing:9px;color:var(--gold);text-transform:uppercase;}
+.h{font-family:'DispBase','Lora';font-size:120px;line-height:1.05;color:var(--white);}
+.h .g{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.h.ink{color:#0A0A0A;}
+.sig{font-family:'DispBase','Lora';font-size:64px;color:var(--white);}
+.tag{font-family:'Poppins';font-weight:500;font-size:25px;letter-spacing:5px;color:rgba(231,199,101,0.62);text-transform:uppercase;}
+.tag.ink{color:rgba(10,10,10,0.65);}
+.goldpanel{position:absolute;left:0;right:0;top:285px;bottom:285px;background:linear-gradient(135deg,#F4DF95 0%,#E7C765 52%,#C9A23F 100%);z-index:1;}
+</style></head><body><div id='stage'><div id='frame'></div><div class='tick tl'></div><div class='tick tr'></div><div class='tick bl'></div><div class='tick br'></div>
+<div class="goldpanel"></div>
+<div class="col inv">
+  <div class="kick" style="color:rgba(10,10,10,0.72)">Most AI advice is an</div>
+  <div class="h ink" style="font-size:330px;letter-spacing:6px">AD.</div>
+  <div data-fig data-w="420" data-pose="crossed"></div>
+  <div class="sig" style="color:#0A0A0A">@itsac.ai</div>
+  <div class="tag ink">AI in plain English &middot; no hype</div>
+</div></div><script>function acArm(uid,side){
+  return '<g id="'+uid+'-arm'+side+'" transform="translate(105,128) rotate(0)">'+
+    '<path class="fst" d="M0 0 L46 0"/>'+
+    '<g class="fore" transform="translate(46,0) rotate(0)"><path class="fst" d="M0 0 L38 0"/></g></g>';
+}
+function acFig(uid,opts){
+  opts=opts||{};
+  const hair='';   // AC's reference (2026-08-18): clean head, no hair strands
+  const eyes=opts.plain
+    ? '<circle class="fsun" cx="87" cy="52" r="6"/><circle class="fsun" cx="123" cy="52" r="6"/>'
+    : '<rect x="74" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+      '<rect x="110" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+      '<path class="fth" d="M100 51 h10"/><path class="fth" d="M74 50 L61 46"/><path class="fth" d="M136 50 L149 46"/>'+
+      '<path class="fth" d="M113 38 Q123 33 133 37"/>';
+  const head='<g id="'+uid+'-head" transform="rotate(-5 105 104)">'+
+    '<circle cx="105" cy="58" r="46" class="fst"/>'+hair+eyes+
+    '<rect id="'+uid+'-mouth" x="100" y="80" width="10" height="5" rx="2.5" class="fcar"/></g>';
+  const torso='<path class="fth" d="M89 108 L96 122 L105 118"/><path class="fth" d="M121 108 L114 122 L105 118"/>'+
+    '<circle cx="105" cy="127" r="2.5" class="fsun"/><path class="fst" d="M105 104 v92"/>';
+  const legs='<path class="fst" d="M105 196 L86 258"/><path class="fst" d="M105 196 L132 256"/>';
+  /* money fan: five gold cards fanned by the right hand (the cash shot) */
+  const fan=opts.fan?'<g id="'+uid+'-fan" transform="translate(28,150)">'+
+    [-26,-13,0,13,26].map(a=>'<rect x="-14" y="-44" width="28" height="44" rx="4" class="fsun" transform="rotate('+a+')" style="opacity:0.9"/>').join('')+'</g>':'';
+  return '<svg width="'+(opts.w||210)+'" viewBox="0 0 210 290">'+
+    '<g id="'+uid+'-body">'+head+torso+acArm(uid,'L')+acArm(uid,'R')+legs+fan+'</g></svg>';
+}
+document.querySelectorAll('[data-fig]').forEach(function(n){
+  n.innerHTML=acFig(n.id||'f'+Math.floor(1),{w:parseInt(n.dataset.w||'420'),plain:false});
+  const set=(el,attr,val)=>{if(el)el.setAttribute(attr,val)};
+  // static pose per cover via data-pose
+  const P={akimbo:{lS:145,lE:-125,rS:40,rE:-125},point:{lS:132,lE:-108,rS:20,rE:-8},waveup:{lS:132,lE:-108,rS:-18,rE:-46},crossed:{lS:118,lE:-145,rS:62,rE:145}};
+  const p=P[n.dataset.pose||'akimbo'];
+  const id=n.querySelector('g[id$="-body"]').id.replace('-body','');
+  const aL=n.querySelector('#'+CSS.escape(id+'-armL')),aR=n.querySelector('#'+CSS.escape(id+'-armR'));
+  if(aL){set(aL,'transform','translate(105,128) rotate('+p.lS+')');set(aL.querySelector('.fore'),'transform','translate(46,0) rotate('+p.lE+')');}
+  if(aR){set(aR,'transform','translate(105,128) rotate('+p.rS+')');set(aR.querySelector('.fore'),'transform','translate(46,0) rotate('+p.rE+')');}
+});
+</script></body></html>
