@@ -2,7 +2,27 @@ AC — Day 34 · page-introduction reel · caption + tags + posting kit
 Structure: @realsimonsquibb comment-to-unlock skeleton (see structure-analysis.md)
 ====================================================================
 
-CAPTION (primary — AC formula)
+CAPTION (SHIPPED — short + directive, AC's call 2026-08-18)
+--------------------------------------------------------------------
+You have been warned. 🧾
+
+Most AI advice is an ad. This page checks the receipts.
+One real AI story a day, in plain English. No hype, no jargon.
+
+Follow @itsac.ai.
+Comment "PLAIN" — I'll DM you the starter kit.
+
+What's the last AI promise that turned out to be an ad? 👇
+
+#ArtificialIntelligence #AItools #TechNews #SmallBusinessOwner #AIinPlainEnglish
+
+(Opens on the cover's own line so tile + caption land as one hit; three
+directives: follow, comment, answer. Ultra-short A/B variant below the
+long-form. Long-form kept as reference — its SEO first line can be added
+back as line one if discovery underperforms.)
+
+
+CAPTION (reference — long AC formula)
 --------------------------------------------------------------------
 AI in plain English for business owners: how to tell AI advice from AI ads.
 
