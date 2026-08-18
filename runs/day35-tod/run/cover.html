@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- AC Reel COVER. 1080x1920. Edit only the text between the EDIT markers below.
+     Key content sits inside the profile-grid safe zone (centre 1080x1350).
+     NOTE: do not put a literal edit-marker comment in THIS header comment. Its
+     closing bracket ends the comment early and the rest leaks onto the page. -->
+<style>
+  :root{--gold:#E7C765;--gold-deep:#C9A23F;--gold-light:#F4DF95;--white:#F4F0E7;--stone:#B9B1A1;}
+  *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;
+    background:#0A0A0A;}  /* FLAT GROUND — matches both engines */
+  #frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.38);}
+  .tick{position:absolute;width:44px;height:44px;}
+  .tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+  .tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+  .tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+  .tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+  .kickrow{position:absolute;top:360px;left:96px;right:96px;display:flex;align-items:center;justify-content:center;}
+  .pillar{font-family:'Poppins';font-weight:600;font-size:30px;letter-spacing:7px;color:var(--gold);text-transform:uppercase;}
+  .newpill{font-family:'Poppins';font-weight:600;font-size:24px;letter-spacing:5px;color:var(--gold);
+    text-transform:uppercase;border:1.5px solid rgba(231,199,101,0.6);border-radius:100px;padding:11px 26px 9px;}
+  .idea{position:absolute;top:640px;left:96px;right:96px;text-align:center;}
+  .idea .l{font-family:'Lora';font-weight:600;font-size:112px;line-height:1.08;letter-spacing:-1px;color:var(--white);}
+  .idea .l.gold{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 18px rgba(231,199,101,0.16));margin-top:6px;}
+  .divider{position:absolute;top:1010px;left:50%;transform:translateX(-50%);width:70px;height:2px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+  .support{position:absolute;top:1046px;left:150px;right:150px;text-align:center;
+    font-family:'Poppins';font-weight:400;font-size:40px;line-height:1.45;color:var(--stone);}
+  .support b{color:var(--white);font-weight:600;}
+  .sig{position:absolute;top:1372px;left:0;width:100%;display:flex;flex-direction:column;align-items:center;}
+  .mono{width:120px;height:120px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
+    font-family:'Lora';font-weight:600;font-size:60px;color:var(--gold);letter-spacing:1px;
+    }
+  .handle{font-family:'Lora';font-weight:600;font-size:56px;color:var(--white);margin-top:26px;}
+  .tag{font-family:'Poppins';font-weight:500;font-size:25px;letter-spacing:5px;color:rgba(231,199,101,0.62);text-transform:uppercase;margin-top:18px;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <!-- ONE label only. No day number, no date, no "Day N" pill: the page is not a
+       numbered series (AC, 2026-07-30). The .newpill style is kept for a genuine
+       one-off flag like NEW or FREE, and stays unused by default. -->
+  <div class="kickrow">
+    <div class="pillar">Tool of the Day</div>
+  </div>
+  <div class="idea">
+    <div class="l"><!--EDIT-->You don&rsquo;t need</div>
+    <div class="l gold"><!--EDIT-->an editor.</div>
+  </div>
+  <div class="divider"></div>
+  <!--EDIT support line: name the tool + one-line promise --><div class="support"><b>OpusClip</b> cuts long video into ranked, captioned clips.<br>60 free minutes a month. Watermark and all, we checked.</div>
+  <div class="sig">
+    <div class="mono">AC</div>
+    <div class="handle">@itsac.ai</div>
+    <div class="tag">Daily AI trends · no hype, no jargon</div>
+  </div>
+</div>
+</body>
+</html>
