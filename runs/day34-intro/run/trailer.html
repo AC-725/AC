@@ -141,7 +141,7 @@ const SCENES=[
   {id:'S11',start:10.6,dur:2.0,inv:true,fig:{w:540,pA:'akimbo',pB:'crossed',hA:6,hB:-6}},
   {id:'S12',start:12.6,dur:1.4,fig:{w:500,pA:'point',pB:'point',hA:-2,hB:2,talk:1},word:'<div class="bw" style="font-size:132px">NO SOURCE,</div>'},
   {id:'S13',start:14.0,dur:1.4,inv:true,fig:{w:500,pA:'akimbo',pB:'akimbo',hA:2,hB:6,talk:1},word:'<div class="bw ink" style="font-size:150px">NO POST.</div>'},
-  {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:280,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
+  {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:340,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
    cap:'<div class="handle" style="margin-top:36px">'+HANDLE+'</div>'+
        '<div class="tagl" style="margin-top:26px">Comment PLAIN &middot; starter kit</div>'+
        '<div class="loopcur" id="loopc" style="margin-top:24px">this is a message&hellip; _</div>'}
@@ -219,7 +219,7 @@ function poseTick(s,lt){
   const mix=(a,b)=>lerp(a,b,p);
   const gt=s.start+lt;
   const sway=3.2*Math.sin(gt*2.1)+1.4*Math.sin(gt*3.7);
-  const wave=(f.pB==='waveup'||f.pA==='waveup')?14*Math.sin(gt*4.4):0;
+  const wave=(f.pB==='waveup'||f.pA==='waveup')?20*Math.sin(gt*4.4):0;
   s.armL.setAttribute('transform','translate(105,128) rotate('+mix(A.lS,B.lS).toFixed(2)+')');
   s.armL.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+(mix(A.lE,B.lE)-0.6*sway).toFixed(2)+')');
   s.armR.setAttribute('transform','translate(105,128) rotate('+mix(A.rS,B.rS).toFixed(2)+')');
@@ -244,7 +244,9 @@ window.seek=function(t){
     if(!on)return;
     /* hard-cut slam + continuous push-in (the gate-4 device) */
     const slam=lerp(i===0?1.05:1.18,1,eExpo(lt/0.14));
-    const push=1+0.03*clamp(lt/Math.max(0.35,s.dur));
+    /* the CTA shot holds 3.1s: a slow punch zoom (9%) keeps the whole frame
+       alive where the 3% breath was under gate 4's floor */
+    const push=1+(s.cta?0.09:0.03)*clamp(lt/Math.max(0.35,s.dur));
     s.el.style.opacity=1;
     s.el.style.transform='scale('+(slam*push).toFixed(4)+')';
     poseTick(s,lt);
