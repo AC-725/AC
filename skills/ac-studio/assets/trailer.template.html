@@ -35,9 +35,15 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
 .scene{position:absolute;left:0;right:0;top:240px;bottom:680px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:0 110px;text-align:center;visibility:hidden;
   will-change:transform,opacity;gap:34px;}
-/* the lighting flip: gold panel inside the safe area, figure ink turns black */
-.scene.inv::before{content:'';position:absolute;left:64px;right:64px;top:0;bottom:-40px;
-  background:linear-gradient(135deg,#F4DF95 0%,#E7C765 52%,#C9A23F 100%);z-index:0;}
+/* the lighting flip is FULL-BLEED: the whole frame goes gold (AC, 2026-08-18 —
+   the boxed panel read as an awkward square during cuts). #goldbg is a stage-level
+   underlay toggled by seek(); chrome inverts with it via #stage.goldmode. */
+#goldbg{position:absolute;inset:0;z-index:0;opacity:0;
+  background:linear-gradient(135deg,#F4DF95 0%,#E7C765 52%,#C9A23F 100%);}
+#stage.goldmode #frame{border-color:rgba(10,10,10,0.35);}
+#stage.goldmode .tick{border-color:#0A0A0A;}
+#stage.goldmode #progress{background:rgba(10,10,10,0.18);}
+#stage.goldmode #progress i{background:#0A0A0A;}
 .scene>*{position:relative;z-index:1;}
 /* figure ink */
 .fig svg{overflow:visible;display:block;}
@@ -72,6 +78,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
 </head>
 <body>
 <div id="stage">
+  <div id="goldbg"></div>
   <div id="frame"></div>
   <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
   <div id="progress"><i></i></div>
@@ -119,6 +126,8 @@ const POSES={
   point:{lS:132,lE:-108,rS: 20,rE: -8},
   crossed:{lS:118,lE:-145,rS: 62,rE:145},
   waveup:{lS:132,lE:-108,rS:-18,rE:-46},
+  think:{lS:145,lE:-125,rS:-30,rE:-120},   /* hand to chin, left arm akimbo */
+  think2:{lS:145,lE:-125,rS:-24,rE:-112},  /* the settle inside the think */
   palms:{lS:185,lE: 40,rS: -5,rE:-40},
   lean :{lS:150,lE:-100,rS: 55,rE: 30}
 };
@@ -132,17 +141,17 @@ const SCENES=[
   {id:'S01',start:0.0,dur:2.0,fig:{w:560,pA:'rest',pB:'akimbo',hA:-2,hB:6,talk:1},capFirst:true,
    cap:'<div class="addr">This is a message<br>to every AI guru</div>'},
   {id:'S02',start:2.0,dur:0.5,fig:{w:470,pA:'point',pB:'point',hA:8,hB:4},word:'<div class="bw" style="font-size:300px">MOST</div>'},
-  {id:'S03',start:2.5,dur:0.5,inv:true,fig:{w:420,pA:'crossed',pB:'crossed',hA:-6,hB:-2},word:'<div class="bw ink" style="font-size:380px">AI</div>'},
+  {id:'S03',start:2.5,dur:0.5,inv:true,fig:{w:420,pA:'akimbo',pB:'akimbo',hA:-6,hB:-2},word:'<div class="bw ink" style="font-size:380px">AI</div>'},
   {id:'S04',start:3.0,dur:0.5,fig:{w:470,pA:'waveup',pB:'waveup',hA:0,hB:5},word:'<div class="bw" style="font-size:230px">ADVICE</div>'},
   {id:'S05',start:3.5,dur:0.5,fig:{w:470,pA:'shrug',pB:'shrug',hA:-8,hB:-4},word:'<div class="bw" style="font-size:290px">IS AN</div>'},
   {id:'S06',start:4.0,dur:1.0,inv:true,fig:{w:420,pA:'akimbo',pB:'akimbo',hA:3,hB:8},word:'<div class="bw ink" style="font-size:380px">AD.</div>'},
   {id:'S07',start:5.0,dur:1.2,fig:{w:440,pA:'point',pB:'point',hA:10,hB:12,talk:1},word:'<div class="bw" style="font-size:170px">WE<br>CHECKED.</div>'},
   {id:'S08',start:6.2,dur:1.2,fig:{w:400,pA:'point',pB:'point',hA:0,hB:4,fan:1,talk:1},word:'<div class="kk">Our count</div><div class="bw" style="font-size:150px">14 &ldquo;FREE&rdquo;<br>TOOLS</div>'},
   {id:'S09',start:7.4,dur:1.2,fig:{w:440,pA:'shrug',pB:'palms',hA:-4,hB:2,talk:1},word:'<div class="bw g" style="font-size:160px">6 WERE<br>TRIALS.</div>'},
-  {id:'S10',start:8.6,dur:2.0,fig:{w:640,pA:'crossed',pB:'crossed',hA:-8,hB:8}},
-  {id:'S11',start:10.6,dur:2.0,inv:true,fig:{w:640,pA:'akimbo',pB:'crossed',hA:6,hB:-6}},
+  {id:'S10',start:8.6,dur:2.0,fig:{w:640,pA:'think',pB:'think2',hA:10,hB:4}},
+  {id:'S11',start:10.6,dur:2.0,inv:true,fig:{w:640,pA:'think2',pB:'think',hA:-8,hB:9}},
   {id:'S12',start:12.6,dur:1.4,fig:{w:420,pA:'point',pB:'point',hA:-2,hB:2,talk:1},word:'<div class="bw" style="font-size:190px">NO<br>SOURCE,</div>'},
-  {id:'S13',start:14.0,dur:1.4,inv:true,fig:{w:390,pA:'crossed',pB:'crossed',hA:2,hB:6,talk:1},word:'<div class="bw ink" style="font-size:210px">NO<br>POST.</div>'},
+  {id:'S13',start:14.0,dur:1.4,inv:true,fig:{w:390,pA:'akimbo',pB:'akimbo',hA:2,hB:6,talk:1},word:'<div class="bw ink" style="font-size:210px">NO<br>POST.</div>'},
   {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:340,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
    cap:'<div class="handle" style="margin-top:18px">'+HANDLE+'</div>'+
        '<div class="tagl" style="margin-top:22px">Comment PLAIN &middot; starter kit</div>'+
@@ -235,12 +244,14 @@ function poseTick(s,lt){
   else{m.setAttribute('x',100);m.setAttribute('y',80);m.setAttribute('width',10);m.setAttribute('height',5);m.setAttribute('rx',2.5);}
 }
 
-const _wm=document.getElementById('wm');
+const _wm=document.getElementById('wm'),_gbg=document.getElementById('goldbg'),_stage=document.getElementById('stage');
 window.seek=function(t){
   __prog.style.height=(clamp(t/window.__TOTAL)*100).toFixed(2)+'%';
   subTick(t);
-  /* watermark ink flips on the gold shots (brand law: on gold, accent inverts) */
+  /* full-bleed lighting flip: whole frame goes gold on inv shots, chrome inverts */
   let inv=false;for(const sc of SCENES){const st=t-sc.start;if(st>=-0.0001&&st<=sc.dur&&sc.inv)inv=true;}
+  _gbg.style.opacity=inv?1:0;
+  _stage.classList.toggle('goldmode',inv);
   _wm.style.color=inv?'rgba(10,10,10,0.62)':'rgba(231,199,101,0.5)';
   const LAST=SCENES.length-1;
   SCENES.forEach((s,i)=>{

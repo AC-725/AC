@@ -80,3 +80,12 @@ produce.sh still recognises it.
 18.5s · 14 shots · map above · words: MOST / AI / ADVICE / IS AN / AD. →
 WE CHECKED. / 14 "FREE" TOOLS / 6 WERE TRIALS. → b-roll ×2 → NO SOURCE, / NO POST.
 → wave-out. Music: AC-supplied track. Full run in `runs/day34-intro/` (repo).
+
+## v4 addendum (2026-08-18, AC's review)
+
+- **The gold flip is FULL-BLEED**, never a boxed panel — the box read as an awkward
+  square during cuts. A stage-level `#goldbg` underlay toggles via seek() and the
+  chrome (frame, ticks, progress rule, watermark) inverts with `#stage.goldmode`.
+- **The pause/b-roll shots use the `think` pose** (hand on chin, head-tilt drift),
+  not `crossed` — crossed read as praying hands at reel scale and is retired from
+  shots (it survives only on the WARNED. cover, where it reads as arms folded).
