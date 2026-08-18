@@ -31,7 +31,7 @@ html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
 #wm{position:absolute;bottom:645px;left:0;width:100%;text-align:center;z-index:6;
   font-family:'Poppins';font-weight:500;letter-spacing:6px;font-size:24px;color:rgba(231,199,101,0.5);}
 /* one scene = one hard-cut shot; composition lives in the app-safe zone */
-#S15{transform-origin:50% 96%;}  /* CTA punch zoom grows upward, away from the watermark */
+#S15{transform-origin:50% 96%;gap:22px;}  /* CTA punch zoom grows upward, away from the watermark */
 .scene{position:absolute;left:0;right:0;top:470px;bottom:680px;display:flex;flex-direction:column;
   align-items:center;justify-content:center;padding:0 110px;text-align:center;visibility:hidden;
   will-change:transform,opacity;gap:34px;}
@@ -142,10 +142,10 @@ const SCENES=[
   {id:'S11',start:10.6,dur:2.0,inv:true,fig:{w:540,pA:'akimbo',pB:'crossed',hA:6,hB:-6}},
   {id:'S12',start:12.6,dur:1.4,fig:{w:500,pA:'point',pB:'point',hA:-2,hB:2,talk:1},word:'<div class="bw" style="font-size:132px">NO SOURCE,</div>'},
   {id:'S13',start:14.0,dur:1.4,inv:true,fig:{w:500,pA:'akimbo',pB:'akimbo',hA:2,hB:6,talk:1},word:'<div class="bw ink" style="font-size:150px">NO POST.</div>'},
-  {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:340,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
-   cap:'<div class="handle" style="margin-top:36px">'+HANDLE+'</div>'+
+  {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:290,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
+   cap:'<div class="handle" style="margin-top:18px">'+HANDLE+'</div>'+
        '<div class="tagl" style="margin-top:26px">Comment PLAIN &middot; starter kit</div>'+
-       '<div class="loopcur" id="loopc" style="margin-top:24px">this is a message&hellip; _</div>'}
+       '<div class="loopcur" id="loopc" style="margin-top:14px">this is a message&hellip; _</div>'}
 ];
 
 /* the tone-flip gag: typed like the recording's yellow subs */
