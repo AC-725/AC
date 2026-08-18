@@ -212,13 +212,19 @@ function poseTick(s,lt){
   if(!s.armL)return;
   const f=s.fig||{w:420,pA:'rest',pB:'rest',hA:0,hB:0,talk:1};
   const A=POSES[f.pA||'rest'],B=POSES[f.pB||f.pA||'rest'];
-  const p=eOut(lt/Math.max(0.6,s.dur));           // slow drift A→B across the hold
+  /* LINEAR drift A→B (eOut plateaued and left long shots static — gate 4),
+     plus a continuous forearm micro-sway; waveup gets a real wave. All pure
+     functions of t, so seeks stay deterministic. */
+  const p=clamp(lt/Math.max(0.6,s.dur));
   const mix=(a,b)=>lerp(a,b,p);
+  const gt=s.start+lt;
+  const sway=3.2*Math.sin(gt*2.1)+1.4*Math.sin(gt*3.7);
+  const wave=(f.pB==='waveup'||f.pA==='waveup')?14*Math.sin(gt*4.4):0;
   s.armL.setAttribute('transform','translate(105,128) rotate('+mix(A.lS,B.lS).toFixed(2)+')');
-  s.armL.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+mix(A.lE,B.lE).toFixed(2)+')');
+  s.armL.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+(mix(A.lE,B.lE)-0.6*sway).toFixed(2)+')');
   s.armR.setAttribute('transform','translate(105,128) rotate('+mix(A.rS,B.rS).toFixed(2)+')');
-  s.armR.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+mix(A.rE,B.rE).toFixed(2)+')');
-  s.headEl.setAttribute('transform','rotate('+(lerp(f.hA||0,f.hB||0,p)-5).toFixed(2)+' 105 104)');
+  s.armR.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+(mix(A.rE,B.rE)+sway+wave).toFixed(2)+')');
+  s.headEl.setAttribute('transform','rotate('+(lerp(f.hA||0,f.hB||0,p)-5+1.6*Math.sin(gt*1.7)).toFixed(2)+' 105 104)');
   /* two-state mouth, aperiodic but deterministic — talks only in talk shots */
   const m=s.mouth;if(!m)return;
   const osc=Math.sin((s.start+lt)*27.3)+0.55*Math.sin((s.start+lt)*41.7)+0.3*Math.sin((s.start+lt)*17.1);
