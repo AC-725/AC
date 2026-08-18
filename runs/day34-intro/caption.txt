@@ -1,0 +1,82 @@
+AC — Day 34 · page-introduction reel · caption + tags + posting kit
+Structure: @realsimonsquibb comment-to-unlock skeleton (see structure-analysis.md)
+====================================================================
+
+CAPTION (primary — AC formula)
+--------------------------------------------------------------------
+AI in plain English for business owners: how to tell AI advice from AI ads.
+
+14 "free" AI tools. 6 were really paid trials.
+We checked their pricing pages, not their homepages.
+
+That's this page, in one move.
+
+Most AI advice online is selling you something.
+So here's the deal on @itsac.ai:
+
+→ One real AI story a day, explained like you're busy, not stupid.
+→ Every number checked against the primary source.
+→ The famous ones that can't be sourced? Killed before they reach you.
+→ Nothing sold to you mid-feed. Ever.
+
+The rule this page runs on: no source, no post.
+
+(Yes, the warning tone is dramatic. The receipts aren't.)
+
+What's the last AI promise that turned out to be an ad? 👇
+
+— Comment "PLAIN" and I'll DM you the starter kit: the 3 checks for any
+"free" AI tool, the first prompt worth running, and the one rule that
+makes AI pay.
+
+Follow @itsac.ai for daily AI in plain English. No hype, no jargon.
+
+#ArtificialIntelligence #AItools #TechNews #SmallBusinessOwner #AIinPlainEnglish
+
+
+CAPTION (B variant — Squibb-short, mirrors the source's 3-beat brevity)
+--------------------------------------------------------------------
+you've been sold to… 🧾
+Comment "PLAIN" for the starter kit.
+What's the last AI promise that turned out to be an ad? 👇
+
+#ArtificialIntelligence #AItools #TechNews #SmallBusinessOwner #AIinPlainEnglish
+
+(Run the primary as the pinned intro. The short variant is the trial-reel
+test: it converts harder but carries zero SEO, so it should never be the
+permanent caption on the pinned post.)
+
+
+A/B HOOKS (for trial reels)
+--------------------------------------------------------------------
+A (shipped): 14 "free" tools. / 6 were trials.
+   receipts open · stop A · send A- (Gift — the friend who forwards AI-hype reels)
+B: Most AI advice / is an ad.
+   thesis-first open, 6/14 demoted to the label · stop A- · send B+ (Mirror)
+
+
+WORDING GATES (load-bearing — also apply to comment replies)
+--------------------------------------------------------------------
+1. The 6-of-14 is AC's OWN check (Day 28 run, vendors' own pricing pages).
+   Never "a study found". Never name the unnamed vendor, incl. in replies.
+2. The 80% follow-up stat is UNSOURCED, not disproven. Say "nobody can
+   source it" / "no primary source survives". Never "it's false/fake".
+3. "Nothing sold to you mid-feed" is a feed promise, not a business claim.
+   Offers can live in Highlights and DMs; don't contradict this line there
+   by hard-selling inside the PLAIN DM either.
+4. No day number or date on any frame, cover, or caption first line.
+5. The DM must deliver everything the caption promises: 3 checks + first
+   prompt + one rule, in one message (dm_reply.txt).
+6. If asked "which 6 tools?" in comments: the full 14-tool list lives in
+   the Day 28 run; share the METHOD publicly, not the names.
+
+
+POSTING NOTE
+--------------------------------------------------------------------
+· Pin this reel to the profile top once posted — it's the introduction.
+· Post at the audience peak per IG Insights; reply to early comments in
+  the first hour (every "PLAIN" gets the DM + a one-line human reply).
+· If 1,000+ followers: trial-reel hook B first; if retention holds, ship A.
+· Cover mirrors the thesis ("Most AI advice is an ad.") so the grid tile
+  sells the claim while the reel opens on the receipt.
+· Comment replies follow the wording gates above.

@@ -1,0 +1,21 @@
+{
+  "day": 34,
+  "title": "The introduction · A warning about AI advice",
+  "cut": "11.7s · margin theme · News engine",
+  "file": "AC_News_Day34_intro-warning_silent.mp4",
+  "meta": "29 words · 40 syllables · ~3.5 syl/sec",
+  "scenes": [
+    {"t": "0.0s", "id": "A · hook", "line": "Fourteen free tools. Six were really trials.", "cue": "Loud, flat, receipts on the table. Hit 'six'."},
+    {"t": "2.6s", "id": "B · problem", "line": "Most AI advice is an ad.", "cue": "The thesis. Slow down half a step, let it accuse."},
+    {"t": "5.0s", "id": "C · proof", "line": "The internet's favorite stat? No source.", "cue": "Wry. The question mark does the work."},
+    {"t": "7.5s", "id": "D · rule", "line": "Here, no source means no post.", "cue": "The law. Calm, final. Hit 'no post'."},
+    {"t": "9.6s", "id": "E · gate", "line": "Comment PLAIN. I'll start you.", "cue": "Slowest line in the reel. A door opening, not a pitch."}
+  ],
+  "clean_read": "Fourteen free tools. Six were really trials. Most AI advice is an ad. The internet's favorite stat? No source. Here, no source means no post. Comment PLAIN. I'll start you.",
+  "notes": [
+    "Record over the _silent build so the voice doesn't fight the baked SFX; a ducked mix is the alternative.",
+    "The whole read is a warning delivered calmly. Never speed up the hook.",
+    "PLAIN is spoken as the word, not spelled."
+  ],
+  "gate": "Say 'nobody can source it' energy in C without claiming the stat is false. The 6/14 and the 80% are AC's own checks (Days 28/25)."
+}
