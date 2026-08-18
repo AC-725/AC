@@ -39,6 +39,15 @@ All three: the 60 odometers on screen under the headline with label
 "free processing minutes, every month" — the number is the screen's job, the
 promise is the voice's job. Recommendation: **#1** (strongest stop AND send).
 
+> **CORRECTION 2026-08-18 (post-production).** The scene rows below use generic beat
+> names, but the TOD engine's slots are fixed and mean something else: A hook ·
+> **B the oversized number** · **C the four cards** · **D the old-vs-now chart** ·
+> E three steps · F the rule · G CTA. The video was built to the engine's slots
+> (correct), but the first VO pass was written from the beat names below, so three
+> lines sat on the wrong picture. The shipped VO (`../day35-tod/vo_spec.json`) is
+> written against the filled CONTENT and is the one to record. Rule now in
+> `references/tod-scenes.md`: name beat-sheet rows with the engine's slot names.
+
 ## Beats → scenes (TOD A–G, draft)
 
 | Scene | Beat | On-screen | VO (draft, budget) |
@@ -87,4 +96,4 @@ well-known; the freshness is the verified-pricing angle, not the news.
 ## Cover (draft slots)
 
 Kicker `Tool of the Day` · Headline `You don't need an editor.` · Number `60` ·
-Label `free processing minutes a month. Watermark and all, we checked.`
+Label `free processing minutes a month. Watermark and all.`

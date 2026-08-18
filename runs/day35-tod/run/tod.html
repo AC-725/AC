@@ -89,6 +89,11 @@
   #A .kicker,#A .promptbar[data-live],#A .h1{opacity:1 !important;transform:none !important;}
 
   .kicker{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:7px;color:var(--gold);text-transform:uppercase;}
+  /* THE SIGN-OFF LINE HAS ITS OWN TRACKING (2026-08-18, Day 35). At the kicker's
+     29px/7px the 36-character signature measured ~828px inside an 860px box and
+     broke, orphaning the last word on its own line. Tighter tracking buys the
+     full line back with room to spare. Budget: keep cta.tagline under ~40 chars. */
+  .tagline{font-size:26px;letter-spacing:4.5px;line-height:1.5;}
   .kicker .dot{color:rgba(231,199,101,0.5);margin:0 10px;}
   .h1{font-family:var(--disp),'Lora';font-weight:600;font-size:82px;line-height:1.1;color:var(--white);letter-spacing:-0.5px;}
   .h1.sm{font-size:70px;}
@@ -154,8 +159,12 @@
 
   #F{gap:50px;}
   .frow{position:relative;width:360px;height:200px;display:flex;align-items:center;justify-content:center;gap:60px;}
-  .slash{position:absolute;left:40px;top:96px;width:200px;height:8px;border-radius:6px;
-    background:linear-gradient(90deg,#F4DF95,#C9A23F);transform-origin:left center;transform:rotate(-18deg) scaleX(0);}
+  /* the strike belongs to the FROM-icon ALONE. Until 2026-08-18 it was
+     left:40 width:200 in a 360px row (icons at x30-150 and x210-330), so it
+     sliced the gap and the to-icon as well and read as a stray diagonal. */
+  .slashwrap{position:absolute;left:20px;top:96px;width:140px;height:8px;transform:rotate(-18deg);}
+  .slash{width:100%;height:100%;border-radius:6px;
+    background:linear-gradient(90deg,#F4DF95,#C9A23F);transform-origin:left center;transform:scaleX(0);}
 
   #G{gap:22px;}
   .mono{width:150px;height:150px;position:relative;display:flex;align-items:center;justify-content:center;
@@ -205,6 +214,7 @@ const ICONS={
   save:'<path d="M30 16 h40 v70 l-20 -16 l-20 16 z"/>',
   gear:'<circle cx="50" cy="50" r="14"/><path d="M50 20 v-8 M50 88 v-8 M80 50 h8 M12 50 h8 M71 29 l6 -6 M23 77 l6 -6 M71 71 l6 6 M23 23 l6 6"/>',
   bolt:'<path d="M55 12 l-30 44 h20 l-6 32 l32 -46 h-20 z"/>',
+  clock:'<circle cx="50" cy="50" r="32"/><path d="M50 30 v22 l15 9"/>',
   chart:'<line x1="20" y1="82" x2="82" y2="82"/><rect x="28" y="54" width="12" height="28"/><rect x="48" y="38" width="12" height="44"/><rect x="68" y="24" width="12" height="58"/>',
   doc:'<rect x="28" y="14" width="44" height="72" rx="6"/><line x1="38" y1="36" x2="62" y2="36"/><line x1="38" y1="50" x2="62" y2="50"/><line x1="38" y1="64" x2="54" y2="64"/>',
   audio:'<path d="M24 60 v-9 a26 26 0 0 1 52 0 v9"/><rect x="16" y="58" width="17" height="27" rx="6"/><rect x="67" y="58" width="17" height="27" rx="6"/>',
@@ -233,8 +243,8 @@ const CONTENT={
   hook:{ kicker:'Tool of the Day', typed:'cut my podcast into clips',
          line1:"You don't need", line2:'an editor.' },
   // B — the oversized number + news stamp
-  number:{ kicker:'The free lane', value:60, prefix:'', suffix:'',
-           label:'free processing minutes a month on <b style="color:var(--white);font-weight:600">OpusClip</b>',
+  number:{ kicker:'The free lane', value:60, prefix:'', suffix:' min', icon:'clock',
+           label:'of free processing a month on <b style="color:var(--white);font-weight:600">OpusClip</b>',
            stamp:'Free Forever', stampSub:'their words, not ours' },
   // C — what you can feed it (4 use-cases)
   build:{ kicker:'Feed it anything long',
@@ -284,31 +294,46 @@ root.innerHTML=`
 <div class="scene" id="A">
   ${el('kicker',C.hook.kicker)}
   <div class="promptbar el" data-live="1"><span class="chev">&rsaquo;</span><span class="ptext"></span><span class="pcur"></span></div>
-  <div class="card el" data-a="1.25,0.4,pop">
-    <div class="cardbar" data-c="1.35"><i></i><i></i><i></i></div>
-    <div class="cardhero" data-c="1.55"></div>
-    <div class="cardline" data-c="1.80" style="top:230px;width:300px;"></div>
-    <div class="cardline" data-c="1.95" style="top:262px;width:220px;"></div>
+  <!-- BEAT MAP (Day 35 polish): the app window opens WITH the prompt, not after
+       it. It used to pop at 1.25 and leave the first 1.2s of the reel carrying
+       nothing but 12px of typed text - a stretch gate 4 reads as frozen and a
+       viewer reads as a still. Chrome at 0.30, bar at 0.50, then the result
+       fills in from 1.30 once the prompt has finished typing (1.50). Keep the
+       largest element's entry inside the first half-second of every scene. -->
+  <div class="card el" data-a="0.30,0.45,pop">
+    <div class="cardbar" data-c="0.50"><i></i><i></i><i></i></div>
+    <div class="cardhero" data-c="1.30"></div>
+    <div class="cardline" data-c="1.60" style="top:230px;width:300px;"></div>
+    <div class="cardline" data-c="1.85" style="top:262px;width:220px;"></div>
     <div class="cardbtn" data-c="2.15"></div>
   </div>
   <div style="height:6px"></div>
-  ${el('h1 sm',C.hook.line1,'3.0,0.6,up')}
-  ${el('h1 sm gold',C.hook.line2,'3.28,0.6,up')}
+  <!-- NO data-a ON THESE TWO. The FRAME-ONE LAW is enforced in CSS
+       (#A .kicker, #A .promptbar[data-live], #A .h1 { opacity:1 !important }),
+       so any delay written here is dead code that reads like a live timing -
+       it cost a whole debugging pass on 2026-08-18. The hook is on frame 0. -->
+  ${el('h1 sm',C.hook.line1)}
+  ${el('h1 sm gold',C.hook.line2)}
 </div>
 <div class="scene" id="B">
   ${el('kicker',C.number.kicker,'0,0.5,fade')}
-  <svg class="ic el" width="92" height="92" viewBox="0 0 100 100" data-a="0.3,0.6,pop">${ICONS.globe}</svg>
+  <svg class="ic el" width="92" height="92" viewBox="0 0 100 100" data-a="0.3,0.6,pop">${ICONS[C.number.icon||'chart']}</svg>
   <div class="odometer gold" id="odo">0</div>
-  ${el('sub',C.number.label,'1.85,0.5,rise')}
+  ${el('sub',C.number.label,'0.9,0.5,rise')}
   <div style="height:14px"></div>
-  ${el('stamp',C.number.stamp,'2.15,0.45,stamp')}
-  ${el('sub',C.number.stampSub,'2.95,0.5,rise').replace('class="sub el"','class="sub el" style="font-size:32px"')}
+  ${el('stamp',C.number.stamp,'1.4,0.45,stamp')}
+  <!-- the stamp keeps a permanent rotate(-7deg), so its INK box is taller than its
+       layout box and it clips the line beneath. Latent since the stamp was born;
+       only surfaced 2026-08-18 when the sub-line was pulled forward into the same
+       settled window. Flex gap cannot see a rotation - this spacer can. -->
+  <div style="height:12px"></div>
+  ${el('sub',C.number.stampSub,'1.9,0.5,rise').replace('class="sub el"','class="sub el" style="font-size:32px"')}
 </div>
 <div class="scene" id="C">
   ${el('kicker',C.build.kicker,'0,0.5,fade')}
   <div style="height:10px"></div>
   <div class="grid">
-    ${C.build.cards.map((c,i)=>`<div class="gcard el" data-a="${0.35+i*0.55},0.5,pop">${icon(c.icon,86)}<div class="lab">${c.label}</div></div>`).join('')}
+    ${C.build.cards.map((c,i)=>`<div class="gcard el" data-a="${0.30+i*0.45},0.5,pop">${icon(c.icon,86)}<div class="lab">${c.label}</div></div>`).join('')}
   </div>
   <div style="height:20px"></div>
   ${el('sub',C.build.footer,'2.35,0.5,rise').replace('class="sub el"','class="sub el" style="color:var(--white);font-weight:500"')}
@@ -336,25 +361,25 @@ root.innerHTML=`
   ${el('kicker',C.steps.kicker,'0,0.5,fade')}
   <div class="dots"><div class="pdot" id="d1"></div><div class="pdot" id="d2"></div><div class="pdot" id="d3"></div></div>
   <div class="steps">
-    ${C.steps.items.map((s,i)=>`<div class="step el" data-a="${0.4+i*1.10},0.5,left"><div class="icb">${icon(s.icon,52)}</div><div class="stx">${s.html}</div></div>`).join('')}
+    ${C.steps.items.map((s,i)=>`<div class="step el" data-a="${0.35+i*0.95},0.5,left"><div class="icb">${icon(s.icon,52)}</div><div class="stx">${s.html}</div></div>`).join('')}
   </div>
 </div>
 <div class="scene" id="F">
   <div class="frow">
-    <svg class="ic grey el" id="pdfic" width="120" height="120" viewBox="0 0 100 100" data-a="0,0.45,pop">${ICONS[C.rule.fromIcon]}</svg>
-    <div class="slash" id="slash"></div>
-    <svg class="ic el" id="toolic" width="120" height="120" viewBox="0 0 100 100" data-a="0.9,0.5,pop">${ICONS[C.rule.toIcon]}</svg>
+    <svg class="ic grey el" id="pdfic" width="120" height="120" viewBox="0 0 100 100" data-a="0,0.35,pop">${ICONS[C.rule.fromIcon]}</svg>
+    <div class="slashwrap"><div class="slash" id="slash"></div></div>
+    <svg class="ic el" id="toolic" width="120" height="120" viewBox="0 0 100 100" data-a="0.60,0.45,grow">${ICONS[C.rule.toIcon]}</svg>
   </div>
-  ${el('h1',C.rule.line1,'1.2,0.6,up').replace('class="h1 el"','class="h1 el" style="color:var(--stone)"')}
-  ${el('h1 gold',C.rule.line2,'1.45,0.6,up')}
-  ${el('sub',C.rule.sub,'1.85,0.6,rise')}
+  ${el('h1',C.rule.line1,'0.70,0.55,up').replace('class="h1 el"','class="h1 el" style="color:var(--stone)"')}
+  ${el('h1 gold',C.rule.line2,'0.90,0.55,up')}
+  ${el('sub',C.rule.sub,'1.30,0.55,rise')}
 </div>
 <div class="scene" id="G">
   <div class="mono el" data-a="0.2,0.6,pop"><svg width="150" height="150" viewBox="0 0 150 150"><circle cx="75" cy="75" r="70" pathLength="1" style="fill:none;stroke:var(--gold);stroke-width:2.5"/></svg>${C.monogram}</div>
   ${el('handle gold',C.cta.handle,'0.55,0.6,up')}
   <div class="saverow el" data-a="0.9,0.5,rise">${icon('save',46)}<span class="sub" style="color:var(--white)">${C.cta.save}</span></div>
   <div style="height:8px"></div>
-  ${el('kicker',C.cta.tagline,'1.2,0.5,rise')}
+  ${el('kicker tagline',C.cta.tagline,'1.2,0.5,rise')}
   <div style="height:26px"></div>
   <div class="loopcur el" id="loopc" data-a="1.8,0.6,fade">${C.cta.loop}</div>
 </div>
@@ -377,6 +402,7 @@ function applyA(node,lt){
   else if(t==='up')tr='translateY('+((1-e)*48).toFixed(2)+'px)';
   else if(t==='left')tr='translateX('+((1-e)*-50).toFixed(2)+'px)';
   else if(t==='pop')tr='scale('+lerp(0.6,1,b).toFixed(3)+')';
+  else if(t==='grow')tr='scale('+lerp(0.82,1,e).toFixed(3)+')';  /* eased, no overshoot */
   else if(t==='stamp')tr='rotate(-7deg) scale('+lerp(1.5,1,b).toFixed(3)+')';
   node.style.opacity=clamp(p);node.style.transform=tr;
 }
@@ -391,6 +417,15 @@ const oldval=document.getElementById('oldval'),newval=document.getElementById('n
 const dots=[document.getElementById('d1'),document.getElementById('d2'),document.getElementById('d3')];
 const slash=document.getElementById('slash'),pdfic=document.getElementById('pdfic'),loopc=document.getElementById('loopc');
 const TYPETXT=C.hook.typed, NUM=C.number.value, NUMSUF=C.number.suffix||'', NUMPRE=C.number.prefix||'', OLDV=C.chart.oldValue;
+/* MONEY NEVER COUNTS (2026-08-18, Day 35). An odometer ticking 0->29 on a PRICE
+   puts prices on screen that the vendor has never charged - a frame of this TOD
+   read "$28/mo" for OpusClip Pro. A tally (minutes, sites, users) may count: the
+   intermediate values are just a smaller true number. A price may not: every
+   intermediate value is a false claim, and this page is the one that checks.
+   Money lands whole. Override per run with number.count / chart.count if a
+   currency figure genuinely should tick. */
+const MONEY=/^[$£€¥]/, ODO_COUNT=(C.number.count!==undefined)?!!C.number.count:!MONEY.test(NUMPRE),
+      CHART_COUNT=(C.chart.count!==undefined)?!!C.chart.count:!MONEY.test(C.chart.oldPrefix??'');
 
 function sceneAnim(s,lt){
   s.anims.forEach(n=>applyA(n,lt));
@@ -401,23 +436,35 @@ function sceneAnim(s,lt){
     cardParts.forEach(c=>popC(c,lt,parseFloat(c.dataset.c)));
   } else if(s.id==='B'){
     const p=eExpo((lt-0.3)/1.35),v=Math.min(NUM,Math.round(p*NUM));
-    odo.textContent=NUMPRE+v.toLocaleString('en-US')+(p>=1?NUMSUF:'');
+    /* NAKED-FIGURE FIX (2026-08-18, Day 35): the suffix used to be gated on
+       p>=1, so the hero number counted up with no unit and the unit snapped
+       in at the end. A figure without its unit is not a fact, it is a digit.
+       The unit now rides the entire count. */
+    odo.textContent=NUMPRE+(ODO_COUNT?v:NUM).toLocaleString('en-US')+NUMSUF;
     odo.style.opacity=clamp((lt-0.3)/0.3);
     odo.style.transform='scale('+lerp(0.9,1,eOut((lt-0.3)/0.5)).toFixed(3)+')';
   } else if(s.id==='D'){
     const g=eOut((lt-0.25)/1.15);
     oldbar.style.transform='scaleY('+g.toFixed(3)+')';newbar.style.transform='scaleY('+g.toFixed(3)+')';
     oldbar.style.opacity=clamp((lt-0.2)/0.2);newbar.style.opacity=clamp((lt-0.2)/0.2);
-    oldval.textContent=(CONTENT.chart.oldPrefix??'$')+Math.round(g*OLDV).toLocaleString('en-US')+(CONTENT.chart.oldUnit??'');
+    oldval.textContent=(CONTENT.chart.oldPrefix??'$')+(CHART_COUNT?Math.round(g*OLDV):OLDV).toLocaleString('en-US')+(CONTENT.chart.oldUnit??'');
     oldval.style.opacity=clamp((lt-0.25)/0.3);
     newval.style.opacity=clamp((lt-1.2)/0.3);
   } else if(s.id==='E'){
-    const times=[0.55,2.25,3.95];
+    /* the dots track the STEPS. The Day 27 retime moved the steps to a 1.10s
+       stagger (0.4/1.5/2.6) and left this array on the pre-retime schedule, so
+       dot 3 lit 1.35s after the step it reports. One fact, two places: if you
+       change the step stagger in the DOM above, change it here in the same edit. */
+    const times=[0.50,1.45,2.40];
     dots.forEach((d,i)=>{const on=lt>=times[i];d.style.background=on?'var(--gold)':'transparent';
       d.style.borderColor=on?'var(--gold)':'rgba(231,199,101,0.5)';d.style.transform=on?'scale(1.25)':'scale(1)';});
   } else if(s.id==='F'){
-    slash.style.transform='rotate(-18deg) scaleX('+eOut((lt-0.45)/0.35).toFixed(3)+')';
-    if(lt>0.5)pdfic.style.opacity=lerp(1,0.32,clamp((lt-0.5)/0.5));
+    slash.style.transform='scaleX('+eOut((lt-0.28)/0.32).toFixed(3)+')';  /* wrapper owns the angle */
+    /* cross-dissolve: the struck mark recedes (dim AND slightly smaller) as
+       the new one arrives, so the swap reads as one move, not two events. */
+    const fade=clamp((lt-0.45)/0.55);
+    pdfic.style.opacity=lerp(1,0.26,eOut(fade));
+    pdfic.style.transform='scale('+lerp(1,0.93,eOut(fade)).toFixed(3)+')';
   } else if(s.id==='G'){
     const circ=s.el.querySelector('.mono circle');
     circ.style.strokeDasharray='1';circ.style.strokeDashoffset=(1-eOut((lt-0.2)/0.9)).toFixed(3);
@@ -469,7 +516,7 @@ window.seek=function(t){
        the News engine (Day 30 fix): TOD settled in 0.35s and then sat truly static,
        which is the whole of the gate-4 motion debt logged since Day 24. */
     const settle=lerp(1.03,1,clamp(st/0.35));
-    const push=1+0.03*clamp((st-0.35)/Math.max(0.35,s.dur-0.35));
+    const push=1+0.05*clamp((st-0.35)/Math.max(0.35,s.dur-0.35));  /* 3%->5% (Day 35): more area change per frame on a sparse black field */
     s.el.style.transform=vis>0.002?'scale('+(settle*push).toFixed(4)+')':'none';
     if(vis>0.002)sceneAnim(s,st);
   });

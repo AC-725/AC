@@ -1,23 +1,23 @@
 {
   "day": 35,
-  "title": "OpusClip · You don't need an editor",
-  "cut": "23.4s · TOD engine · margin theme",
+  "title": "Tool of the Day · OpusClip — you don't need an editor",
+  "cut": "23.4s · margin theme · TOD engine",
   "file": "AC_TOD_Day35_opusclip_silent.mp4",
-  "meta": "55 words · 78 syllables · ~3.4 syl/sec",
+  "meta": "74 words · 86 syllables · ~3.4 syl/sec",
   "scenes": [
-    {"t": "0.0s", "id": "A · hook", "line": "You don't need an editor to post clips every day.", "cue": "The Controversy hook. Flat, certain. Hit 'editor'."},
-    {"t": "3.25s", "id": "B · number", "line": "Paste in one long video. A podcast, a talk.", "cue": "The 60 rolls up while you talk. Don't say the number, the screen owns it."},
-    {"t": "6.55s", "id": "C · feed", "line": "It finds the best moments and captions them.", "cue": "Matter-of-fact. The cards land on the beat."},
-    {"t": "9.70s", "id": "D · math", "line": "One hour of podcast is your whole free month.", "cue": "The honest math. Slight weight on 'whole'."},
-    {"t": "12.75s", "id": "E · steps", "line": "Paste the link. Keep the best clips. Export vertical, captions on.", "cue": "Three beats, one per step as the dots fill."},
-    {"t": "17.10s", "id": "F · ceiling", "line": "The catch: watermarks, and three days to download.", "cue": "The anti-hype beat. Calm, unbothered."},
-    {"t": "19.75s", "id": "G · sign-off", "line": "Comment CLIP. I'll send the steps.", "cue": "Slowest line in the reel. A door, not a pitch."}
+    {"t": "0.00s", "id": "A · hook",     "line": "You don't need an editor to post clips.",        "cue": "Flat and certain. The claim, not a tease. Hit 'editor'."},
+    {"t": "3.25s", "id": "B · the 60",   "line": "The free plan gives you sixty minutes a month.", "cue": "The number is already on screen counting. Say it like a fact you checked."},
+    {"t": "6.55s", "id": "C · feed it",  "line": "Feed it any podcast, talk or webinar.",          "cue": "Four cards land as you list them. Let them breathe."},
+    {"t": "9.70s", "id": "D · the price","line": "Pro costs twenty-nine a month. Free costs nothing.", "cue": "Two bars, two prices. Beat between the sentences."},
+    {"t": "12.75s","id": "E · the steps","line": "Paste the link. Keep what it ranks highest. Export vertical.", "cue": "Three steps, three beats. The longest line in the reel, so do not rush it."},
+    {"t": "17.10s","id": "F · the rule", "line": "It cuts clips. It doesn't create them.",         "cue": "The honest ceiling. Calm, no apology."},
+    {"t": "19.75s","id": "G · sign-off", "line": "Comment CLIP and I'll send you the three steps.", "cue": "Slowest line in the reel. An offer, not a pitch."}
   ],
-  "clean_read": "You don't need an editor to post clips every day. Paste in one long video. A podcast, a talk. It finds the best moments and captions them. One hour of podcast is your whole free month. Paste the link. Keep the best clips. Export vertical, captions on. The catch: watermarks, and three days to download. Comment CLIP. I'll send the steps.",
+  "clean_read": "You don't need an editor to post clips. The free plan gives you sixty minutes a month. Feed it any podcast, talk or webinar. Pro costs twenty-nine a month. Free costs nothing. Paste the link. Keep what it ranks highest. Export vertical. It cuts clips. It doesn't create them. Comment CLIP and I'll send you the three steps.",
   "notes": [
-    "Record over the _silent cut; the SFX bed on the subs/clean cuts is punctuation, not music.",
-    "The 60, the $29 and the $0 live on screen. The voice never repeats a number the screen is showing except the free-month math.",
+    "Record over the _silent cut. Every line sits on the picture it describes - this was rewritten 2026-08-18 after the first pass mapped VO to the draft beat names instead of the engine's slots.",
+    "Never say the tool is unlimited. 60 minutes a month, watermarked, 3-day export window.",
     "CLIP is spoken as the word."
   ],
-  "gate": "Never imply unlimited: the watermark and 3-day window are the F beat, not a footnote. 'Free Forever' is OpusClip's own phrase."
+  "gate": "60 min/mo and $29 Pro are vendor-page figures. Free clips carry a watermark and a 3-day download window - scene F says so on screen, so the voice does not have to repeat it."
 }
