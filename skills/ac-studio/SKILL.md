@@ -94,6 +94,7 @@ Read only what the task needs.
 | A "Spine" reel / a headline-and-progress-dots look | `spine-reel.md` |
 | Hook options / VO opening lines / "more engaging hooks" | `vo-hooks.md` (4 banks · offer 3 per run) |
 | A trailer / montage / "like the Squibb video" / figure-as-creator cut | `trailer-scenes.md` (engine: `assets/trailer.template.html`) |
+| The AC figure / narrator / "the figure is missing" | `tod-scenes.md` (TOD, on by default) or the `FIGURE` constant in `reel.template.html` |
 | Subtitles / captions on a video | `subtitles.md` (mandatory on every video) |
 | A longer / retimed cut ("24s version") | `variants.md` |
 | A carousel, slide deck, static graphic | `carousel.md` + `themes.md` |
@@ -328,10 +329,20 @@ against the news map; an explicit flag that contradicts the spec is announced, n
 
 ### 9. Grade, deliver, log — then PERSIST
 Grade the hook A–F per `hooks.md` — ship A- or better, one rewrite pass if below.
-`SendUserFile`: the **subtitled MP4** (primary) *and* the **clean MP4** (plus light/silent
-variants if made), **cover PNG**, the **VO script PDF(s)** (step 8b), **beatsheet.md** (it IS the vo_script + caption +
-hashtags + A/B hooks in one file), and a short **posting note**. Show the grade and
-scorecard so AC sees *why* it will hold attention.
+**Deliver as ONE zip** (AC, 2026-08-19 — "compose everything in a zip file for me to
+easier download"). Nine separate file cards is nine taps on a phone and an easy way to
+grab last week's caption by mistake:
+```bash
+bash SKILL_DIR/scripts/package_run.sh runs/dayN-slug AC_DayN_<slug>
+```
+It takes the deliverables only — every MP4 cut, the cover, the VO PDF(s), caption.txt,
+dm_reply.txt, the beat sheet, and the gate 7 contact sheet under `qa/` — and leaves the
+render intermediates (frame dirs, master wavs, the qa scratch, the working HTML, the
+fonts) out, because produce.sh rebuilds those on demand.
+
+`SendUserFile` the **zip** as the deliverable, and alongside it the **subtitled MP4** on
+its own so AC can watch it inline without unzipping. Then a short **posting note**. Show
+the grade and scorecard so AC sees *why* it will hold attention.
 
 Append to `run-log.md`: date, day #, format, story + source, theme, hook grade,
 scorecard, files, metrics (leave `—`, fill when AC drops numbers — never nag for them).

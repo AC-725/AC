@@ -312,3 +312,34 @@ What DOES close it is the beat map. Two rules, both cheap:
 Scene E is the honest exception: three steps across 4.50s cannot be spaced under 0.9s and
 still leave the VO room, so it keeps one ~1.0s stretch. Log it, do not fake it - and never
 close a gate-4 gap by adding motion that says nothing.
+
+## The AC figure on this engine (added 2026-08-19)
+
+`const FIGURE='on'` — **on by default**, after AC watched the Day 35 cut and said the
+figure was missing. The mark, the two-bone arm rig and the pose set are ported verbatim
+from `reel.template.html`; nothing about the drawing is re-invented here, so a fix to the
+mark in one engine should be carried to the other in the same edit.
+
+**He carries three scenes: A, F and G — the hook, the rule and the sign-off.** Those are
+the beats where a person is talking. B, C, D and E belong to the tool: the 60, the four
+cards, the paid-vs-free chart and the three steps are evidence, and a narrator standing
+next to evidence turns it into an opinion. He fades out at 3.16s and returns at 17.10s;
+the track keeps ticking while he is hidden so he never pops back mid-gesture.
+
+**He stands in the subtitle lane**, the one horizontal band no TOD scene's content enters,
+and the typed caption is his speech — the mouth caret opens only inside the `SPEECH`
+windows, which are the VO's three spoken scenes.
+
+**The lane shifts for the whole video, not just while he is on screen.** `#stage.hasfig`
+left-aligns the caption at `x=310` permanently. A padding that changed per scene would put
+a moving box under gate 1's force-show audit and would read as a caption that jumps. 310px
+is not a taste number: the sign-off step-forward pushes his pointing hand to x=272, so the
+copy starts clear of it with room to spare.
+
+**The loop seam.** A TOD is watched on repeat, so `t=LOOP` and `t=0` are adjacent frames.
+The first `GEST` key is a copy of the last (he is still waving as it restarts), `figStep`
+returns to 0 before the end, and `W_BR` / `W_WV` are derived from `LOOP` so a whole number
+of cycles fits. Retime `SCENES` and you retime this track in the same edit.
+
+Turn him `'off'` for a run whose three talking scenes are already crowded — the data
+scenes never held him anyway, so nothing else has to move.

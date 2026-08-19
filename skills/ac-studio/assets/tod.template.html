@@ -178,6 +178,27 @@
      TOD is busy up top (prompt bar, self-building site), so the caption rides the lower
      band by default; VERIFY per theme in the audit and move to the clear zone if it
      collides. Gold on dark; the light-flip sends it to ink. See references/subtitles.md. */
+  /* ===== THE AC FIGURE — narrator mode, ported from the News engine 2026-08-19
+     at AC's note "the AC figure is missing in the video". He appears in the
+     THREE scenes where a person is talking rather than a product is demoing:
+     A (the hook), F (the rule) and G (the sign-off). The data scenes - the 60,
+     the four cards, the chart, the three steps - are the tool's, not his.
+     He stands in the SUBTITLE LANE, the one horizontal band no TOD scene's
+     content enters, and the typed caption is his speech. The lane shifts right
+     and left-aligns for the WHOLE video, not only while he is on screen: a
+     padding that changes per scene puts a moving box under gate 1's force-show
+     audit and reads as a caption that jumps. One lane, always his.
+     transform-origin is bottom centre so the sign-off step grows him from his
+     own feet. Every value is written by figTick(t) - no CSS transition, ever
+     (a transition makes the ink gate see phantom ink on every element). */
+  .acfig{position:absolute;left:80px;bottom:690px;width:150px;z-index:7;
+         transform-origin:50% 100%;will-change:transform;}
+  #stage.hasfig #subline{text-align:left;padding:0 96px 0 310px;}  /* his lane: the sign-off step pushes his hand to x=272, so the copy starts clear of it */
+  .acfig .fst{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round;}
+  .acfig .fth{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round;}
+  .acfig .fhr{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:6;stroke-linecap:round;stroke-linejoin:round;}
+  .acfig .fsun{fill:var(--figstroke,var(--gold));}
+  .acfig .fcar{fill:var(--gold-light,#F4DF95);}
   #subline{position:absolute;left:0;right:0;bottom:708px;text-align:center;padding:0 150px;
     font-family:'Poppins';font-weight:500;font-size:30px;letter-spacing:0.3px;line-height:1.4;
     opacity:0;z-index:6;pointer-events:none;}
@@ -231,6 +252,14 @@ const HANDLE='@itsac.ai';
    'base' (bar bottom) · 'crest' (band top) · 'column' (gold header, bar left)
    · 'margin' (bar right) ===== */
 const THEME='base';
+
+/* ===== FIGURE — the AC narrator mark. 'on' | 'off'. ON by default on this
+   engine (AC, 2026-08-19: "the AC figure is missing in the video"). He carries
+   scenes A, F and G - the hook, the rule and the sign-off. Turn him 'off' for a
+   run whose three talking scenes are already crowded; the data scenes never
+   held him anyway. Mark, rig and track live further down; the subtitle lane
+   shifts right for the whole video whenever he is on. */
+const FIGURE='on';
 
 /* =========================================================================
    ============================  CONTENT  ==================================
@@ -392,6 +421,43 @@ document.getElementById('stage').className='t-'+THEME;
 document.getElementById('wm').textContent=HANDLE.toUpperCase();
 const __prog=document.querySelector('#progress i');
 const __VBAR=(THEME==='column'||THEME==='margin');
+/* ===== THE AC FIGURE — canonical mark, RIGGED (ported from reel.template.html,
+   finalised 2026-08-13 in a design interview with AC; do not redraw casually).
+   Akimbo stance, head tilted 5 degrees; eye-level sunglasses WITH temple arms
+   (armless bars read as a visor); ONE raised brow above the right lens - the
+   sceptic's face; caret mouth, the page's typed-caret signature, because he
+   does not speak, he types; polo collar with button dot as the only body
+   detail; no feet ticks; hair variant T3 "tousled", judged at 140px.
+   Arms are two-bone: the upper bone is drawn along +x from the shoulder and
+   rotated by S, the forearm pivots at the elbow and is rotated by E - so a
+   gesture is a PAIR OF ANGLES and poses interpolate. He has no name; he is AC
+   drawn, and captions say "me". Source sheets: assets/figure/. */
+function acArm(id,S,E){
+  return '<g id="'+id+'" transform="translate(105,128) rotate('+S+')">'+
+    '<path class="fst" d="M0 0 L46 0"/>'+
+    '<g class="fore" transform="translate(46,0) rotate('+E+')">'+
+    '<g class="forescale"><path class="fst" d="M0 0 L38 0"/></g>'+
+    '<circle class="fhand fsun" cx="38" cy="0" r="0"/></g></g>';
+}
+function acFigure(){
+  if(typeof FIGURE==='undefined'||FIGURE==='off')return '';
+  const hair='<path class="fhr" d="M64 40 Q70 9 105 8 Q141 9 146 40"/>'+
+    '<path class="fth" d="M76 20 l4 -11"/><path class="fth" d="M92 11 l-2 -11"/>'+
+    '<path class="fth" d="M110 8 l6 -10"/><path class="fth" d="M128 14 l9 -6"/>';
+  const head='<g id="f-head" transform="rotate(-5 105 104)">'+
+    '<circle cx="105" cy="58" r="46" class="fst"/>'+hair+
+    '<path class="fth" d="M113 38 Q123 33 133 37"/>'+
+    '<rect x="74" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+    '<rect x="110" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+    '<path class="fth" d="M100 51 h10"/><path class="fth" d="M74 50 L61 46"/><path class="fth" d="M136 50 L149 46"/>'+
+    '<rect id="f-mouth" x="100" y="80" width="10" height="5" rx="2.5" class="fcar"/></g>';
+  const torso='<path class="fth" d="M89 108 L96 122 L105 118"/><path class="fth" d="M121 108 L114 122 L105 118"/>'+
+    '<circle cx="105" cy="127" r="2.5" class="fsun"/><path class="fst" d="M105 104 v92"/>';
+  const legs='<path class="fst" d="M105 196 L86 258"/><path class="fst" d="M105 196 L132 256"/>';
+  return '<div class="acfig"><svg width="150" height="207" viewBox="0 0 210 290" style="overflow:visible">'+
+    '<g id="f-body">'+head+torso+acArm('f-armL',132,-108)+acArm('f-armR',72,14)+legs+'</g></svg></div>';
+}
+
 function clamp(p){return Math.min(1,Math.max(0,p));}
 function eOut(p){p=clamp(p);return 1-Math.pow(1-p,3);}
 function eBack(p){p=clamp(p);const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2);}
@@ -487,6 +553,8 @@ const SUBS=[
   "",  // F
   ""   // G
 ];
+document.getElementById('stage').insertAdjacentHTML('beforeend',acFigure());
+if(typeof FIGURE!=='undefined'&&FIGURE!=='off')document.getElementById('stage').classList.add('hasfig');
 const _subL=document.getElementById('subline'),_subT=document.getElementById('subtxt'),_subC=document.getElementById('subcar');
 function subTick(t){
   if(!_subL) return;
@@ -501,9 +569,120 @@ function subTick(t){
   const fin=clamp(lt/0.35),fout=clamp((s.dur-lt)/0.35);
   _subL.style.opacity=clamp(Math.min(fin,fout));
 }
+/* ===== THE FIGURE'S TRACK =====
+   Keyed to the TOD's own scene map, NOT the reel's. He is on screen for A
+   (0.00-3.40), F (17.10-20.00) and G (19.75-23.05) and hidden through the four
+   data scenes - but the track keeps ticking while he is hidden so he never
+   pops back in mid-gesture.
+   Craft rules, unchanged from the News engine: a gesture arrives slightly
+   BEFORE the word it punctuates; arms and head never move in lockstep; every
+   move eases; and a pose SETTLES AND HOLDS, because constant motion reads as
+   jitter while a held pose reads as confidence. A hold is never frozen - the
+   'moving hold' beats (palms2, pointcam2) exist for the eye and for gate 4.
+   HARD RULE: every value here is a pure function of t. No CSS transition, no
+   randomness, no Date - the render seeks frame by frame.
+   LOOP SEAM: a TOD is watched as a loop, so t=LOOP and t=0 are adjacent frames.
+   The first key is a copy of the last (he is still waving as it restarts), the
+   step-forward returns to 0 before the end, and the oscillator frequencies are
+   DERIVED from LOOP so an integer number of cycles fits. */
+const POSES={
+  rest :{lS:132,lE:-108,rS: 72,rE: 14},
+  shrug:{lS:152,lE: -88,rS: 28,rE:-88},
+  point:{lS:132,lE:-108,rS: 20,rE: -8},
+  palms:{lS:185,lE:  40,rS: -5,rE:-40},
+  palms2:{lS:198,lE: 54,rS:-18,rE:-54},
+  cut  :{lS:132,lE:-108,rS:  0,rE:  0},
+  waveup   :{lS:132,lE:-108,rS:-18,rE:-46},
+  pointcam :{lS:132,lE:-108,rS:-34,rE: 26,rF:0.38},
+  pointcam2:{lS:132,lE:-108,rS:-40,rE: 32,rF:0.32}
+};
+const GEST=[
+  {t: 0.00,p:'waveup',   h: 6},            /* THE LOOP SEAM - a copy of the last key */
+  {t: 0.55,p:'point',    h: 8},            /* A · "you don't need"                   */
+  {t: 1.65,p:'palms',    h: 0},            /*     "an editor" - the open hands       */
+  {t: 2.45,p:'palms2',   h: 7},            /*     moving hold: the line lands        */
+  {t: 3.05,p:'rest',     h: 0},
+  {t:17.40,p:'rest',     h: 0},            /* F · he is back for the honest ceiling  */
+  {t:17.80,p:'cut',      h:-4},            /*     "it cuts clips" - the chop         */
+  {t:18.55,p:'palms',    h: 0},            /*     "it doesn't create"                */
+  {t:19.15,p:'palms2',   h: 8},
+  {t:19.65,p:'rest',     h: 0},
+  {t:20.15,p:'waveup',   h: 6, tr:0.30},   /* G · the sign-off starts                */
+  {t:20.95,p:'pointcam', h:-2, tr:0.26},   /*     "comment CLIP" - the hand turns to you */
+  {t:21.65,p:'pointcam2',h: 5, tr:0.24},   /*     moving hold                        */
+  {t:22.35,p:'waveup',   h: 6, tr:0.22}    /*     and waves through the seam         */
+];
+const TR=0.34;
+/* Mouth windows: the VO's three spoken scenes. He only talks where he is on screen. */
+const SPEECH=[[0.15,3.10],[17.30,19.70],[19.95,22.70]];
+function _ez(p){return p<0.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;}
+function _bk(p){const c=1.70158+1;return 1+(c+1)*Math.pow(p-1,3)+c*Math.pow(p-1,2);}
+function _sm(p){p=clamp(p);return p*p*(3-2*p);}
+const LOOP=Math.max(...SCENES.map(s=>s.start+s.dur));
+const W_BR=2*Math.PI*10/LOOP;   /* breathing, ~10 breaths per loop */
+const W_WV=2*Math.PI*64/LOOP;   /* wave swing, ~0.36s per stroke   */
+function waveEnv(t){
+  if(t>=20.02&&t<=20.85) return _sm((t-20.02)/0.22)*(1-_sm((t-20.55)/0.22));
+  if(t>=22.10)           return _sm((t-22.10)/0.20);
+  if(t<=0.40)            return 1-_sm((t-0.10)/0.30);
+  return 0;
+}
+/* The step forward lives entirely inside the sign-off and returns to 0 before
+   LOOP, so the seam frame matches t=0 on both sides. */
+function figStep(t){
+  if(t<19.95) return 0;
+  if(t<20.62) return _ez((t-19.95)/0.67);
+  if(t<22.40) return 1;
+  return 1-_ez(clamp((t-22.40)/0.55));
+}
+/* On screen for A, F and G only. Frame-one law: no fade-in at t=0. */
+function figVis(t){
+  const F=0.24;
+  if(t<=3.40)  return t>3.40-F ? clamp((3.40-t)/F) : 1;
+  if(t>=17.10) return clamp((t-17.10)/F);
+  return 0;
+}
+function figTick(t){
+  const fig=document.querySelector('.acfig'); if(!fig) return;
+  const vis=figVis(t);
+  fig.style.opacity=vis; fig.style.visibility=vis>0.002?'visible':'hidden';
+  const fb=document.getElementById('f-body'); if(!fb) return;
+  let i=0; for(let k=0;k<GEST.length;k++){ if(t>=GEST[k].t-(GEST[k].tr||TR)) i=k; }
+  const cur=GEST[i], prev=GEST[Math.max(0,i-1)], tr=cur.tr||TR;
+  let raw=(t-(cur.t-tr))/tr; raw=Math.max(0,Math.min(1,raw));
+  const e=(cur.p==='rest')?_ez(raw):_bk(raw);      /* returns settle, gestures pop */
+  const A=POSES[prev.p], B=POSES[cur.p];
+  const mix=(a,b)=>a+(b-a)*e;
+  const wv=Math.sin(t*W_WV)*waveEnv(t);
+  let hRot=prev.h+(cur.h-prev.h)*_ez(raw);
+  hRot+=Math.sin(t*W_WV/2)*2.2*waveEnv(t);
+  const br=Math.sin(t*W_BR)*7.0, hb=Math.sin(t*W_BR+0.6)*1.9;
+  fb.setAttribute('transform','translate(0,'+br.toFixed(2)+')');
+  const hd=document.getElementById('f-head');
+  if(hd) hd.setAttribute('transform','rotate('+(-5+hRot+hb).toFixed(2)+' 105 104)');
+  const sp=figStep(t);
+  fig.style.transform='translateX('+(30*sp).toFixed(2)+'px) scale('+(1+0.15*sp).toFixed(4)+')';
+  const aL=document.getElementById('f-armL'), aR=document.getElementById('f-armR');
+  if(aL){ aL.setAttribute('transform','translate(105,128) rotate('+mix(A.lS,B.lS).toFixed(2)+')');
+          aL.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+mix(A.lE,B.lE).toFixed(2)+')'); }
+  if(aR){ aR.setAttribute('transform','translate(105,128) rotate('+mix(A.rS,B.rS).toFixed(2)+')');
+          const rE=mix(A.rE,B.rE)+wv*20, rF=mix(A.rF||1,B.rF||1);
+          aR.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+rE.toFixed(2)+')');
+          aR.querySelector('.forescale').setAttribute('transform','scale('+rF.toFixed(3)+',1)');
+          const hn=aR.querySelector('.fhand');
+          hn.setAttribute('cx',(38*rF).toFixed(2));
+          hn.setAttribute('r',(Math.max(0,1-rF)*19).toFixed(2)); }
+  const m=document.getElementById('f-mouth'); if(!m) return;
+  let talking=false; for(const w of SPEECH){ if(t>=w[0]&&t<=w[1]){talking=true;break;} }
+  /* aperiodic but deterministic, so it reads as syllables and not a metronome */
+  const osc=Math.sin(t*27.3)+0.55*Math.sin(t*41.7)+0.3*Math.sin(t*17.1);
+  if(talking&&osc>0.1){ m.setAttribute('x',99); m.setAttribute('y',70); m.setAttribute('width',12); m.setAttribute('height',18); m.setAttribute('rx',6); }
+  else                { m.setAttribute('x',100);m.setAttribute('y',80); m.setAttribute('width',10); m.setAttribute('height',5);  m.setAttribute('rx',2.5); }
+}
 window.__TOTAL=Math.max(...SCENES.map(s=>s.start+s.dur));
 window.seek=function(t){
   subTick(t);
+  figTick(t);
   if(__prog){const pc=(clamp(t/window.__TOTAL)*100).toFixed(2)+'%';
     if(__VBAR){__prog.style.height=pc;__prog.style.width='100%';}
     else{__prog.style.width=pc;__prog.style.height='100%';}}
