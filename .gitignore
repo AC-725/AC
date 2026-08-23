@@ -7,3 +7,7 @@
 .env.*
 !.env.example
 ac-studio.skill
+
+# zoneout anim build artifacts
+zoneout/anim/node_modules/
+zoneout/anim/out/
