@@ -4,7 +4,7 @@
 </head><body>
 <script type="module">
 import * as THREE from '../lib/three.module.min.js';
-import { PALETTE, FONT_STACK, lightRig, stage, ease, span, lerp } from '../lib/zoneout.js';
+import { PALETTE, FONT_STACK, lightRig, stage, ease, span, lerp, sauropod } from '../lib/zoneout.js';
 
 /* SEQ 45 hero beat — the priority rule.
  *
@@ -13,8 +13,17 @@ import { PALETTE, FONT_STACK, lightRig, stage, ease, span, lerp } from '../lib/z
  * lost a race by two years. That is the whole correction, and it is unshowable
  * with an archive plate.
  *
+ * The animal stays gold and alive for the whole beat while the 1879 nameplate greys
+ * and is struck. That is the argument in one picture: the label died, the creature
+ * never went anywhere.
+ *
  * Contract: window.__TOTAL + window.seek(t), matching skills/ac-studio/assets/
  * render_frames.js so this plugs into the proven pipeline unchanged.
+ *
+ * LAYOUT WARNING: the frame is only ~3.5 units wide at z=0 (fov 38, aspect 9:16,
+ * cam z=9). Anything wider is silently cropped. The sauropod is ~6 units wide at
+ * scale 1, so it MUST be scaled to ~0.45 and given its own band above the plates —
+ * placed behind them it just reads as loose gold tubing.
  */
 
 const { renderer, scene, camera } = stage({ fov: 38, z: 9 });
@@ -42,6 +51,9 @@ function faceTexture(genus, year, { genusColor, yearColor }) {
   return t;
 }
 
+const PLATE_W = 2.9, PLATE_H = 1.45;
+const Y_TOP = -0.35, Y_BOT = -2.05;
+
 function makePlate(genus, year) {
   const live = faceTexture(genus, year,
     { genusColor: '#FFFFFF', yearColor: hex(PALETTE.gold) });
@@ -54,7 +66,7 @@ function makePlate(genus, year) {
   const edge = new THREE.MeshStandardMaterial({
     color: PALETTE.goldDeep, metalness: 0.75, roughness: 0.3,
   });
-  const m = new THREE.Mesh(new THREE.BoxGeometry(3.0, 1.5, 0.10),
+  const m = new THREE.Mesh(new THREE.BoxGeometry(PLATE_W, PLATE_H, 0.10),
     [edge, edge, edge, edge, mat, edge]);
   m.userData = { mat, live, dead };
   return m;
@@ -62,60 +74,75 @@ function makePlate(genus, year) {
 
 const apato  = makePlate('APATOSAURUS',  '1877');
 const bronto = makePlate('BRONTOSAURUS', '1879');
-apato.position.set(0,  1.35, 0);
-bronto.position.set(0, -1.35, 0);
+apato.position.set(0,  Y_TOP, 0);
+bronto.position.set(0, Y_BOT, 0);
 scene.add(apato, bronto);
 
 /* The strike: a gold rule that draws left-to-right across the losing plate. */
 const strike = new THREE.Mesh(
-  new THREE.BoxGeometry(1, 0.075, 0.02),
+  new THREE.BoxGeometry(1, 0.072, 0.02),
   new THREE.MeshStandardMaterial({
     color: PALETTE.gold, emissive: PALETTE.gold,
     emissiveIntensity: 1.4, metalness: 0.4, roughness: 0.3,
   })
 );
-strike.position.set(0, -1.35, 0.09);
+strike.position.set(0, Y_BOT, 0.09);
 strike.scale.x = 0;
 scene.add(strike);
+
+/* The animal, in its own band above the plates. */
+const dino = sauropod({ emissive: 0.34 });
+dino.scale.setScalar(0.42);
+dino.position.set(0.10, 1.52, -0.6);
+scene.add(dino);
 
 window.__TOTAL = 4.2;
 
 window.seek = (t) => {
+  // the animal walks in first — it is the subject, the plates are the argument
+  const g = span(t, 0.00, 1.10, ease.out);
+  dino.position.x = lerp(-2.2, 0.10, g) + Math.sin(t * 0.30) * 0.10;
+  dino.position.y = 1.52 + Math.sin(t * 1.85) * 0.040;
+  dino.rotation.z = Math.sin(t * 1.85) * 0.012;
+  dino.userData.neck.rotation.z = -0.05 + Math.sin(t * 0.85 + 0.6) * 0.075;
+
   // 1877 enters from the left
-  const a = span(t, 0.00, 0.85, ease.back);
+  const a = span(t, 0.35, 1.20, ease.back);
   apato.position.x = lerp(-4.6, 0, a);
   apato.rotation.y = lerp(0.55, 0, a);
 
   // 1879 enters from the right, slightly behind
-  const b = span(t, 0.55, 1.45, ease.back);
+  const b = span(t, 0.85, 1.75, ease.back);
   bronto.position.x = lerp(4.6, 0, b);
   bronto.rotation.y = lerp(-0.55, 0, b);
 
   // the turn: 1879 greys out, tilts back, recedes
-  const d = span(t, 2.25, 3.05, ease.inOut);
+  const d = span(t, 2.35, 3.10, ease.inOut);
   bronto.userData.mat.map = d > 0.5 ? bronto.userData.dead : bronto.userData.live;
   bronto.userData.mat.emissiveMap = bronto.userData.mat.map;
   bronto.userData.mat.emissiveIntensity = lerp(0.5, 0.12, d);
   bronto.userData.mat.needsUpdate = true;
   bronto.rotation.x = lerp(0, -0.30, d);
   bronto.position.z = lerp(0, -1.15, d);
-  bronto.position.y = lerp(-1.35, -1.52, d);
+  bronto.position.y = lerp(Y_BOT, Y_BOT - 0.17, d);
 
   // the strike rule sweeps across it
-  strike.scale.x = span(t, 2.45, 3.15) * 3.05;
+  strike.scale.x = span(t, 2.55, 3.20) * (PLATE_W + 0.05);
   strike.position.z = lerp(0.09, -1.02, d);
   strike.position.y = bronto.position.y;
 
   // 1877 pushes forward — the winner
-  const w = span(t, 3.00, 4.20, ease.inOut);
-  apato.position.z = lerp(0, 0.85, w);
-  apato.position.y = lerp(1.35, 1.05, w);
+  const w = span(t, 3.05, 4.20, ease.inOut);
+  apato.position.z = lerp(0, 0.80, w);
   apato.userData.mat.emissiveIntensity = lerp(0.5, 0.82, w);
 
+  // the animal brightens as the nameplate dies — it outlives the label
+  dino.userData.mat.emissiveIntensity = lerp(0.34, 0.62, span(t, 2.55, 3.80));
+
   // slow parallax so the frame is never static
-  camera.position.x = Math.sin(t * 0.42) * 0.20;
-  camera.position.y = Math.cos(t * 0.31) * 0.12;
-  camera.lookAt(0, 0, 0);
+  camera.position.x = Math.sin(t * 0.42) * 0.18;
+  camera.position.y = Math.cos(t * 0.31) * 0.10;
+  camera.lookAt(0, -0.10, 0);
 
   renderer.render(scene, camera);
 };

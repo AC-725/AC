@@ -63,6 +63,7 @@ has neither, so beats fall back to Liberation Sans and `zoneout_cover.py` fails 
 on `ImageFont.truetype`.
 
     ../setup-fonts.sh
+    python3 ../install-cover-icons.py   # extra cover icons, incl. `sauropod`
 
 Google Fonts is blocked by the egress proxy, but the npm registry is not and
 `@fontsource` ships the real files — the script fetches them and converts woff2 to TTF,
@@ -80,9 +81,15 @@ Every scene exposes the same contract as the itsac.ai pipeline:
 randomness. That is what makes a render reproducible and resumable, and it is why
 `lib/zoneout.js` exports `span()`/`lerp()` instead of a delta-time helper.
 
-`lib/zoneout.js` carries the palette, the light rig, the 1080x1920 stage and a
-`textTexture()` helper that draws type to a canvas — font *loaders* are unusable here
-because headless Chromium has no network.
+`lib/zoneout.js` carries the palette, the light rig, the 1080x1920 stage, a
+`textTexture()` helper that draws type to a canvas (font *loaders* are unusable here —
+headless Chromium has no network), and `sauropod()`, the 3D twin of the `sauropod`
+cover icon built from tubes so it reads as drawn rather than modelled.
+
+⚠ **The frame is only ~3.5 units wide at z=0** (fov 38, aspect 9:16, camera z=9).
+Anything wider is silently cropped with no error. `sauropod()` is ~6 units wide at
+scale 1, so it needs ~0.42 and a band of its own — placed behind the plates it just
+reads as loose gold tubing.
 
 **Grey always means the wrong or old version; gold always means the correction.**
 Same law as the covers. On `priority-1877` the viewer reads the argument before

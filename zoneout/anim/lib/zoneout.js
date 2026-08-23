@@ -111,3 +111,66 @@ export function span(t, a, b, fn = ease.out) {
 }
 
 export const lerp = (a, b, p) => a + (b - a) * p;
+
+/* ---------------------------------------------------------------- sauropod
+ * The 3D counterpart of the `sauropod` cover icon — same silhouette, same gold
+ * stroke, built from tubes so it reads as drawn rather than modelled.
+ *
+ * Proportions are the icon's and they are load-bearing: a steep neck and a deep
+ * body. Shallow both and it reads as a bench.
+ */
+const SAUROPOD_TOP = [
+  [-2.30, 2.35], [-1.90, 1.75], [-1.50, 1.05], [-1.05, 0.35], [-0.55, -0.05],
+  [0.00, 0.18], [0.60, 0.18], [1.05, -0.02],
+  [1.75, -0.12], [2.50, 0.05], [3.15, 0.50],
+];
+const SAUROPOD_UNDER = [
+  [3.15, 0.50], [2.45, -0.25], [1.75, -0.50], [1.10, -0.58],
+  [0.40, -0.78], [-0.25, -0.75], [-0.62, -0.55],
+  [-1.05, 0.00], [-1.55, 0.85], [-1.95, 1.60], [-2.20, 2.10],
+];
+const SAUROPOD_HEAD = [
+  [-2.20, 2.10], [-2.92, 2.24], [-2.86, 2.56], [-2.30, 2.35],
+];
+
+function tube(pts2, mat, radius = 0.07, closed = false) {
+  const curve = new THREE.CatmullRomCurve3(
+    pts2.map(([x, y]) => new THREE.Vector3(x, y, 0)), closed, 'catmullrom', 0.4);
+  return new THREE.Mesh(new THREE.TubeGeometry(curve, 140, radius, 8, closed), mat);
+}
+
+/** Returns a Group. `group.userData.neck` is the head+neck subgroup, pivoted at
+ *  the shoulder so it can sway independently of the body. */
+export function sauropod({ color = PALETTE.gold, radius = 0.075, emissive = 0.55 } = {}) {
+  const mat = new THREE.MeshStandardMaterial({
+    color, emissive: color, emissiveIntensity: emissive,
+    metalness: 0.5, roughness: 0.35,
+  });
+
+  const g = new THREE.Group();
+  // Split the outline at the shoulder so the neck can articulate: indices 0-4 of
+  // the topline and 7-10 of the underline are neck, the rest is body.
+  const body = new THREE.Group();
+  body.add(tube(SAUROPOD_TOP.slice(3), mat, radius));
+  body.add(tube(SAUROPOD_UNDER.slice(0, 8), mat, radius));
+
+  const neck = new THREE.Group();
+  neck.add(tube(SAUROPOD_TOP.slice(0, 5), mat, radius));
+  neck.add(tube(SAUROPOD_UNDER.slice(6), mat, radius));
+  neck.add(tube(SAUROPOD_HEAD, mat, radius * 0.85));
+  // pivot at the shoulder so rotation swings the head, not the whole animal
+  neck.position.set(-0.6, -0.2, 0);
+  neck.children.forEach(c => c.position.set(0.6, 0.2, 0));
+
+  const legs = new THREE.Group();
+  const legGeo = new THREE.CylinderGeometry(radius * 0.95, radius * 0.8, 1.25, 8);
+  [[-0.35, 0.32], [-0.10, -0.30], [0.80, 0.32], [1.05, -0.30]].forEach(([x, z]) => {
+    const l = new THREE.Mesh(legGeo, mat);
+    l.position.set(x, -1.32, z);
+    legs.add(l);
+  });
+
+  g.add(body, neck, legs);
+  g.userData = { neck, body, legs, mat };
+  return g;
+}
