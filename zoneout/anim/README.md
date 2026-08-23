@@ -58,10 +58,15 @@ case is a silent black frame that passes every gate.
 
 ## Fonts
 
-Brand faces are **Poppins** (covers) and **Oswald Bold** (captions). Neither is
-installed in the render sandbox — previews fall back to Liberation Sans via
-`FONT_STACK` in `lib/zoneout.js`. **Install the real faces before shipping a beat**,
-or the animation will not match the grid. This is a one-line change once they exist.
+Brand faces are **Poppins** (covers) and **Oswald Bold** (captions). A fresh container
+has neither, so beats fall back to Liberation Sans and `zoneout_cover.py` fails outright
+on `ImageFont.truetype`.
+
+    ../setup-fonts.sh
+
+Google Fonts is blocked by the egress proxy, but the npm registry is not and
+`@fontsource` ships the real files — the script fetches them and converts woff2 to TTF,
+which PIL needs. **Run it once per container**, before rendering a cover or a beat.
 
 ## Writing a scene
 
