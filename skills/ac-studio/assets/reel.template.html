@@ -460,6 +460,31 @@ const FIGURE='on';
 /* OPENER — 'default' | 'contrast'. See the op-contrast block in the CSS. */
 const OPENER='default';
 
+/* ===== TRANSITION — how one scene becomes the next (AC, 2026-08-24) =========
+   Every mode here is GHOST-FREE, by one of two different means, and the
+   distinction is the whole point:
+
+     by OPACITY  - only ONE scene is ever painted, so a fade has to pass through
+                   black. There is no such thing as a zero-overlap cross-fade: a
+                   fade-out that touches a fade-in IS two scenes on screen at once,
+                   which is exactly the ghosting this engine was fixed to remove.
+     by GEOMETRY - both scenes paint, but into DISJOINT regions, so no pixel ever
+                   carries two scenes. This is how you get a soft-feeling move
+                   without a dissolve.
+
+   SCENES timings are untouched in every mode, so audio cue maps still match.
+   Times are seconds. Scene A never fades in (loud-open law) and the last scene
+   never fades out (loop seam). ========================================== */
+const TRANSITION='fade';   // 'cut' | 'fade' | 'dip' | 'wipe' | 'slide' | 'bar'
+const TRANS={
+  cut:   {by:'opacity', out:0.00, in:0.00, hold:0.00},
+  fade:  {by:'opacity', out:0.13, in:0.17, hold:0.00},
+  dip:   {by:'opacity', out:0.14, in:0.18, hold:0.10},
+  wipe:  {by:'geometry', dur:0.26},
+  slide: {by:'geometry', dur:0.28},
+  bar:   {by:'geometry', dur:0.30}
+};
+
 /* ===== SCENE TIMINGS (fixed — audio cues in reel_audio.py match these) ===== */
 const SCENES=[
   {id:'A',start:0.0,dur:2.7},{id:'B',start:2.6,dur:2.5},{id:'C',start:5.0,dur:2.6},
@@ -693,6 +718,10 @@ document.getElementById('stage').className='t-'+THEME
   +(typeof OPENER!=='undefined'&&OPENER!=='default'?' op-'+OPENER:'');
 document.getElementById('wm').textContent=HANDLE.toUpperCase();
 const __prog=document.querySelector('#progress i');
+document.getElementById('stage').insertAdjacentHTML('beforeend',
+  '<div id="trbar" style="position:absolute;inset:0;z-index:6;pointer-events:none;opacity:0;'+
+  'background:linear-gradient(90deg,rgba(231,199,101,0) 0%,#E7C765 42%,#E7C765 58%,rgba(231,199,101,0) 100%);"></div>');
+const __BAR=document.getElementById('trbar');
 /* COLUMN and LEDGER run the bar vertically, so the fill grows in height, not width. */
 const __VBAR=(THEME==='column'||THEME==='margin');
 function fxTick(t){
@@ -964,6 +993,16 @@ window.seek=function(t){
      place for it on a format whose whole strategy is the rewatch. Costs nothing
      and needs no SCENES change, so the audio cue map is untouched. */
   const LAST=SCENES.length-1;
+  const __M=TRANS[TRANSITION]||TRANS.cut, __GEO=(__M.by==='geometry'), __TD=__M.dur||0;
+  if(__BAR){                       // the gold bar sweeps the frame and hides the switch
+    let bu=-1;
+    if(__M===TRANS.bar) SCENES.forEach((s,i)=>{ if(i===LAST)return;
+      const c=Math.min(s.start+s.dur,SCENES[i+1].start);
+      if(t>=c&&t<c+__TD) bu=(t-c)/__TD; });
+    if(bu<0){ __BAR.style.opacity=0; }
+    else{ __BAR.style.opacity=1;
+      __BAR.style.transform='translateX('+((bu*2-1)*1080).toFixed(1)+'px)'; }
+  }
   SCENES.forEach((s,i)=>{
     /* TRANSITION ENVELOPE — retuned 2026-08-21 (Day 38) against the motion-design
        pass. Two faults, one fix. (1) OUT was LONGER than IN (0.24 vs 0.22), the
@@ -994,9 +1033,39 @@ window.seek=function(t){
        SCENES timings are UNTOUCHED, so every audio cue map still matches. */
     const st=t-s.start,isLast=(i===LAST);
     const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[i+1].start);
-    const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
-    const vis=live?1:0;
-    s.el.style.opacity=vis;s.el.style.visibility=live?'visible':'hidden';
+    /* In geometry modes the OUTGOING scene overhangs the cut for the length of the
+       move, because a wipe or a slide needs something to wipe away. It is still
+       ghost-free: the two scenes are clipped or translated into disjoint regions,
+       verified by measuring per-pixel ink overlap, not by counting live scenes. */
+    const endAt=isLast?Infinity:(cut+(__GEO?__TD:0));
+    const live=(st>=-0.0001)&&t<endAt-0.0001;
+    let op=live?1:0, clipS='none', extra='';
+    if(live&&!__GEO){
+      /* fade in from this scene's own start; fade out so it is FULLY gone before
+         the cut (minus any deliberate hold on black), never across it */
+      if(!(s.start<=0.0001)&&__M.in>0) op*=eOut(clamp(st/__M.in));
+      if(!isLast&&__M.out>0){ const gone=cut-__M.hold; op*=eOut(clamp((gone-t)/__M.out)); }
+    } else if(live&&__GEO){
+      const inU=clamp(st/__TD), outU=clamp((t-cut)/__TD);
+      if(!(s.start<=0.0001)&&inU<1){                       // this scene is arriving
+        /* whole PIXELS, not percentages, and the two halves are split with a 1px
+           guard: at exactly u*100% on both sides the boundary column belongs to
+           both scenes and antialiasing puts real ink from each into it (measured:
+           53 shared pixels). */
+        if(__M===TRANS.wipe)  clipS='inset(0 '+(1080-Math.round(inU*1080))+'px 0 0)';
+        if(__M===TRANS.slide) extra=' translateX('+((1-inU)*1080).toFixed(1)+'px)';
+        if(__M===TRANS.bar)   op=(inU<0.5?0:1);
+      }
+      if(!isLast&&t>=cut&&outU<=1){                        // this scene is leaving
+        if(__M===TRANS.wipe)  clipS='inset(0 0 0 '+(Math.round(outU*1080)+1)+'px)';
+        if(__M===TRANS.slide) extra=' translateX('+(-outU*1080).toFixed(1)+'px)';
+        if(__M===TRANS.bar)   op=(outU<0.5?1:0);
+      }
+    }
+    const vis=op>0.002?1:0;
+    s.el.style.opacity=op;
+    s.el.style.visibility=op>0.002?'visible':'hidden';
+    s.el.style.clipPath=clipS; s.el.style.webkitClipPath=clipS;
     /* SETTLE, then a slow continuous PUSH-IN for the rest of the scene.
        Found 2026-08-14 (Day 30): gate 4 had been passing on the scene FADES, not on
        content. The moment the loop-seam fix above removed the last fade, four windows
@@ -1007,8 +1076,8 @@ window.seek=function(t){
        scenes carry 150px/110px padding and gates 1, 2 and 6 are re-run against it. */
     const settle=lerp(1.03,1,clamp(st/0.35));
     const push=1+0.03*clamp((st-0.35)/Math.max(0.35,s.dur-0.35));
-    s.el.style.transform=vis>0.002?'scale('+(settle*push).toFixed(4)+')':'none';
-    if(vis>0.002)sceneAnim(s,st);
+    s.el.style.transform=op>0.002?('scale('+(settle*push).toFixed(4)+')'+extra):'none';
+    if(op>0.002)sceneAnim(s,st);
   });
 };
 window.seek(0);document.title='ready';

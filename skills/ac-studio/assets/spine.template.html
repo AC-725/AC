@@ -212,6 +212,21 @@ const CONTENT={
 
 /* ===== SCENE TIMINGS — match reel.template.html's AI News windows. Do not
    change without retiming reel_audio.py (references/variants.md). ===== */
+/* ===== TRANSITION — how one scene becomes the next (AC, 2026-08-24) =========
+   Opacity modes only in this engine: ONE scene is ever painted, so a fade has to
+   pass through black. There is no zero-overlap cross-fade - a fade-out that
+   touches a fade-in IS two scenes at once, which is the ghosting this engine was
+   fixed to remove. (The News reel also carries wipe/slide/bar, which stay
+   ghost-free by keeping the two scenes in DISJOINT regions instead.)
+   SCENES timings untouched, so the audio cue map still matches. Scene A never
+   fades in (loud-open law); the last scene never fades out (loop seam). ===== */
+const TRANSITION='fade';   // 'cut' | 'fade' | 'dip'
+const TRANS={
+  cut:  {out:0.00, in:0.00, hold:0.00},
+  fade: {out:0.13, in:0.17, hold:0.00},
+  dip:  {out:0.14, in:0.18, hold:0.10}
+};
+
 const SCENES=[
   {id:'A',start:0.0,dur:2.7},{id:'B',start:2.6,dur:2.5},{id:'C',start:5.0,dur:2.6},
   {id:'D',start:7.5,dur:2.2},{id:'E',start:9.6,dur:1.8}
@@ -366,8 +381,14 @@ window.seek=function(t){
     const st=t-s.start,isLast=(idx===LAST);
     const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[idx+1].start);
     const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
-    s.el.style.opacity=live?1:0;s.el.style.visibility=live?'visible':'hidden';
-    if(live){ activeIdx=idx; s.anims.forEach(n=>applyA(n,st));
+    const __M=TRANS[TRANSITION]||TRANS.cut;
+    let op=live?1:0;
+    if(live){
+      if(!(s.start<=0.0001)&&__M.in>0) op*=eOut(clamp(st/__M.in));
+      if(!isLast&&__M.out>0){ const gone=cut-__M.hold; op*=eOut(clamp((gone-t)/__M.out)); }
+    }
+    s.el.style.opacity=op;s.el.style.visibility=op>0.002?'visible':'hidden';
+    if(op>0.002){ activeIdx=idx; s.anims.forEach(n=>applyA(n,st));
       if(s.id==='B') strikeB.style.transform='scaleX('+eOut((st-0.30)/0.30).toFixed(3)+')';
     }
   });

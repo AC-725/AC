@@ -300,6 +300,21 @@ const CONTENT={
         tagline:'Daily AI trends <span class="dot">·</span> no hype, no jargon', loop:'try it &rarr; _' }
 };
 
+/* ===== TRANSITION — how one scene becomes the next (AC, 2026-08-24) =========
+   Opacity modes only in this engine: ONE scene is ever painted, so a fade has to
+   pass through black. There is no zero-overlap cross-fade - a fade-out that
+   touches a fade-in IS two scenes at once, which is the ghosting this engine was
+   fixed to remove. (The News reel also carries wipe/slide/bar, which stay
+   ghost-free by keeping the two scenes in DISJOINT regions instead.)
+   SCENES timings untouched, so the audio cue map still matches. Scene A never
+   fades in (loud-open law); the last scene never fades out (loop seam). ===== */
+const TRANSITION='fade';   // 'cut' | 'fade' | 'dip'
+const TRANS={
+  cut:  {out:0.00, in:0.00, hold:0.00},
+  fade: {out:0.13, in:0.17, hold:0.00},
+  dip:  {out:0.14, in:0.18, hold:0.10}
+};
+
 /* ===== SCENE TIMINGS (fixed — audio cues in synth_audio.py match these) ===== */
 const SCENES=[
   /* RETIMED 2026-08-11 (Day 27) to pay down the motion debt logged on Day 24.
@@ -708,8 +723,14 @@ window.seek=function(t){
        SCENES timings are UNTOUCHED, so every audio cue map still matches. */
     const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[i+1].start);
     const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
-    const vis=live?1:0;
-    s.el.style.opacity=vis;s.el.style.visibility=live?'visible':'hidden';
+    const __M=TRANS[TRANSITION]||TRANS.cut;
+    let op=live?1:0;
+    if(live){
+      if(!(s.start<=0.0001)&&__M.in>0) op*=eOut(clamp(st/__M.in));
+      if(!isLast&&__M.out>0){ const gone=cut-__M.hold; op*=eOut(clamp((gone-t)/__M.out)); }
+    }
+    const vis=op>0.002?1:0;
+    s.el.style.opacity=op;s.el.style.visibility=op>0.002?'visible':'hidden';
     /* settle, then a slow continuous PUSH-IN (ported from the News engine's Day 30
        fix on 2026-08-18, Day 35): TOD settled in 0.35s then sat truly static, which
        was the whole of the gate-4 motion debt logged since Day 24. Result on Day 35:
@@ -717,8 +738,8 @@ window.seek=function(t){
        animation below freezedetect's floor - the documented engine ceiling. */
     const settle=lerp(1.03,1,clamp(st/0.35));
     const push=1+0.05*clamp((st-0.35)/Math.max(0.35,s.dur-0.35));  /* 3%->5% (Day 35): more area change per frame on a sparse black field */
-    s.el.style.transform=vis>0.002?'scale('+(settle*push).toFixed(4)+')':'none';
-    if(vis>0.002)sceneAnim(s,st);
+    s.el.style.transform=op>0.002?'scale('+(settle*push).toFixed(4)+')':'none';
+    if(op>0.002)sceneAnim(s,st);
   });
 };
 window.seek(0);document.title='ready';

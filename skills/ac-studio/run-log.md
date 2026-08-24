@@ -1471,3 +1471,63 @@ draft before deciding whether to tighten the entrance cascades.
 `claude/ac-studio-animation-workflow-rc2yxp`.
 
 **Metrics:** — (engine change, nothing posted)
+
+---
+
+## 2026-08-24 · Engine maintenance II · no post · transitions
+
+AC asked for the transition to fade in and fade out, and for a menu to choose from.
+
+### There is no such thing as a zero-overlap cross-fade
+
+Worth stating plainly, because it is the whole tension in the request: a fade-out that
+touches a fade-in IS two scenes on screen at once, which is exactly the ghosting the
+engine was fixed to remove a few hours earlier. So a fade with zero overlap has to pass
+through black. `fade` does it briefly (out 0.13 / in 0.17); `dip` holds black for 0.10s.
+
+Six modes now live behind a single `TRANSITION` constant, ghost-free by one of two
+different means:
+- **by opacity** (`cut`, `fade`, `dip`) — only ONE scene is ever painted.
+- **by geometry** (`wipe`, `slide`, `bar`) — both scenes paint, into DISJOINT regions,
+  so no pixel ever carries two of them. This is how you get a softer move without a
+  dissolve.
+
+`fade` is the new default in all three engines. `wipe`/`slide`/`bar` are News-reel only
+until AC picks one. SCENES timings untouched everywhere, so every audio cue map matches.
+
+### The ghost gate had to be rebuilt twice before it measured anything
+
+Counting live scenes is the wrong test the moment a geometry mode exists — wipe and slide
+legitimately paint two scenes at once. The first rewrite compared per-scene screenshots
+directly and reported 3400+ shared pixels on wipe and slide: it was comparing the shared
+CHROME (frame, ticks, watermark, figure, subtitle), present identically in both shots. The
+second rewrite diffed each scene against a baseline with every scene hidden — the trick
+gate 2 already uses — and still reported 53 shared pixels on wipe, at x 456..608 while the
+incoming scene was clipped to x <= 54. It could not physically be scene ink: it was the
+subtitle text RE-ANTIALIASING against a different backdrop in each shot. Restricting the
+count to pixels where the baseline is empty ground settled it. All six modes: **0 shared
+ink pixels** across 20 pair-samples each, and cut/fade/dip/bar never paint two scenes at
+all.
+
+Lesson worth keeping: when a measurement disagrees with the geometry, suspect the
+measurement. Twice here the "ghost" was the instrument.
+
+### fade costs one gate-4 stretch, and it is the documented ceiling
+
+Gates 1, 2 and 6 CLEAN. Gate 3 PASS at row-decorrelation 0.625 (needs 0.150) — a fade this
+short does not blunt the cut. Gate 5 still reports 0 cuts, unchanged and still a threshold
+problem, not a regression.
+
+Gate 4 FAILS on `fade`: static from 7.73s for **1.08s** against a 1.00s floor. The same
+content on `cut` passes, so the fade caused it by spreading the change. Read the window
+per the standing rule rather than believing the number: between 7.80 and 8.80 the figure
+changes pose twice, a gold rule draws under line two, the closing sub arrives, and the
+progress bar grows — 16,811 then 24,980 pixels changing between samples. It is alive and
+merely quiet, which is exactly the documented ceiling: a -50dB whole-frame mean cannot see
+small events on a flat black ground. Logged at 1.08s and shipped, not papered over.
+
+**Files:** `TRANSITION`/`TRANS` in reel, tod and spine templates. Menu sheet rendered for
+AC's pick.
+
+**Metrics:** — (engine change, nothing posted)
+
