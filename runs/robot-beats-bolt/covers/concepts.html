@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+@font-face{font-family:'Poppins';font-weight:400;src:url('fonts/Poppins-400.ttf');}
+@font-face{font-family:'Poppins';font-weight:500;src:url('fonts/Poppins-500.ttf');}
+@font-face{font-family:'Poppins';font-weight:600;src:url('fonts/Poppins-600.ttf');}
+@font-face{font-family:'Poppins';font-weight:700;src:url('fonts/Poppins-700.ttf');}
+@font-face{font-family:'DispCrest';src:url('fonts/BricolageGrotesque-Bold.ttf');}
+
+:root{
+  --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
+  --white:#F4F0E7; --stone:#B9B1A1;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+body{background:#222;}
+
+.stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--black);margin:0 0 30px 0;}
+.frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.38);}
+.tick{position:absolute;width:44px;height:44px;}
+.tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+
+/* kicker — moved INSIDE the 1080x1350 grid crop (y 285..1635) */
+.kick{position:absolute;top:330px;left:104px;display:flex;align-items:center;gap:18px;}
+.kick .dot{width:14px;height:14px;border-radius:50%;background:var(--gold);}
+.kick .lbl{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:8px;
+  color:var(--gold);text-transform:uppercase;}
+
+.mark{position:absolute;right:104px;bottom:352px;width:118px;height:140px;
+  background:url('mark_corner.png') no-repeat center/contain;opacity:.92;}
+
+/* gold figure treatment */
+.fig{font-family:'DispCrest';letter-spacing:-6px;line-height:.86;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 26px rgba(231,199,101,0.18));}
+.figq{font-family:'DispCrest';letter-spacing:-5px;line-height:.86;color:#5E5A52;}
+.tagl{font-family:'Poppins';font-weight:600;font-size:27px;letter-spacing:6px;
+  text-transform:uppercase;color:var(--stone);}
+.tagl.dim{color:#6f6a60;}
+.rule{background:linear-gradient(90deg,var(--gold),rgba(231,199,101,0));height:2px;}
+
+/* ============ A — SCOREBOARD ============ */
+#A .who{position:absolute;left:104px;top:470px;}
+#A .n1{position:absolute;left:96px;top:520px;font-size:330px;}
+#A .l1{position:absolute;left:112px;top:846px;}
+#A .hr{position:absolute;left:104px;top:938px;width:640px;}
+#A .n2{position:absolute;left:100px;top:990px;font-size:196px;}
+#A .l2{position:absolute;left:112px;top:1206px;}
+#A .kickr{position:absolute;left:104px;top:1352px;font-family:'Poppins';font-weight:600;
+  font-size:52px;line-height:1.28;color:var(--white);}
+#A .kickr span{color:var(--stone);font-weight:400;}
+
+/* ============ B — THE RATE ============ */
+#B .oldl{position:absolute;left:104px;top:460px;}
+#B .oldn{position:absolute;left:100px;top:506px;font-size:150px;}
+#B .drop{position:absolute;left:126px;top:700px;width:2px;height:220px;
+  background:linear-gradient(180deg,rgba(231,199,101,.15),var(--gold));}
+#B .arw{position:absolute;left:113px;top:906px;width:0;height:0;
+  border-left:14px solid transparent;border-right:14px solid transparent;
+  border-top:22px solid var(--gold);}
+#B .delta{position:absolute;left:190px;top:768px;font-family:'Poppins';font-weight:600;
+  font-size:34px;letter-spacing:3px;color:var(--gold);text-transform:uppercase;}
+#B .newl{position:absolute;left:104px;top:966px;}
+#B .newn{position:absolute;left:96px;top:1012px;font-size:330px;}
+#B .kickr{position:absolute;left:104px;top:1380px;font-family:'Poppins';font-weight:600;
+  font-size:50px;line-height:1.28;color:var(--white);}
+#B .kickr span{color:var(--stone);font-weight:400;}
+
+/* ============ C — THE FINISH LINE ============ */
+#C .n1{position:absolute;left:96px;top:500px;font-size:360px;}
+#C .l1{position:absolute;left:112px;top:862px;}
+/* the lane: solid up to the line, then it breaks apart */
+#C .lane{position:absolute;left:104px;top:952px;width:600px;height:3px;background:var(--gold);}
+#C .lanebreak{position:absolute;left:704px;top:952px;width:272px;height:3px;
+  background:repeating-linear-gradient(90deg,
+    rgba(231,199,101,.85) 0 26px, transparent 26px 46px,
+    rgba(231,199,101,.5) 46px 62px, transparent 62px 92px,
+    rgba(231,199,101,.22) 92px 102px, transparent 102px 150px);}
+#C .post{position:absolute;left:700px;top:900px;width:3px;height:108px;background:rgba(231,199,101,.55);}
+#C .postl{position:absolute;left:730px;top:886px;font-family:'Poppins';font-weight:600;
+  font-size:24px;letter-spacing:5px;color:rgba(231,199,101,.75);text-transform:uppercase;}
+#C .h1{position:absolute;left:104px;top:1052px;font-family:'DispCrest';font-size:96px;
+  line-height:1.04;letter-spacing:-2px;color:var(--white);text-transform:uppercase;}
+#C .h2{position:absolute;left:104px;top:1268px;font-family:'DispCrest';font-size:96px;
+  line-height:1.04;letter-spacing:-2px;color:#5E5A52;text-transform:uppercase;}
+#C .kickr{position:absolute;left:104px;top:1432px;font-family:'Poppins';font-weight:400;
+  font-size:42px;line-height:1.3;color:var(--stone);}
+
+/* ============ D — THE ASTERISK ============ */
+#D .h{position:absolute;left:104px;top:520px;right:96px;font-family:'DispCrest';
+  font-size:132px;line-height:1.0;letter-spacing:-3px;color:var(--white);text-transform:uppercase;}
+#D .h .g{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+#D .ast{font-family:'Poppins';font-weight:700;font-size:96px;color:var(--gold);
+  vertical-align:super;line-height:0;}
+#D .hr{position:absolute;left:104px;top:1006px;width:560px;}
+#D .sb{position:absolute;left:104px;top:1064px;display:flex;align-items:baseline;gap:34px;}
+#D .sb .a{font-family:'DispCrest';font-size:148px;letter-spacing:-4px;
+  background:linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+#D .sb .v{font-family:'Poppins';font-weight:500;font-size:40px;color:#6f6a60;}
+#D .sb .b{font-family:'DispCrest';font-size:148px;letter-spacing:-4px;color:#5E5A52;}
+#D .sbl{position:absolute;left:108px;top:1244px;font-family:'Poppins';font-weight:600;
+  font-size:26px;letter-spacing:5px;color:#6f6a60;text-transform:uppercase;}
+#D .foot{position:absolute;left:104px;top:1348px;right:150px;font-family:'Poppins';
+  font-weight:600;font-size:50px;line-height:1.26;color:var(--white);}
+#D .foot .s{color:var(--gold);}
+</style>
+</head>
+<body>
+
+<!-- ===================== A — SCOREBOARD ===================== -->
+<div class="stage" id="A">
+  <div class="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="kick"><div class="dot"></div><div class="lbl">AI News</div></div>
+
+  <div class="tagl who">The robot</div>
+  <div class="fig n1">9.39</div>
+  <div class="tagl l1">Tiangong Ultra &middot; Beijing</div>
+  <div class="rule hr"></div>
+  <div class="figq n2">9.58</div>
+  <div class="tagl dim l2">Usain Bolt &middot; world record, 2009</div>
+
+  <div class="kickr">Then it hit the wall<br><span>and was carried off.</span></div>
+  <div class="mark"></div>
+</div>
+
+<!-- ===================== B — THE RATE ===================== -->
+<div class="stage" id="B">
+  <div class="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="kick"><div class="dot"></div><div class="lbl">AI News</div></div>
+
+  <div class="tagl dim oldl">Same race, last year</div>
+  <div class="figq oldn">21.50</div>
+  <div class="drop"></div><div class="arw"></div>
+  <div class="delta">12.11 seconds faster</div>
+  <div class="tagl newl">Same race, this year</div>
+  <div class="fig newn">9.39</div>
+
+  <div class="kickr">Forget the record.<br><span>Look at the rate.</span></div>
+  <div class="mark"></div>
+</div>
+
+<!-- ===================== C — THE FINISH LINE ===================== -->
+<div class="stage" id="C">
+  <div class="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="kick"><div class="dot"></div><div class="lbl">AI News</div></div>
+
+  <div class="fig n1">9.39</div>
+  <div class="tagl l1">100 metres &middot; Beijing</div>
+  <div class="lane"></div><div class="lanebreak"></div>
+  <div class="post"></div><div class="postl">Finish</div>
+
+  <div class="h1">Faster than<br>Usain Bolt.</div>
+  <div class="h2">Then it fell over.</div>
+  <div class="kickr">Brilliant inside the task.<br>Blind at the edges of it.</div>
+  <div class="mark"></div>
+</div>
+
+<!-- ===================== D — THE ASTERISK ===================== -->
+<div class="stage" id="D">
+  <div class="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="kick"><div class="dot"></div><div class="lbl">AI News</div></div>
+
+  <div class="h">A robot beat<br><span class="g">Usain Bolt.</span><span class="ast">*</span></div>
+  <div class="rule hr"></div>
+  <div class="sb">
+    <div class="a">9.39</div><div class="v">vs</div><div class="b">9.58</div>
+  </div>
+  <div class="sbl">Robot &middot; Beijing &nbsp;&nbsp;&nbsp;&nbsp; Bolt &middot; Berlin, 2009</div>
+  <div class="foot"><span class="s">*</span> Nobody outside the industry<br>that built it ratified the time.</div>
+  <div class="mark"></div>
+</div>
+
+</body>
+</html>
