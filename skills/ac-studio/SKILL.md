@@ -108,6 +108,7 @@ Read only what the task needs.
 | A 3D icon / 3D art on a slide or in a scene | `icons3d.md` (12 baked icons in `assets/icons3d/`) |
 | A Prompt Drop (the Saturday prompt pack) | `prompt-drop.md`, then `carousel.md` |
 | Which theme / how the frames look | `themes.md`, then `brand.md` |
+| "Make it premium" / pacing, restraint, sign-off grammar | `premium-grammar.md` (BINDS every video run since 2026-08-25) |
 | A post, caption, or "what should I post" | `content.md` |
 | Bio, profile, link-in-bio, Highlights | `foundation.md` |
 | Growth, reach, weekly plan, engagement | `growth.md` |

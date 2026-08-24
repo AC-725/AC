@@ -1,0 +1,123 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+@font-face{font-family:'IS';src:url('fonts/InstrumentSerif-Italic.ttf') format('truetype');font-style:italic;}
+@font-face{font-family:'Pop';src:url('fonts/Poppins-600.ttf') format('truetype');font-weight:600;}
+@font-face{font-family:'Pop4';src:url('fonts/Poppins-400.ttf') format('truetype');font-weight:400;}
+*{margin:0;box-sizing:border-box}
+body{background:#111;overflow:hidden}
+.slide{position:relative;width:1080px;height:1350px;background:#0A0A0A;overflow:hidden}
+canvas.web{position:absolute;inset:0}
+.rail{position:absolute;right:0;top:0;bottom:0;width:18px;background:linear-gradient(180deg,#EFD68A,#B9913A)}
+.tk{position:absolute;width:44px;height:44px;border:2px solid #E7C765}
+.tr{right:62px;top:56px;border-left:0;border-bottom:0}.br{right:62px;bottom:56px;border-left:0;border-top:0}
+.kick{position:absolute;left:96px;top:74px;font-family:'Pop';font-size:24px;letter-spacing:.30em;
+  text-transform:uppercase;color:#E7C765}
+.hero{position:absolute;left:96px;right:190px;font-family:'IS',Georgia,serif;font-style:italic;
+  font-size:112px;line-height:1.04;color:#F3EFE6}
+.hero i{color:#E7C765;font-style:italic}
+.sub{position:absolute;left:96px;right:230px;font-family:'Pop4';font-size:31px;line-height:1.5;color:#BFB49A}
+.swipe{position:absolute;left:96px;bottom:120px;display:flex;align-items:center;gap:20px;
+  font-family:'Pop';font-size:26px;letter-spacing:.22em;text-transform:uppercase;color:#E7C765}
+.arw{width:120px;height:2px;background:linear-gradient(90deg,rgba(231,199,101,0),#E7C765);position:relative}
+.arw:after{content:'';position:absolute;right:0;top:-5px;width:12px;height:12px;
+  border-top:2px solid #E7C765;border-right:2px solid #E7C765;transform:rotate(45deg)}
+.hand{position:absolute;right:96px;bottom:104px;width:104px;height:118px;opacity:1}
+.n{position:absolute;right:96px;top:70px;font-family:'Pop';font-size:22px;letter-spacing:.16em;color:#655838}
+</style></head><body>
+<div id="deck"></div>
+<script>
+const HANDLE='@itsac.ai';
+/* four beats. The THREAD is the spine: one line runs the whole deck and only
+   opens into a web on the last card. Continuity is the trick, not the character. */
+const S=[
+ {kick:'AI in Plain English', hero:'Pull the<br><i>thread.</i>',
+  sub:'Most AI advice snaps the moment you tug on it.', swipe:true},
+ {kick:'One', hero:'A number<br><i>with no source</i>',
+  sub:'is just a nicer way of saying "trust me".'},
+ {kick:'Two', hero:'So I open<br><i>the source first.</i>',
+  sub:'The report. The vendor’s own pricing page. Not a summary of a summary.'},
+ {kick:'Three', hero:'Fourteen free<br><i>AI tools. Six</i><br>were trials.',
+  sub:'That one held. Most do not.'},
+ {kick:'', hero:'One real trend<br><i>a day.</i>',
+  sub:'Checked before it reaches you. No hype, no jargon.', cta:true}
+];
+const N=S.length, W=1080, H=1350, THREADY=838;
+document.getElementById('deck').innerHTML=S.map((s,i)=>`
+ <div class="slide" id="s${i}">
+   <canvas class="web" id="c${i}" width="1080" height="1350"></canvas>
+   <div class="rail"></div><div class="tk tr"></div><div class="tk br"></div>
+   ${s.kick?`<div class="kick">${s.kick}</div>`:''}
+   ${i<N-1?`<div class="n">${i+1} / ${N}</div>`:''}
+   <div class="hero" style="top:${s.cta?300:250}px">${s.hero}</div>
+   <div class="sub" style="top:${s.cta?640:s.hero.split('<br>').length>2?700:620}px">${s.sub}</div>
+   ${s.swipe?`<div class="swipe">Swipe<div class="arw"></div></div>`:''}
+   ${s.cta?`<div class="swipe" style="letter-spacing:.16em">${HANDLE}</div><img class="hand" src="mark.png">`:''}
+ </div>`).join('');
+/* the thread: one continuous, slightly irregular gold line whose phase carries
+   ACROSS slides, so slide k+1 picks up exactly where slide k left off. */
+function thread(ctx,i){
+  const seed=i*W;
+  ctx.lineCap='round';
+  for(let pass=0;pass<3;pass++){
+    ctx.beginPath();
+    const amp=[8,5,2.6][pass], off=[0,-7,8][pass], w=[4.2,1.8,1.3][pass];
+    ctx.strokeStyle=['rgba(231,199,101,1)','rgba(231,199,101,0.50)','rgba(231,199,101,0.34)'][pass];
+    ctx.lineWidth=w;
+    for(let x=-4;x<=W+4;x+=4){
+      const gx=seed+x;
+      const y=THREADY+off+Math.sin(gx*0.0135+pass*1.9)*amp+Math.sin(gx*0.0041+pass)*amp*0.7;
+      x===-4?ctx.moveTo(x,y):ctx.lineTo(x,y);
+    }
+    ctx.stroke();
+  }
+}
+/* the last card opens the thread into a web - drawn radials + catenary rings */
+function web(ctx,i){
+  const seed=i*W, ox=470, oy=THREADY, R=600;
+  const A0=-1.42, A1=1.42, K=13;
+  const jig=(n,amp)=>Math.sin(n*127.1+seed*0.017)*amp;   // deterministic wobble
+  // radials: each its own length and a slight bend
+  const rlen=[], rang=[];
+  for(let k=0;k<=K;k++){
+    const a=A0+(A1-A0)*k/K + jig(k,0.035);
+    rang.push(a); rlen.push(R*(0.82+0.18*Math.abs(Math.sin(k*3.7+seed))));
+  }
+  ctx.lineCap='round';
+  ctx.strokeStyle='rgba(231,199,101,0.52)'; ctx.lineWidth=1.7;
+  for(let k=0;k<=K;k++){
+    ctx.beginPath(); ctx.moveTo(ox,oy);
+    const midx=ox+Math.cos(rang[k])*rlen[k]*0.5+jig(k*7,9);
+    const midy=oy+Math.sin(rang[k])*rlen[k]*0.5+jig(k*11,9);
+    ctx.quadraticCurveTo(midx,midy, ox+Math.cos(rang[k])*rlen[k], oy+Math.sin(rang[k])*rlen[k]);
+    ctx.stroke();
+  }
+  // rings: sagging catenaries between radials, spacing tightens outward, some strands broken
+  ctx.strokeStyle='rgba(231,199,101,0.42)'; ctx.lineWidth=1.4;
+  const NR=7;
+  for(let r=1;r<=NR;r++){
+    const base=Math.pow(r/NR,0.8)*0.94;
+    for(let k=0;k<K;k++){
+      if((k*5+r*3+i)%17===0) continue;               // the broken strand
+      const rr0=rlen[k]*base*(1+jig(r*13+k,0.02));
+      const rr1=rlen[k+1]*base*(1+jig(r*17+k,0.02));
+      const x0=ox+Math.cos(rang[k])*rr0,   y0=oy+Math.sin(rang[k])*rr0;
+      const x1=ox+Math.cos(rang[k+1])*rr1, y1=oy+Math.sin(rang[k+1])*rr1;
+      const sag=(rr0+rr1)*0.045;
+      ctx.beginPath(); ctx.moveTo(x0,y0);
+      ctx.quadraticCurveTo((x0+x1)/2+sag*0.4,(y0+y1)/2+sag, x1,y1); ctx.stroke();
+    }
+  }
+  // the thread runs in and anchors the hub
+  ctx.strokeStyle='rgba(231,199,101,1)'; ctx.lineWidth=4.2; ctx.beginPath();
+  for(let x=-4;x<=ox;x+=4){
+    const gx=seed+x, y=THREADY+Math.sin(gx*0.0135)*8+Math.sin(gx*0.0041)*5.6;
+    x===-4?ctx.moveTo(x,y):ctx.lineTo(x,y);
+  }
+  ctx.stroke();
+}
+for(let i=0;i<N;i++){
+  const ctx=document.getElementById('c'+i).getContext('2d');
+  if(i===N-1) web(ctx,i); else thread(ctx,i);
+}
+document.title='ready';
+</script></body></html>

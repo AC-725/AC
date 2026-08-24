@@ -1,0 +1,109 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>*{margin:0}html,body{width:620px;height:980px;background:transparent;overflow:hidden}
+canvas{display:block}</style></head>
+<body><canvas id="a" width="620" height="980"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765, GOLD_D=0x9C8342;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(620,980,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(24,620/980,0.1,100);
+c.position.set(0,0.46,9.4); c.lookAt(0,0.46,0);
+
+/* ---------------------------------------------------------------
+   PREMIUM NARRATOR.
+   1px hairlines are what made the earlier pass read as a sketch, so every
+   stroke here is a QUAD with real, controlled weight - heavier on the
+   silhouette, lighter on the depth marks. Two weights, one figure.
+   2. It INKS ITSELF ON, stroke by stroke, the way the mark does on
+   ac-wins.com and the way the ring does. Particles carry the move, a drawn
+   stroke carries the hold (the 24 Aug hand-off law).
+   --------------------------------------------------------------- */
+function strokeMesh(col,op){
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(18),3));
+  return new THREE.Mesh(g,new THREE.MeshBasicMaterial(
+    {color:col,transparent:true,opacity:op===undefined?1:op,side:THREE.DoubleSide}));
+}
+function drawStroke(m,a,b,w,frac,w2){
+  const f=Math.max(0,Math.min(1,frac));
+  const bx=a[0]+(b[0]-a[0])*f, by=a[1]+(b[1]-a[1])*f;   // the ink-on: grow along its length
+  const dx=bx-a[0],dy=by-a[1],L=Math.hypot(dx,dy)||1e-6,nx=-dy/L,ny=dx/L;
+  const wb=(w2===undefined?w:w+(w2-w)*f);
+  const A=m.geometry.attributes.position.array;
+  const P=[[a[0]+nx*w,a[1]+ny*w],[a[0]-nx*w,a[1]-ny*w],[bx-nx*wb,by-ny*wb],[bx+nx*wb,by+ny*wb]];
+  const put=(i,p)=>{A[i*3]=p[0];A[i*3+1]=p[1];A[i*3+2]=0;};
+  put(0,P[0]);put(1,P[1]);put(2,P[2]);put(3,P[0]);put(4,P[2]);put(5,P[3]);
+  m.geometry.attributes.position.needsUpdate=true;
+  m.visible=f>0.002;
+}
+function arcMesh(col,op,n){
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(n*18),3));
+  return new THREE.Mesh(g,new THREE.MeshBasicMaterial(
+    {color:col,transparent:true,opacity:op===undefined?1:op,side:THREE.DoubleSide}));
+}
+function drawArc(m,pts,w,frac){
+  const f=Math.max(0,Math.min(1,frac));
+  const N=pts.length-1, upto=N*f;
+  const A=m.geometry.attributes.position.array; A.fill(0);
+  for(let i=0;i<N;i++){
+    const seg=Math.max(0,Math.min(1,upto-i)); if(seg<=0) break;
+    const a=pts[i], bfull=pts[i+1];
+    const b=[a[0]+(bfull[0]-a[0])*seg, a[1]+(bfull[1]-a[1])*seg];
+    const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-6,nx=-dy/L,ny=dx/L;
+    const P=[[a[0]+nx*w,a[1]+ny*w],[a[0]-nx*w,a[1]-ny*w],[b[0]-nx*w,b[1]-ny*w],[b[0]+nx*w,b[1]+ny*w]];
+    const o=i*18, put=(k,p)=>{A[o+k*3]=p[0];A[o+k*3+1]=p[1];A[o+k*3+2]=0;};
+    put(0,P[0]);put(1,P[1]);put(2,P[2]);put(3,P[0]);put(4,P[2]);put(5,P[3]);
+  }
+  m.geometry.attributes.position.needsUpdate=true; m.visible=f>0.002;
+}
+const G=new THREE.Group(); s.add(G);
+const W_HEAVY=0.0135, W_LIGHT=0.0075;     // the two weights
+const HY=2.29, RX=0.176, RY=0.216;
+const headRing=arcMesh(GOLD,1,80), jaw=arcMesh(GOLD,0,40), brow=arcMesh(GOLD,0,30);
+[headRing,jaw,brow].forEach(m=>G.add(m));
+const ringPts=Array.from({length:81},(_,i)=>{const a=-Math.PI/2+i/80*Math.PI*2;
+  return [Math.cos(a)*RX, HY+Math.sin(a)*RY];});
+const jawPts=Array.from({length:41},(_,i)=>{const a=Math.PI*1.02+i/40*Math.PI*0.52;
+  return [Math.cos(a)*RX*0.56, HY+Math.sin(a)*RY*0.62];});
+const browPts=Array.from({length:31},(_,i)=>{const a=0.30+i/30*0.92;
+  return [Math.cos(a)*RX*0.62+0.03, HY+Math.sin(a)*RY*0.60];});
+const S={neck:strokeMesh(GOLD),spine:strokeMesh(GOLD),shoul:strokeMesh(GOLD),
+  ua_l:strokeMesh(GOLD),la_l:strokeMesh(GOLD),ua_r:strokeMesh(GOLD),la_r:strokeMesh(GOLD),
+  hip:strokeMesh(GOLD),leg_l:strokeMesh(GOLD),leg_r:strokeMesh(GOLD)};
+Object.values(S).forEach(m=>G.add(m));
+const GRD=strokeMesh(GOLD_D,0.30); G.add(GRD);          // the ground the figure stands on
+const SH=1.88, HP=0.62;
+/* ink order: ground, spine, head, shoulders, arms, hips, legs, then the detail marks */
+const ORDER=[['grd',0.00],['spine',0.06],['neck',0.14],['head',0.18],['shoul',0.40],
+  ['ua_l',0.48],['la_l',0.54],['ua_r',0.50],['la_r',0.56],['hip',0.62],
+  ['leg_l',0.66],['leg_r',0.68],['jaw',0.80],['brow',0.86]];
+const at=(k,t,span)=>{const e=ORDER.find(o=>o[0]===k); if(!e) return 1;
+  return Math.max(0,Math.min(1,(t-e[1])/(span||0.20)));};
+const ease=x=>1-Math.pow(1-Math.max(0,Math.min(1,x)),3);
+window.seek=function(T){
+  const ink=Math.max(0,Math.min(1,T));           // 0..1 = the figure drawing itself on
+  const br=Math.sin(T*Math.PI*2*0.9)*0.016;      // slow, calm breath
+  const gw=Math.sin(T*Math.PI*2*0.42);
+  drawStroke(GRD,[-1.05,-1.32],[1.05,-1.32],0.0055,ease(at('grd',ink,0.22)));
+  drawStroke(S.spine,[0,HP],[0,SH+br],W_HEAVY*0.92,ease(at('spine',ink)),W_HEAVY);
+  drawStroke(S.neck,[0,SH+br],[0,HY-RY+0.02],W_LIGHT,ease(at('neck',ink,0.12)));
+  drawArc(headRing,ringPts.map(p=>[p[0],p[1]+br*0.6]),W_HEAVY,ease(at('head',ink,0.26)));
+  drawArc(jaw,jawPts.map(p=>[p[0],p[1]+br*0.6]),W_LIGHT,ease(at('jaw',ink,0.16)));
+  drawArc(brow,browPts.map(p=>[p[0],p[1]+br*0.6]),W_LIGHT,ease(at('brow',ink,0.14)));
+  drawStroke(S.shoul,[-0.44,SH+br],[0.44,SH+br],W_HEAVY,ease(at('shoul',ink,0.16)));
+  const eL=[-0.505,SH-0.60+br*0.5], eR=[0.505,SH-0.60+br*0.5];
+  drawStroke(S.ua_l,[-0.44,SH+br],eL,W_HEAVY,ease(at('ua_l',ink,0.14)),W_HEAVY*0.82);
+  drawStroke(S.la_l,eL,[eL[0]+0.055+gw*0.055,eL[1]-0.58],W_HEAVY*0.82,ease(at('la_l',ink,0.14)),W_LIGHT);
+  drawStroke(S.ua_r,[0.44,SH+br],eR,W_HEAVY,ease(at('ua_r',ink,0.14)),W_HEAVY*0.82);
+  drawStroke(S.la_r,eR,[eR[0]-0.055-gw*0.055,eR[1]-0.58],W_HEAVY*0.82,ease(at('la_r',ink,0.14)),W_LIGHT);
+  drawStroke(S.hip,[-0.185,HP],[0.185,HP],W_LIGHT,ease(at('hip',ink,0.12)));
+    drawStroke(S.leg_l,[-0.175,HP],[-0.315,-1.30],W_HEAVY,ease(at('leg_l',ink,0.18)),W_LIGHT);
+  drawStroke(S.leg_r,[0.175,HP],[0.322,-1.30],W_HEAVY,ease(at('leg_r',ink,0.18)),W_LIGHT);
+  r.render(s,c);
+};
+window.__TOTAL=1; window.seek(1); document.title='ready';
+</script></body></html>

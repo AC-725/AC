@@ -4,6 +4,16 @@ gate 8 · VO budget — does the script physically fit the cut?
 
     python3 vo_budget.py vo_spec.json [--engine news|tod]
 
+RETIMED CUTS (2026-08-24). variants.md makes a retimed cut a flag rather than a
+project, but this gate could only ever grade the two stock maps - so a 24s intro
+was graded against the 11.4s news windows and failed four scenes that fit with
+room to spare. A spec may now carry its own map:
+
+    "windows": [5.0, 5.0, 5.5, 4.5, 4.0]
+
+which must match the SCENES durations in the working copy. A gate that can only
+grade the default cut silently stops being a gate the moment a run retimes.
+
 Born 2026-08-14 (Day 30). AC caught a VO script that was ~90 syllables inside an
 11.4s reel: about 8 syllables per second, roughly double a natural read. It could
 not have been performed, and nothing in the pipeline would have noticed, because
@@ -94,6 +104,13 @@ def main():
     elif explicit:
         engine = explicit
     win = WINDOWS.get(engine, WINDOWS['news'])
+    # a spec-supplied map wins: it is the only thing that can know a retimed cut
+    custom = spec.get('windows')
+    if custom:
+        ids = [sc.get('id', chr(65 + i))[:1] for i, sc in enumerate(scenes)]
+        win = [(ids[i] if i < len(ids) else chr(65 + i), float(d))
+               for i, d in enumerate(custom)]
+        engine = f"{engine}, RETIMED {sum(float(d) for d in custom):.1f}s"
     if len(scenes) > len(win):
         print(f"  note: spec has {len(scenes)} scenes, {engine} engine has {len(win)}")
 

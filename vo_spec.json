@@ -1,0 +1,26 @@
+{
+  "day": 0,
+  "title": "Introduction · I open the source first",
+  "cut": "24s · margin theme · premium intro",
+  "file": "AC_Intro_source-first_subs.mp4",
+  "meta": "51 words · 65 syllables · 2.7 syl/sec",
+  "scenes": [
+    {"t": "0.0s", "id": "A · hook", "line": "People make AI sound complicated. That's usually the pitch.",
+     "cue": "Flat, unhurried. Land 'the pitch' and stop. Do not sell the line."},
+    {"t": "5.0s", "id": "B · who", "line": "I'm AC. I explain AI in plain English.",
+     "cue": "Warmest line in the read. This is the handshake."},
+    {"t": "10.0s", "id": "C · receipt", "line": "We checked fourteen free AI tools. Six were trials.",
+     "cue": "Say the numbers plainly. Small pause before 'six'."},
+    {"t": "15.5s", "id": "D · rule", "line": "Every number I put on screen, I open the source first.",
+     "cue": "The spine of the whole page. Slow, no lift at the end."},
+    {"t": "20.0s", "id": "E · sign-off", "line": "One real trend a day. No hype. No jargon.",
+     "cue": "Slowest line in the read. Three separate beats, full stops between."}
+  ],
+  "clean_read": "People make AI sound complicated. That's usually the pitch. I'm AC. I explain AI in plain English. We checked fourteen free AI tools. Six were trials. Every number I put on screen, I open the source first. One real trend a day. No hype. No jargon.",
+  "notes": [
+    "Record over the subtitled cut. The captions are already timed to these five entries.",
+    "The pace is deliberately slow at 2.7 syllables a second. Calm is the brand; do not speed up to fill.",
+    "Leave the gaps between scenes empty. The silence is the premium, not a mistake to cover."
+  ],
+  "gate": "Every claim here is true from the run-log. Do not add a number that is not on this sheet."
+}

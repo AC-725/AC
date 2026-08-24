@@ -1,0 +1,110 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>*{margin:0}html,body{width:700px;height:1000px;background:transparent;overflow:hidden}
+canvas{display:block}</style></head>
+<body><canvas id="a" width="700" height="1000"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765, DIM=0x8a7742;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(700,1000,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(30,700/1000,0.1,100);
+c.position.set(0,0.30,10.6); c.lookAt(0,0.30,0);
+function mk(col,op,n){const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array((n||1)*18),3));
+  return new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:col,transparent:true,
+    opacity:op===undefined?1:op,side:THREE.DoubleSide}));}
+function seg(m,a,b,w,w2,idx){
+  const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-6,nx=-dy/L,ny=dx/L;
+  const wb=(w2===undefined?w:w2);
+  const A=m.geometry.attributes.position.array,o=(idx||0)*18;
+  const P=[[a[0]+nx*w,a[1]+ny*w],[a[0]-nx*w,a[1]-ny*w],[b[0]-nx*wb,b[1]-ny*wb],[b[0]+nx*wb,b[1]+ny*wb]];
+  const put=(k,p)=>{A[o+k*3]=p[0];A[o+k*3+1]=p[1];A[o+k*3+2]=0;};
+  put(0,P[0]);put(1,P[1]);put(2,P[2]);put(3,P[0]);put(4,P[2]);put(5,P[3]);
+  m.geometry.attributes.position.needsUpdate=true;}
+function poly(m,pts,w,frac){
+  const f=Math.max(0,Math.min(1,frac===undefined?1:frac)),N=pts.length-1,upto=N*f;
+  const A=m.geometry.attributes.position.array; A.fill(0);
+  for(let i=0;i<N;i++){const sg=Math.max(0,Math.min(1,upto-i)); if(sg<=0)break;
+    const a=pts[i],bf=pts[i+1],b=[a[0]+(bf[0]-a[0])*sg,a[1]+(bf[1]-a[1])*sg];
+    seg(m,a,b,w,w,i);} m.geometry.attributes.position.needsUpdate=true; m.visible=f>0.002;}
+const W=0.026, WL=0.014;
+const G=new THREE.Group(); s.add(G);
+const P={spine:mk(GOLD),neck:mk(GOLD),shoul:mk(GOLD),uaL:mk(GOLD),laL:mk(GOLD),uaR:mk(GOLD),laR:mk(GOLD),
+  hip:mk(GOLD),thL:mk(GOLD),shL:mk(GOLD),thR:mk(GOLD),shR:mk(GOLD)};
+Object.values(P).forEach(m=>G.add(m));
+const head=mk(GOLD,1,80); G.add(head);
+const ROPE=mk(GOLD,1,64); s.add(ROPE);          // the thread he rides in on
+const WEB=mk(GOLD,0.42,220); s.add(WEB);        // the web that opens on the landing
+const RING=(rx,ry,cx,cy)=>Array.from({length:41},(_,i)=>{const a=i/40*Math.PI*2;
+  return [cx+Math.cos(a)*rx, cy+Math.sin(a)*ry];});
+/* skeleton: one pose function, three named poses, linear blends between them */
+function skel(J){
+  poly(head,RING(0.150,0.184,J.hd[0],J.hd[1]),W*0.86);
+  seg(P.neck,J.sho,[J.hd[0],J.hd[1]-0.17],WL,WL);
+  seg(P.spine,J.hip,J.sho,W,W);
+  seg(P.shoul,[J.sho[0]-0.38,J.sho[1]],[J.sho[0]+0.38,J.sho[1]],W,W);
+  seg(P.uaL,[J.sho[0]-0.34,J.sho[1]],J.elL,W,W*0.84); seg(P.laL,J.elL,J.hnL,W*0.84,WL);
+  seg(P.uaR,[J.sho[0]+0.34,J.sho[1]],J.elR,W,W*0.84); seg(P.laR,J.elR,J.hnR,W*0.84,WL);
+  seg(P.hip,[J.hip[0]-0.20,J.hip[1]],[J.hip[0]+0.20,J.hip[1]],WL,WL);
+  seg(P.thL,J.hip,J.knL,W,W*0.86); seg(P.shL,J.knL,J.ftL,W*0.86,WL);
+  seg(P.thR,J.hip,J.knR,W,W*0.86); seg(P.shR,J.knR,J.ftR,W*0.86,WL);
+}
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t, a[1]+(b[1]-a[1])*t];
+function blend(A,B,t){const o={};for(const k in A)o[k]=lerp(A[k],B[k],t);return o;}
+/* HANG: body trailing under the grip, legs swept back */
+const HANG={hd:[0.10,1.52],sho:[0.02,1.16],hip:[-0.16,0.34],
+  elL:[0.38,1.74],hnL:[0.66,2.30],elR:[0.20,1.60],hnR:[0.52,2.16],
+  knL:[-0.60,-0.04],ftL:[-1.06,0.16],knR:[-0.40,-0.22],ftR:[-0.90,-0.10]};
+/* CROUCH: the landing. Deep knees, one hand down, head low */
+const CROUCH={hd:[0.30,0.72],sho:[0.16,0.40],hip:[-0.10,-0.46],
+  elL:[0.52,-0.02],hnL:[0.66,-0.72],elR:[-0.44,0.52],hnR:[-0.86,0.78],
+  knL:[0.42,-0.66],ftL:[0.40,-1.08],knR:[-0.52,-0.72],ftR:[-0.60,-1.08]};
+/* STAND: the narrator, ready to talk */
+const STAND={hd:[0.00,1.72],sho:[0.00,1.16],hip:[0.00,0.10],
+  elL:[-0.48,0.64],hnL:[-0.40,0.10],elR:[0.48,0.64],hnR:[0.40,0.10],
+  knL:[-0.20,-0.52],ftL:[-0.26,-1.16],knR:[0.20,-0.52],ftR:[0.26,-1.16]};
+const cl=t=>Math.max(0,Math.min(1,t));
+const eOut=x=>1-Math.pow(1-cl(x),3), eIn=x=>cl(x)*cl(x);
+window.seek=function(t){
+  t=cl(t);
+  let J,gx=0,gy=0,rot=0,ropeF=0,webF=0;
+  if(t<0.34){                                  // the swing in, riding the thread
+    const u=t/0.34;
+    J=HANG; gx=-1.15+u*1.55; gy=1.35-Math.sin(u*Math.PI)*0.35-u*0.55; rot=0.42-u*0.70; ropeF=1;
+  }else if(t<0.52){                            // release: he lets go and falls
+    const u=(t-0.34)/0.18;
+    J=blend(HANG,CROUCH,eIn(u)); gx=0.40+u*0.12; gy=0.80-eIn(u)*1.20; rot=-0.28+u*0.28;
+    ropeF=Math.max(0,1-u*2.4);
+  }else if(t<0.68){                            // the landing, held
+    const u=(t-0.52)/0.16; J=CROUCH; gx=0.52; gy=-0.40+Math.sin(u*Math.PI)*0.05;
+    webF=eOut(u*1.6);
+  }else{                                       // rise into the narrator
+    const u=(t-0.68)/0.32; J=blend(CROUCH,STAND,eOut(u)); gx=0.52-u*0.52; gy=-0.40+eOut(u)*0.40;
+    webF=1;
+  }
+  G.position.set(gx,gy,0); G.rotation.z=rot; skel(J);
+  // the thread: anchored off frame top-right, down to his grip
+  if(ropeF>0.01){ const gripX=gx+J.hnL[0], gripY=gy+J.hnL[1];
+    const pts=Array.from({length:33},(_,i)=>{const u=i/32;
+      return [2.9+(gripX-2.9)*u, 4.6+(gripY-4.6)*u+Math.sin(u*Math.PI)*0.18];});
+    poly(ROPE,pts,0.020,1); ROPE.material.opacity=ropeF;
+  } else ROPE.visible=false;
+  // the web opens behind the landing
+  if(webF>0.01){
+    const ox=gx-0.05, oy=gy+1.35, R=2.05, K=11, A=WEB.geometry.attributes.position.array; A.fill(0);
+    let idx=0;
+    for(let k=0;k<=K;k++){const a=-Math.PI*0.96+k/K*Math.PI*0.92;
+      seg(WEB,[ox,oy],[ox+Math.cos(a)*R*webF, oy+Math.sin(a)*R*webF],0.010,0.010,idx++);}
+    for(let ri=1;ri<=5;ri++){const rr=R*(ri/5)*webF;
+      for(let k=0;k<K;k++){const a0=-Math.PI*0.96+k/K*Math.PI*0.92, a1=-Math.PI*0.96+(k+1)/K*Math.PI*0.92;
+        const sag=rr*0.06;
+        seg(WEB,[ox+Math.cos(a0)*rr,oy+Math.sin(a0)*rr+sag],
+                [ox+Math.cos(a1)*rr,oy+Math.sin(a1)*rr+sag],0.008,0.008,idx++);}}
+    WEB.geometry.attributes.position.needsUpdate=true; WEB.visible=true; WEB.material.opacity=0.30*webF;
+  } else WEB.visible=false;
+  r.render(s,c);
+};
+window.__TOTAL=1; window.seek(0.5); document.title='ready';
+</script></body></html>

@@ -1,0 +1,168 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'IS';src:url('fonts/InstrumentSerif-Italic.ttf') format('truetype');font-style:italic;}
+@font-face{font-family:'Pop';src:url('fonts/Poppins-600.ttf') format('truetype');font-weight:600;}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;background:#0A0A0A;overflow:hidden;font-kerning:normal}
+#stage{position:absolute;inset:0;background:#0A0A0A}
+#c3d{position:absolute;inset:0}
+#frame{position:absolute;left:56px;right:56px;top:170px;bottom:56px;border:1px solid rgba(231,199,101,.16)}
+.tk{position:absolute;width:46px;height:46px;border:2px solid #E7C765}
+.tl{left:56px;top:170px;border-right:0;border-bottom:0}.tr{right:56px;top:170px;border-left:0;border-bottom:0}
+#wm{position:absolute;left:0;right:0;bottom:214px;text-align:center;font-family:'Pop';font-size:25px;
+  letter-spacing:.34em;color:rgba(231,199,101,.42)}
+.word{position:absolute;left:70px;right:70px;text-align:center;font-family:'IS',Georgia,serif;
+  font-style:italic;color:#F3EFE6;opacity:0}
+.word i{color:#E7C765;font-style:italic}
+#w1{top:300px;font-size:112px;line-height:1.03}
+#w2{top:312px;font-size:92px;line-height:1.08}
+#w3{top:300px;font-size:72px;line-height:1.16}
+#hnd{position:absolute;left:0;right:0;top:540px;text-align:center;font-family:'Pop';font-size:60px;
+  letter-spacing:.02em;color:#E7C765;opacity:0}
+#tag{position:absolute;left:0;right:0;top:642px;text-align:center;font-family:'Pop';font-size:29px;
+  letter-spacing:.24em;text-transform:uppercase;color:#BFB49A;opacity:0}
+#mk{position:absolute;left:50%;transform:translateX(-50%);top:322px;width:160px;height:182px;opacity:0}
+</style></head><body>
+<div id="stage">
+  <canvas id="c3d" width="1080" height="1920"></canvas>
+  <div id="frame"></div><div class="tk tl"></div><div class="tk tr"></div>
+  <div class="word" id="w1">AI in<br><i>plain English.</i></div>
+  <div class="word" id="w2">One real trend<br><i>a day.</i></div>
+  <div class="word" id="w3">Checked to the source.<br><i>No hype. No jargon.</i></div>
+  <img id="mk" src="mark.png">
+  <div id="hnd">@itsac.ai</div>
+  <div id="tag">Follow for daily AI</div>
+  <div id="wm">@ITSAC.AI</div>
+</div>
+<script type="importmap2">{}</script>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('c3d'),alpha:true,antialias:true});
+r.setSize(1080,1920,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(30,1080/1920,0.1,100);
+c.position.set(0,0.30,10.6); c.lookAt(0,0.30,0);
+function mk(col,op,n){const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array((n||1)*18),3));
+  return new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:col,transparent:true,
+    opacity:op===undefined?1:op,side:THREE.DoubleSide}));}
+function seg(m,a,b,w,w2,idx){
+  const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-6,nx=-dy/L,ny=dx/L;
+  const wb=(w2===undefined?w:w2);
+  const A=m.geometry.attributes.position.array,o=(idx||0)*18;
+  const P=[[a[0]+nx*w,a[1]+ny*w],[a[0]-nx*w,a[1]-ny*w],[b[0]-nx*wb,b[1]-ny*wb],[b[0]+nx*wb,b[1]+ny*wb]];
+  const put=(k,p)=>{A[o+k*3]=p[0];A[o+k*3+1]=p[1];A[o+k*3+2]=0;};
+  put(0,P[0]);put(1,P[1]);put(2,P[2]);put(3,P[0]);put(4,P[2]);put(5,P[3]);
+  m.geometry.attributes.position.needsUpdate=true;}
+function poly(m,pts,w){const N=pts.length-1;
+  for(let i=0;i<N;i++)seg(m,pts[i],pts[i+1],w,w,i);
+  m.geometry.attributes.position.needsUpdate=true;}
+const W=0.030, WL=0.016;
+const G=new THREE.Group(); s.add(G);
+const P={spine:mk(GOLD),neck:mk(GOLD),shoul:mk(GOLD),uaL:mk(GOLD),laL:mk(GOLD),uaR:mk(GOLD),laR:mk(GOLD),
+  hip:mk(GOLD),thL:mk(GOLD),shL:mk(GOLD),thR:mk(GOLD),shR:mk(GOLD)};
+Object.values(P).forEach(m=>G.add(m));
+const head=mk(GOLD,1,80); G.add(head);
+const ROPE=mk(GOLD,1,64); s.add(ROPE);
+const WEB=mk(GOLD,0.34,320); s.add(WEB);
+const RING=(rx,ry,cx,cy)=>Array.from({length:41},(_,i)=>{const a=i/40*Math.PI*2;
+  return [cx+Math.cos(a)*rx, cy+Math.sin(a)*ry];});
+function skel(J){
+  poly(head,RING(0.150,0.184,J.hd[0],J.hd[1]),W*0.86);
+  seg(P.neck,J.sho,[J.hd[0],J.hd[1]-0.17],WL,WL);
+  seg(P.spine,J.hip,J.sho,W,W);
+  seg(P.shoul,[J.sho[0]-0.38,J.sho[1]],[J.sho[0]+0.38,J.sho[1]],W,W);
+  seg(P.uaL,[J.sho[0]-0.34,J.sho[1]],J.elL,W,W*0.84); seg(P.laL,J.elL,J.hnL,W*0.84,WL);
+  seg(P.uaR,[J.sho[0]+0.34,J.sho[1]],J.elR,W,W*0.84); seg(P.laR,J.elR,J.hnR,W*0.84,WL);
+  seg(P.hip,[J.hip[0]-0.20,J.hip[1]],[J.hip[0]+0.20,J.hip[1]],WL,WL);
+  seg(P.thL,J.hip,J.knL,W,W*0.86); seg(P.shL,J.knL,J.ftL,W*0.86,WL);
+  seg(P.thR,J.hip,J.knR,W,W*0.86); seg(P.shR,J.knR,J.ftR,W*0.86,WL);
+}
+const lerp=(a,b,t)=>[a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];
+function blend(A,B,t){const o={};for(const k in A)o[k]=lerp(A[k],B[k],t);return o;}
+const HANG={hd:[0.10,1.52],sho:[0.02,1.16],hip:[-0.16,0.34],
+  elL:[0.38,1.74],hnL:[0.66,2.30],elR:[0.20,1.60],hnR:[0.52,2.16],
+  knL:[-0.60,-0.04],ftL:[-1.06,0.16],knR:[-0.40,-0.22],ftR:[-0.90,-0.10]};
+const CROUCH={hd:[0.30,0.72],sho:[0.16,0.40],hip:[-0.10,-0.46],
+  elL:[0.52,-0.02],hnL:[0.66,-0.72],elR:[-0.44,0.52],hnR:[-0.86,0.78],
+  knL:[0.42,-0.66],ftL:[0.40,-1.08],knR:[-0.52,-0.72],ftR:[-0.60,-1.08]};
+const STAND={hd:[0.00,1.72],sho:[0.00,1.16],hip:[0.00,0.10],
+  elL:[-0.48,0.64],hnL:[-0.40,0.10],elR:[0.48,0.64],hnR:[0.40,0.10],
+  knL:[-0.20,-0.52],ftL:[-0.26,-1.16],knR:[0.20,-0.52],ftR:[0.26,-1.16]};
+const POINT={hd:[0.02,1.72],sho:[0.00,1.16],hip:[0.00,0.10],
+  elL:[-0.46,0.66],hnL:[-0.38,0.12],elR:[0.50,1.34],hnR:[0.66,1.90],
+  knL:[-0.20,-0.52],ftL:[-0.26,-1.16],knR:[0.20,-0.52],ftR:[0.26,-1.16]};
+const cl=t=>Math.max(0,Math.min(1,t));
+const eOut=x=>1-Math.pow(1-cl(x),3), eIn=x=>cl(x)*cl(x);
+const els=Object.fromEntries(['w1','w2','w3','hnd','tag','mk','wm'].map(id=>[id,document.getElementById(id)]));
+/* ===== the 8.8s map, matched to the reference energy: loud from frame 0 =====
+   0.0-1.4  swing in (fast)         w1 punches in at 0.15 already
+   1.4-2.1  release + fall
+   2.1-2.9  LAND, web SLAMS open
+   2.9-4.6  rise + w2
+   4.6-6.4  w3 + point pose
+   6.4-8.8  mark + handle + tag, loop out                                     */
+window.__TOTAL=8.8;
+window.seek=function(T){
+  const t=cl(T/8.8)*8.8;
+  let J,gx=0,gy=0,rot=0,ropeF=0,webF=0,scale=1;
+  if(t<1.4){ const u=t/1.4;
+    J=HANG; gx=-0.62+eOut(u)*1.02; gy=0.72-Math.sin(u*Math.PI)*0.22-u*0.42; rot=0.36-u*0.60; ropeF=1;
+  } else if(t<2.1){ const u=(t-1.4)/0.7;
+    J=blend(HANG,CROUCH,eIn(u)); gx=0.40+u*0.10; gy=0.80-eIn(u)*1.20; rot=-0.26+u*0.26;
+    ropeF=Math.max(0,1-u*2.6);
+  } else if(t<2.9){ const u=(t-2.1)/0.8;
+    J=CROUCH; gx=0.50; gy=-0.40+Math.sin(cl(u*2)*Math.PI)*0.045;
+    webF=eOut(u*1.5); scale=1+Math.sin(cl(u*3)*Math.PI)*0.012;   // the landing thump
+  } else if(t<4.6){ const u=(t-2.9)/1.7;
+    J=blend(CROUCH,STAND,eOut(cl(u*1.3))); gx=0.50-eOut(u)*0.50; gy=-0.40+eOut(u)*0.40; webF=1;
+  } else if(t<6.4){ const u=(t-4.6)/1.8;
+    J=blend(STAND,POINT,Math.sin(cl(u)*Math.PI));  // points up at the claim, returns
+    webF=1;
+  } else { const u=(t-6.4)/2.4;
+    J=STAND; webF=Math.max(0,1-u*1.15); gx=0; gy=-eOut(u)*0.85;
+    scale=1-eOut(u)*0.34;                            // recedes as the mark takes over
+  }
+  // breathing everywhere so no window sits still
+  const br=Math.sin(t*Math.PI*2*0.9)*0.018;
+  G.position.set(gx,gy+br*0.4,0); G.rotation.z=rot; G.scale.setScalar(scale);
+  const JB={}; for(const k in J) JB[k]=[J[k][0],J[k][1]+ (k==='hd'?br:br*0.5)];
+  skel(JB);
+  if(ropeF>0.01){ const gX=gx+J.hnL[0],gY=gy+J.hnL[1];
+    const pts=Array.from({length:33},(_,i)=>{const u=i/32;
+      return [2.9+(gX-2.9)*u, 4.8+(gY-4.8)*u+Math.sin(u*Math.PI)*0.16];});
+    poly(ROPE,pts,0.020); ROPE.visible=true; ROPE.material.opacity=ropeF;
+  } else ROPE.visible=false;
+  if(webF>0.01){
+    const ox=gx-0.05, oy=gy+1.30, R=2.6, K=13, A=WEB.geometry.attributes.position.array; A.fill(0);
+    const jig=(n,amp)=>Math.sin(n*127.1)*amp;
+    let idx=0;
+    for(let k=0;k<=K;k++){const a=-Math.PI*0.96+k/K*Math.PI*0.92+jig(k,0.03);
+      const rl=R*(0.82+0.18*Math.abs(Math.sin(k*3.7)))*webF;
+      seg(WEB,[ox,oy],[ox+Math.cos(a)*rl,oy+Math.sin(a)*rl],0.009,0.009,idx++);}
+    for(let ri=1;ri<=6;ri++){const base=Math.pow(ri/6,0.8)*0.94*webF;
+      for(let k=0;k<K;k++){ if((k*5+ri*3)%17===0) continue;
+        const a0=-Math.PI*0.96+k/K*Math.PI*0.92+jig(k,0.03), a1=-Math.PI*0.96+(k+1)/K*Math.PI*0.92+jig(k+1,0.03);
+        const r0=R*(0.82+0.18*Math.abs(Math.sin(k*3.7)))*base, r1=R*(0.82+0.18*Math.abs(Math.sin((k+1)*3.7)))*base;
+        seg(WEB,[ox+Math.cos(a0)*r0,oy+Math.sin(a0)*r0+r0*0.05],
+                [ox+Math.cos(a1)*r1,oy+Math.sin(a1)*r1+r1*0.05],0.007,0.007,idx++);}}
+    WEB.geometry.attributes.position.needsUpdate=true; WEB.visible=true; WEB.material.opacity=0.34*webF;
+  } else WEB.visible=false;
+  r.render(s,c);
+  /* ===== DOM words, hard punches on the beat ===== */
+  const pop=(el,t0,t1,yFrom)=>{const u=cl((t-t0)/0.22), v=t1?1-cl((t-t1)/0.18):1;
+    el.style.opacity=String(Math.min(u,v));
+    el.style.transform='translateY('+((1-eOut(u))*(yFrom||26))+'px)';};
+  pop(els.w1,2.25,4.40);
+  pop(els.w2,4.50,6.25);
+  pop(els.w3,6.35,7.15);
+  const mu=cl((t-7.25)/0.30);
+  els.mk.style.opacity=String(mu);
+  els.mk.style.transform='translateX(-50%) scale('+(0.86+eOut(mu)*0.14)+')';
+  pop(els.hnd,7.42,null,30);
+  pop(els.tag,7.66,null,24);
+};
+window.seek(0); document.title='ready';
+</script></body></html>
