@@ -1,0 +1,174 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<style>
+:root{--bg:#0A0908;--gold:#C9A961;--gold-bright:#E8CD8A;--text:#F3EEE4;--muted:#948D80;--card:#151310;}
+*{margin:0;box-sizing:border-box}
+body{background:var(--bg);font-family:Inter,system-ui,sans-serif;width:1560px;padding:34px 30px 40px}
+h1{color:var(--gold-bright);font-size:23px;font-weight:700;letter-spacing:.02em}
+.sub{color:var(--muted);font-size:14px;margin:7px 0 22px;line-height:1.55;max-width:1180px}
+h2{color:var(--gold);font-size:13px;font-weight:700;letter-spacing:.30em;margin:26px 0 12px;text-transform:uppercase}
+.row{display:flex;align-items:flex-start;gap:14px;padding:11px 0;border-top:1px solid #221F1A}
+.meta{width:246px;flex:none;padding-top:8px}
+.nm{color:var(--text);font-size:16px;font-weight:700;letter-spacing:.05em}
+.uc{color:var(--muted);font-size:12.5px;line-height:1.5;margin-top:5px}
+.tag{display:inline-block;margin-top:7px;font-size:10.5px;letter-spacing:.14em;color:#0A0908;background:var(--gold);padding:2px 7px;font-weight:700}
+.tag.b{background:#2A2620;color:var(--muted)}
+.frames{display:flex;gap:9px}
+.fr{position:relative}
+.fr canvas{display:block;background:#0C0B09;border:1px solid #1E1B16}
+.ft{color:#6E675C;font-size:10.5px;letter-spacing:.1em;padding-top:4px;text-align:center}
+</style></head><body>
+<h1>INTRO TRANSITIONS · drafts</h1>
+<div class="sub">Every candidate is a drawn stroke — no dust, no grain, flat gold, your tokens. The ring is shown already closed so you are judging the MARK move alone. Left to right is 0 → finished.</div>
+<h2>How the mark ARRIVES</h2>
+<div id="arr"></div>
+<h2>How the overlay LEAVES</h2>
+<div id="ext"></div>
+<script>
+const GOLD='#C9A961', BRIGHT='#E8CD8A', INK='#0A0908';
+const MW=600,MH=660;
+const L=(x1,y1,x2,y2)=>Math.hypot(x2-x1,y2-y1);
+const SEGS=[
+ {lw:26,len:140*(2*Math.PI-0.5-0.8),grp:'C',p:c=>{c.arc(412,315,140,0.8,2*Math.PI-0.5);}},
+ {lw:26,len:L(150,505,285,132)+L(285,132,408,505),grp:'A',p:c=>{c.moveTo(150,505);c.lineTo(285,132);c.lineTo(408,505);}},
+ {lw:26,len:L(206,388,378,388),grp:'A',p:c=>{c.moveTo(206,388);c.lineTo(378,388);}},
+ {lw:9, len:L(263,140,122,505),grp:'A',p:c=>{c.moveTo(263,140);c.lineTo(122,505);}},
+ {lw:26,len:140*0.9,grp:'C',p:c=>{c.arc(412,315,140,1.4,2.3);}}
+];
+const TOTAL=SEGS.reduce((a,s)=>a+s.len,0);
+function strokeMark(c,{prog=1,wScale=1,color=BRIGHT,only=null}={}){
+  c.save(); c.lineCap='butt'; c.lineJoin='miter'; c.miterLimit=8; c.strokeStyle=color;
+  let want=prog*TOTAL;
+  for(const s of SEGS){
+    const f=Math.max(0,Math.min(1,want/s.len)); want-=s.len;
+    if(f<=0) continue;
+    if(only&&s.grp!==only) continue;
+    c.lineWidth=Math.max(0.6,s.lw*wScale);
+    c.setLineDash(f>=1?[]:[s.len*f,s.len*2]); c.lineDashOffset=0;
+    c.beginPath(); s.p(c); c.stroke();
+  }
+  c.setLineDash([]); c.restore();
+}
+// ink box, measured once
+const bbc=document.createElement('canvas'); bbc.width=MW; bbc.height=MH;
+strokeMark(bbc.getContext('2d'),{color:'#fff'});
+const bd=bbc.getContext('2d').getImageData(0,0,MW,MH).data;
+let X0=MW,X1=-1,Y0=MH,Y1=-1;
+for(let y=0;y<MH;y++)for(let x=0;x<MW;x++) if(bd[(y*MW+x)*4+3]>128){
+  if(x<X0)X0=x; if(x>X1)X1=x; if(y<Y0)Y0=y; if(y>Y1)Y1=y;}
+const BB={cx:(X0+X1)/2,cy:(Y0+Y1)/2,w:X1-X0,h:Y1-Y0};
+const HALFD=Math.hypot((BB.w/BB.h)/2,0.5);
+
+const CELL=176, DPR=2;
+function mk(){const c=document.createElement('canvas');
+  c.width=CELL*DPR; c.height=CELL*DPR; c.style.width=CELL+'px'; c.style.height=CELL+'px';
+  const x=c.getContext('2d'); x.setTransform(DPR,0,0,DPR,0,0); return {c,x};}
+function ring(x,{R,alpha=1,lw=1.3,cx=CELL/2,cy=CELL/2}){
+  x.save(); x.globalAlpha=alpha; x.strokeStyle=GOLD; x.lineWidth=lw;
+  x.beginPath(); x.arc(cx,cy,R,0,Math.PI*2); x.stroke(); x.restore();}
+/* put the mark in the ring at AC's clearance, then run the candidate's move */
+function inRing(x,R,fn,{cx=CELL/2,cy=CELL/2,scale=1}={}){
+  const clear=R*(21/106);
+  const markH=(R-clear)/HALFD;
+  const S=(markH/BB.h)*scale;
+  x.save(); x.translate(cx,cy); x.scale(S,S); x.translate(-BB.cx,-BB.cy); fn(x); x.restore();}
+const ease=t=>1-Math.pow(1-Math.max(0,Math.min(1,t)),3);
+const eio=t=>{t=Math.max(0,Math.min(1,t));return t<0.5?4*t*t*t:1-Math.pow(-2*t+2,3)/2;};
+
+/* ---------------- ARRIVALS ---------------- */
+const R=68;
+const ARR=[
+ {nm:'DRAW',tag:'ONE LANGUAGE',uc:'The mark strokes itself on exactly the way your ring does — C first, then the A, then the C weaves back over the leg. Same gesture, twice.',
+  f:(x,t)=>{ring(x,{R}); inRing(x,R,c=>strokeMark(c,{prog:ease(t)}));}},
+ {nm:'WEIGHT',tag:'COUTURE',uc:'Full shape from frame one, but the strokes start as hairlines and gain their weight. Reads like ink taking pressure.',
+  f:(x,t)=>{ring(x,{R}); const e=eio(t);
+    inRing(x,R,c=>strokeMark(c,{wScale:0.06+0.94*e,color:BRIGHT}));}},
+ {nm:'IRIS',tag:'TIES TO CIRCLE',uc:'A circular reveal opens from the centre of your ring outward. The circle is already the hero — this makes it the reveal too.',
+  f:(x,t)=>{ring(x,{R});
+    const o=document.createElement('canvas'); o.width=o.height=CELL*DPR;
+    const oc=o.getContext('2d'); oc.setTransform(DPR,0,0,DPR,0,0);
+    inRing(oc,R,c=>strokeMark(c,{}));
+    oc.globalCompositeOperation='destination-in';
+    oc.beginPath(); oc.arc(CELL/2,CELL/2,Math.max(0.01,ease(t)*R*1.5),0,Math.PI*2); oc.fill();
+    x.drawImage(o,0,0,CELL,CELL);}},
+ {nm:'RISE',tag:'QUIETEST',uc:'Revealed bottom edge upward behind a straight mask, with a few pixels of lift. The most restrained option on the sheet.',
+  f:(x,t)=>{ring(x,{R});
+    const e=ease(t);
+    const o=document.createElement('canvas'); o.width=o.height=CELL*DPR;
+    const oc=o.getContext('2d'); oc.setTransform(DPR,0,0,DPR,0,0);
+    inRing(oc,R,c=>strokeMark(c,{}),{cy:CELL/2+6*(1-e)});
+    oc.globalCompositeOperation='destination-in';
+    const top=CELL/2+R - (2*R+8)*e;
+    oc.fillRect(0,top,CELL,CELL); x.drawImage(o,0,0,CELL,CELL);}},
+ {nm:'JOIN',tag:'TELLS THE NAME',uc:'A enters from the left, C from the right, and they interlock on the beat. Literal — it spells the brand as it lands.',
+  f:(x,t)=>{ring(x,{R}); const e=ease(t), d=(1-e)*R*0.78;
+    x.save(); x.globalAlpha=0.18+0.82*e;
+    inRing(x,R,c=>strokeMark(c,{only:'C'}),{cx:CELL/2+d});
+    inRing(x,R,c=>strokeMark(c,{only:'A'}),{cx:CELL/2-d});
+    x.restore();}},
+ {nm:'SETTLE',tag:'SHIPPING NOW',uc:'What is on your site today: a fade with a whisper of scale, on your own acRise curve. Here as the baseline to judge the rest against.',
+  f:(x,t)=>{ring(x,{R}); const e=ease(t);
+    x.save(); x.globalAlpha=e;
+    inRing(x,R,c=>strokeMark(c,{}),{scale:1.05-0.05*e,cy:CELL/2+6*(1-e)});
+    x.restore();}}
+];
+/* ---------------- EXITS ---------------- */
+function pageBehind(x,a){
+  x.save(); x.globalAlpha=a;
+  x.fillStyle='#F3EEE4'; x.font='700 11px Inter,sans-serif'; x.fillText('AC Wins',14,20);
+  x.fillStyle=GOLD; x.font='700 9px Inter,sans-serif'; x.fillText('AI ENABLEMENT · HONG KONG',14,44);
+  x.fillStyle='#F3EEE4'; x.font='700 15px Inter,sans-serif';
+  x.fillText('Go from SCARED',14,70); x.fillText('OF AI to running',14,89);
+  x.fillStyle='#948D80'; x.font='400 9px Inter,sans-serif';
+  x.fillText('One workflow worth automating.',14,112);
+  x.fillStyle=GOLD; x.fillRect(14,126,58,17);
+  x.restore();}
+const EXT=[
+ {nm:'FADE',tag:'SHIPPING NOW',uc:'The whole curtain fades out over 0.9s. Nothing wrong with it — it just does not say anything.',
+  f:(x,t)=>{pageBehind(x,1); x.save(); x.globalAlpha=1-ease(t);
+    x.fillStyle=INK; x.fillRect(0,0,CELL,CELL);
+    ring(x,{R:52}); inRing(x,52,c=>strokeMark(c,{})); x.restore();}},
+ {nm:'PUSH',tag:'CINEMATIC',uc:'The ring and mark scale up and fade as the page arrives — the camera moves through the mark rather than past it.',
+  f:(x,t)=>{pageBehind(x,1); const e=ease(t);
+    x.save(); x.globalAlpha=1-e; x.fillStyle=INK; x.fillRect(0,0,CELL,CELL); x.restore();
+    x.save(); x.globalAlpha=1-e; const s=1+0.55*e;
+    ring(x,{R:52*s}); inRing(x,52,c=>strokeMark(c,{}),{scale:s}); x.restore();}},
+ {nm:'IRIS OUT',tag:'TIES TO CIRCLE',uc:'Your ring keeps growing until it is bigger than the screen, and the site is revealed through it. The circle does the whole job.',
+  f:(x,t)=>{pageBehind(x,1); const e=eio(t);
+    const o=document.createElement('canvas'); o.width=o.height=CELL*DPR;
+    const oc=o.getContext('2d'); oc.setTransform(DPR,0,0,DPR,0,0);
+    oc.fillStyle=INK; oc.fillRect(0,0,CELL,CELL);
+    oc.globalCompositeOperation='destination-out';
+    oc.beginPath(); oc.arc(CELL/2,CELL/2,e*CELL*1.05,0,Math.PI*2); oc.fill();
+    x.drawImage(o,0,0,CELL,CELL);
+    x.save(); x.globalAlpha=1-Math.min(1,e*1.6);
+    inRing(x,52,c=>strokeMark(c,{})); x.restore();
+    ring(x,{R:52+(CELL*1.05-52)*e,alpha:Math.max(0,1-e*0.75),lw:1.3});}},
+ {nm:'HAND-OFF',tag:'MOST PREMIUM',uc:'The mark shrinks and travels to the AC Wins lockup in your header, then the curtain clears. The intro is not a gate any more — it becomes the logo.',
+  f:(x,t)=>{pageBehind(x,1); const e=ease(t);
+    x.save(); x.globalAlpha=1-ease(t*1.6); x.fillStyle=INK; x.fillRect(0,0,CELL,CELL); x.restore();
+    const cx=CELL/2+(20-CELL/2)*e, cy=CELL/2+(16-CELL/2)*e, s=1-0.88*e;
+    x.save(); x.globalAlpha=1-Math.pow(e,3);
+    ring(x,{R:52*s,cx,cy,alpha:Math.max(0,1-e*1.5)});
+    inRing(x,52,c=>strokeMark(c,{}),{cx,cy,scale:s}); x.restore();}}
+];
+function build(host,list,labels){
+  list.forEach(d=>{
+    const row=document.createElement('div'); row.className='row';
+    row.innerHTML='<div class="meta"><div class="nm">'+d.nm+'</div><div class="uc">'+d.uc+
+      '</div><span class="tag'+(d.tag==='SHIPPING NOW'?' b':'')+'">'+d.tag+'</span></div>';
+    const fr=document.createElement('div'); fr.className='frames';
+    labels.forEach(t=>{
+      const w=document.createElement('div'); w.className='fr';
+      const {c,x}=mk(); try{ d.f(x,t); }catch(e){ x.fillStyle='#900'; x.fillRect(0,0,20,20); console.log(d.nm,e); }
+      w.appendChild(c);
+      const lab=document.createElement('div'); lab.className='ft';
+      lab.textContent=(t===0?'start':t===1?'landed':Math.round(t*100)+'%'); w.appendChild(lab);
+      fr.appendChild(w);
+    });
+    row.appendChild(fr); host.appendChild(row);
+  });
+}
+build(document.getElementById('arr'),ARR,[0,0.28,0.55,0.8,1]);
+build(document.getElementById('ext'),EXT,[0,0.35,0.68,1]);
+document.title='ready';
+</script></body></html>

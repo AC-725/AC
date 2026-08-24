@@ -1,0 +1,237 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<!--
+  AC — REEL OPEN STING · particles carry the MOVE, a drawn stroke carries the HOLD
+  ==============================================================================
+  seek(t)-driven, 1080x1920 native, so render_frames.js bakes it with no special
+  casing AT THE SIZE IT IS DISPLAYED. Baking at native size is half the point: the
+  shipped vault open puts 720x792 art in a 224x246 box (reel.template.html
+  #markopen), and that 3.2x non-integer resample of a 1px dot field is what makes
+  the open sparkle and crawl between frames.
+
+  THE HAND-OFF LAW (AC, 2026-08-24) governs this file. A mark made of grains IS
+  grain at any density, so the settle is NOT particles at higher density - the
+  cloud gathers, then hands off to an inline-SVG mark that INKS ITSELF ON by
+  stroke-dashoffset, the same gesture AC's ring uses on ac-wins.com. Anything that
+  has to be READ is drawn, never sampled.
+
+  Every rule below cost a round somewhere else first (references/site.md):
+   - Chrome RESETS dashing per subpath, so every stroke is its own <path> with a
+     window computed from its real getTotalLength().
+   - Particles are GENERATED inside the safe radius, never clamped into it -
+     clamping stacks thousands of grains on one line and lays a hard gold rim.
+   - fract(sin(i)*k) aliases on consecutive integers (bright band + lens-shaped
+     hole), so the hash is a real integer hash.
+   - PointsMaterial draws hard SQUARES without a radial-gradient CanvasTexture,
+     and gold on near-black wants NormalBlending, not Additive.
+   - A radial cloud needs no minimum radius; taper with pow(u,1.35) so density is
+     centre-heavy and the rim thins to nothing instead of ending on an edge.
+   - Draw order is the A's legs, its double stroke, the crossbar, then the C
+     sweeping round, with the weave drawn as it passes the A's leg.
+-->
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+  @font-face{font-family:'Poppins';src:url('../fonts/Poppins-600.ttf');font-weight:600}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+  #stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+  #gl,#svg{position:absolute;inset:0;width:1080px;height:1920px;}
+  .tick{position:absolute;width:44px;height:44px;}
+  .tick.tl{top:34px;left:34px;border-top:2.5px solid #E7C765;border-left:2.5px solid #E7C765;}
+  .tick.tr{top:34px;right:34px;border-top:2.5px solid #E7C765;border-right:2.5px solid #E7C765;}
+  .tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid #E7C765;border-left:2.5px solid #E7C765;}
+  .tick.br{bottom:34px;right:34px;border-bottom:2.5px solid #E7C765;border-right:2.5px solid #E7C765;}
+  #kicker{position:absolute;top:150px;left:0;width:100%;text-align:center;
+    font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:7px;color:#E7C765;}
+</style></head>
+<body>
+<div id="stage">
+  <canvas id="gl" width="1080" height="1920"></canvas>
+  <svg id="svg" viewBox="0 0 1080 1920"></svg>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div id="kicker">AI NEWS</div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+
+const DUR=1.20; window.__TOTAL=DUR;
+/* The cloud must be GONE before a stroke it has not handed to yet would show it.
+   With the fade ending at 0.68 the C's grains sat at ~35% while the drawn C had
+   not started, and a dim settled cloud on near-black reads as a dirty olive ghost
+   rather than as a dissolve. Ending the fade at 0.56 and starting the C's sweep at
+   0.34 closes that gap: absence is correct while a mark inks on; a ghost is not. */
+const GATHER_END=0.52, HANDOFF_A=0.32, HANDOFF_B=0.56, DRAW_A=0.34, DRAW_B=1.00;
+const GOLD=new THREE.Color(0xE7C765), GOLD_HEX='#E7C765';
+
+/* ===== the mark, in MASK coordinates (AC's converged round-3 reconstruction;
+   a stand-in until his SVG lands - the treatment carries over either way) ===== */
+const MW=600,MH=660, CX=412, CY=315, R=140;
+function arcPts(cx,cy,r,a0,a1,n){const o=[];for(let i=0;i<=n;i++){const a=a0+(a1-a0)*i/n;
+  o.push([cx+Math.cos(a)*r, cy+Math.sin(a)*r]);}return o;}
+/* order here is PAINT order (C behind, A over, weave last); timing is separate */
+const STROKES=[
+  {id:'C',    w:26, pts:arcPts(CX,CY,R,0.8,2*Math.PI-0.5,180),           draw:[0.34,0.84]},
+  {id:'Aleg', w:26, pts:[[150,505],[285,132],[408,505]],                 draw:[0.00,0.34]},
+  {id:'Adbl', w:9,  pts:[[263,140],[122,505]],                           draw:[0.20,0.44]},
+  {id:'Abar', w:26, pts:[[206,388],[378,388]],                           draw:[0.34,0.52]},
+  {id:'weave',w:9,  pts:arcPts(CX,CY,R,1.4,2.3,60),                      draw:[0.66,0.80]},
+  {id:'dOut', w:9,  pts:[[285,62],[316,93],[285,124],[254,93],[285,62]], draw:[0.72,0.92]},
+  {id:'dIn',  w:9,  pts:[[285,77],[301,93],[285,109],[269,93],[285,77]], draw:[0.78,0.96]},
+  {id:'bail', w:16, pts:arcPts(285,34,22,Math.PI-0.35,0.35,40),          draw:[0.84,1.00]},
+  {id:'bL',   w:16, pts:[[266,42],[272,62]],                             draw:[0.92,1.00]},
+  {id:'bR',   w:16, pts:[[304,42],[298,62]],                             draw:[0.92,1.00]}
+];
+
+/* ===== the SAME geometry sampled to ink, for the particle cloud ===== */
+const mc=document.createElement('canvas'); mc.width=MW; mc.height=MH;
+const m=mc.getContext('2d'); m.strokeStyle='#fff'; m.lineCap='butt';
+m.lineJoin='miter'; m.miterLimit=8;
+for(const s of STROKES){ m.lineWidth=s.w; m.beginPath();
+  s.pts.forEach(([x,y],i)=> i?m.lineTo(x,y):m.moveTo(x,y)); m.stroke(); }
+/* PER-STROKE OWNERSHIP. A single global fade cannot honour the hand-off law: the
+   cloud covers the whole mark, so while the A is already drawn the C's grains are
+   still sitting there with no stroke to hand to, and a dense cloud held at 15-35%
+   on near-black reads as a dirty olive ghost. So each grain is tagged with the
+   stroke it belongs to and dissolves exactly as THAT stroke inks on. Strokes are
+   rasterised in paint order and later ones claim overlaps, so a grain always hands
+   to the stroke you actually see on top of it. */
+const targets=[];
+{
+  const owner=new Int16Array(MW*MH).fill(-1);
+  STROKES.forEach((st,si)=>{
+    m.clearRect(0,0,MW,MH); m.lineWidth=st.w; m.beginPath();
+    st.pts.forEach(([x,y],i)=> i?m.lineTo(x,y):m.moveTo(x,y)); m.stroke();
+    const d=m.getImageData(0,0,MW,MH).data;
+    for(let y=0;y<MH;y+=2)for(let x=0;x<MW;x+=2)
+      if(d[(y*MW+x)*4+3]>128) owner[y*MW+x]=si;
+  });
+  /* ALONG-STROKE PARAMETER. Fading every grain of a stroke on that stroke's global
+     progress emptied the whole C at once, so a dark gap opened ahead of the pen.
+     Each grain instead carries where it sits along its own stroke (0..1, by nearest
+     segment on the polyline), and hands over only once the draw front passes it -
+     so the grains dissolve INTO the line, at the point the line reaches them. */
+  const cums=STROKES.map(st=>{
+    const c=[0]; for(let i=1;i<st.pts.length;i++)
+      c.push(c[i-1]+Math.hypot(st.pts[i][0]-st.pts[i-1][0], st.pts[i][1]-st.pts[i-1][1]));
+    return c;
+  });
+  const along=(si,x,y)=>{
+    const pts=STROKES[si].pts, c=cums[si], tot=c[c.length-1]||1;
+    let best=1e18, at=0;
+    for(let i=1;i<pts.length;i++){
+      const ax=pts[i-1][0],ay=pts[i-1][1],bx=pts[i][0],by=pts[i][1];
+      const dx=bx-ax,dy=by-ay,L2=dx*dx+dy*dy||1e-9;
+      let t=((x-ax)*dx+(y-ay)*dy)/L2; t=t<0?0:t>1?1:t;
+      const px=ax+dx*t, py=ay+dy*t, d2=(x-px)*(x-px)+(y-py)*(y-py);
+      if(d2<best){best=d2; at=(c[i-1]+Math.hypot(px-ax,py-ay))/tot;}
+    }
+    return at;
+  };
+  for(let y=0;y<MH;y+=2)for(let x=0;x<MW;x+=2){
+    const o=owner[y*MW+x]; if(o>=0) targets.push([x,y,o,along(o,x,y)]);
+  }
+}
+
+/* normalize by the cloud's OWN bounds - a re-drawn mark otherwise under-scales */
+let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+for(const [x,y] of targets){x<x0&&(x0=x);x>x1&&(x1=x);y<y0&&(y0=y);y>y1&&(y1=y);}
+const mcx=(x0+x1)/2, mcy=(y0+y1)/2, span=Math.max(x1-x0,y1-y0);
+const SCALE=2.30/span, MARK_Y=0.77;
+
+/* screen mapping, derived not guessed: at camera z=6.6 with a 50deg vertical FOV,
+   halfHeight = 6.6*tan(25deg) = 3.0777 and PX_PER_WORLD = 960/halfHeight. The SVG
+   is placed with the same numbers, so drawn strokes land exactly where the grains do. */
+const CAMZ=6.6, HALF_H=CAMZ*Math.tan(50*Math.PI/360), PPW=960/HALF_H;
+const K=SCALE*PPW, OY=960-MARK_Y*PPW;
+const sx=px=>540+(px-mcx)*K, sy=py=>OY+(py-mcy)*K;
+
+/* ===== SVG: one <path> per stroke (Chrome resets dashing per subpath) ===== */
+const svg=document.getElementById('svg');
+const paths=STROKES.map(s=>{
+  const p=document.createElementNS('http://www.w3.org/2000/svg','path');
+  p.setAttribute('d','M '+s.pts.map(([x,y])=>sx(x).toFixed(2)+' '+sy(y).toFixed(2)).join(' L '));
+  p.setAttribute('fill','none'); p.setAttribute('stroke',GOLD_HEX);
+  p.setAttribute('stroke-width',(s.w*K).toFixed(2));
+  p.setAttribute('stroke-linecap','butt'); p.setAttribute('stroke-linejoin','miter');
+  p.setAttribute('stroke-miterlimit','8');
+  svg.appendChild(p);
+  return {el:p, len:0, draw:s.draw};
+});
+paths.forEach(p=>{ p.len=p.el.getTotalLength();                  // real length, so no joint changes speed
+  p.el.setAttribute('stroke-dasharray',p.len.toFixed(2));
+  p.el.setAttribute('stroke-dashoffset',p.len.toFixed(2)); });
+
+/* ===== particles ===== */
+function h32(n){ n=(n^61)^(n>>>16); n=(n+(n<<3))|0; n^=n>>>4; n=Math.imul(n,0x27d4eb2d);
+  n^=n>>>15; return (n>>>0)/4294967296; }                        // integer hash, no sin() aliasing
+function dotTex(){
+  const c=document.createElement('canvas'); c.width=c.height=64;
+  const g=c.getContext('2d'), gr=g.createRadialGradient(32,32,0,32,32,32);
+  gr.addColorStop(0,'rgba(255,255,255,1)'); gr.addColorStop(0.42,'rgba(255,255,255,0.55)');
+  gr.addColorStop(1,'rgba(255,255,255,0)');
+  g.fillStyle=gr; g.fillRect(0,0,64,64);
+  const t=new THREE.CanvasTexture(c); t.needsUpdate=true; return t;
+}
+const RMAX=1.45;                                                 // inside halfWidth 1.731
+const P=targets.map(([px,py,own,at],i)=>{
+  const tx=(px-mcx)*SCALE, ty=(mcy-py)*SCALE+MARK_Y;
+  /* GENERATED inside the disc, never clamped: r = RMAX*pow(u,1.35) is centre-heavy
+     and thins to nothing at the rim, so there is no edge to read as a border. */
+  /* Seeds must be DECORRELATED, not merely different. Feeding h32 the adjacent
+     integers i*2+1 and i*2+2 left radius and angle correlated enough to lay
+     visible spiral arms through the cloud - the same structured-noise failure as
+     the sin() aliasing, just a prettier one. Separate multipliers + XOR salts. */
+  const r=RMAX*Math.pow(h32(Math.imul(i,0x9E3779B1)^0x85EBCA6B),1.35),
+        a=h32(Math.imul(i,0xC2B2AE35)^0x27D4EB2F)*Math.PI*2;
+  return {tx,ty, own, at, sx:Math.cos(a)*r, sy:Math.sin(a)*r+MARK_Y,
+          sz:(h32(Math.imul(i,0x165667B1)^0x9E3779B9)-0.5)*1.6,
+          arrive:0.34+h32(Math.imul(i,0x7FEB352D)^0x846CA68B)*0.60};
+});
+const N=P.length, pos=new Float32Array(N*3), alp=new Float32Array(N);
+const geo=new THREE.BufferGeometry();
+geo.setAttribute('position',new THREE.BufferAttribute(pos,3));
+geo.setAttribute('aAlpha',new THREE.BufferAttribute(alp,1));
+const renderer=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true,alpha:true});
+renderer.setSize(1080,1920,false); renderer.setPixelRatio(1);
+renderer.setClearColor(0x000000,0);                              // alpha: the CSS ground shows through
+const scene=new THREE.Scene();                                   // NO scene.background (lab lesson)
+const cam=new THREE.PerspectiveCamera(50,1080/1920,0.1,60); cam.position.set(0,0,CAMZ);
+/* vertexColors would force the fade through the COLOUR, and a gold grain darkened
+   toward black on a near-black ground reads as dirt rather than as distance. A
+   per-vertex ALPHA keeps every grain true gold right up to the moment it leaves.
+   gl_PointSize replicates three's own attenuation (scale = canvasHeight/2 = 960). */
+const mat=new THREE.ShaderMaterial({
+  uniforms:{uMap:{value:dotTex()}, uColor:{value:new THREE.Color(0xE7C765)}, uSize:{value:0.038}},
+  transparent:true, depthWrite:false, blending:THREE.NormalBlending,
+  vertexShader:`attribute float aAlpha; varying float vA; uniform float uSize;
+    void main(){ vA=aAlpha; vec4 mv=modelViewMatrix*vec4(position,1.0);
+      gl_PointSize=uSize*(960.0/max(0.001,-mv.z)); gl_Position=projectionMatrix*mv; }`,
+  fragmentShader:`uniform sampler2D uMap; uniform vec3 uColor; varying float vA;
+    void main(){ if(vA<=0.002) discard; vec4 t=texture2D(uMap,gl_PointCoord);
+      gl_FragColor=vec4(uColor, t.a*vA); }`});
+scene.add(new THREE.Points(geo,mat));
+
+const clamp=v=>Math.min(1,Math.max(0,v));
+const ease=t=>1-Math.pow(1-clamp(t),3);
+const span01=(v,a,b)=>clamp((v-a)/(b-a));
+
+window.seek=function(t){
+  const p=clamp(t/DUR);
+  /* --- the MOVE: grains gather, then dissolve as the drawn mark takes over --- */
+  const g=span01(p,0,GATHER_END);
+  /* stroke draw progress first - each grain hands to its own stroke */
+  const d=span01(p,DRAW_A,DRAW_B);
+  const K_=paths.map(pa=>ease(span01(d,pa.draw[0],pa.draw[1])));
+  paths.forEach((pa,i)=> pa.el.setAttribute('stroke-dashoffset',(pa.len*(1-K_[i])).toFixed(2)));
+  for(let i=0;i<N;i++){
+    const q=P[i], u=ease(g/q.arrive);
+    pos[i*3]=q.sx+(q.tx-q.sx)*u; pos[i*3+1]=q.sy+(q.ty-q.sy)*u; pos[i*3+2]=q.sz*(1-u);
+    /* handed over once the pen passes this grain's own point on the line */
+    const handed=clamp((K_[q.own]-q.at)/0.14);
+    alp[i]=(0.30+0.70*u)*(1-handed);
+  }
+  geo.attributes.position.needsUpdate=true; geo.attributes.aAlpha.needsUpdate=true;
+  renderer.render(scene,cam);
+};
+window.seek(0);
+document.title='ready';
+</script></body></html>

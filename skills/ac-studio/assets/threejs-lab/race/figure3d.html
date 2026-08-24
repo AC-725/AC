@@ -1,0 +1,66 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>*{margin:0}html,body{width:460px;height:760px;background:transparent;overflow:hidden}
+canvas{display:block}</style></head>
+<body><canvas id="a" width="460" height="760"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765, DIM=0x8a7742;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(460,760,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(28,460/760,0.1,100);
+c.position.set(0,0.05,8.2); c.lookAt(0,0.05,0);
+const lm=(o,w)=>new THREE.LineBasicMaterial({color:o===undefined?GOLD:o,transparent:true,opacity:w===undefined?1:w});
+const G=new THREE.Group(); s.add(G);
+
+/* HEAD — a DRAWN contour, not a globe. Depth comes from two inset arcs, nothing spins.
+   (v1 built a lat/long sphere and it read as a disco ball, which is the lab's own
+   "rings read as broken, not premium" lesson arriving the hard way.) */
+const headG=new THREE.Group(); G.add(headG);
+const HY=1.66, RX=0.30, RY=0.355;
+{ const ring=Array.from({length:73},(_,i)=>{const a=i/72*Math.PI*2;
+    return new THREE.Vector3(Math.cos(a)*RX,HY+Math.sin(a)*RY,0);});
+  headG.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(ring),lm(GOLD,1)));
+  // one inset arc on the shadow side = volume, no spin
+  const arc=Array.from({length:31},(_,i)=>{const a=-1.15+i/30*2.30;
+    return new THREE.Vector3(Math.cos(a)*RX*0.60+0.055,HY+Math.sin(a)*RY*0.86,0.02);});
+  headG.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(arc),lm(GOLD,0.30)));
+  const jaw=Array.from({length:21},(_,i)=>{const a=Math.PI+i/20*Math.PI*0.62;
+    return new THREE.Vector3(Math.cos(a)*RX*0.88,HY+Math.sin(a)*RY*0.90,0.02);});
+  headG.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(jaw),lm(GOLD,0.22)));
+}
+function seg(o,w){const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(6),3));
+  return new THREE.Line(g,lm(o,w));}
+function setSeg(l,a,b){const p=l.geometry.attributes.position;
+  p.array[0]=a[0];p.array[1]=a[1];p.array[2]=a[2]||0;
+  p.array[3]=b[0];p.array[4]=b[1];p.array[5]=b[2]||0;p.needsUpdate=true;}
+const P={neck:seg(),spine:seg(),shoul:seg(),ua_l:seg(),la_l:seg(),ua_r:seg(),la_r:seg(),
+         hip:seg(),leg_l:seg(),leg_r:seg()};
+Object.values(P).forEach(x=>G.add(x));
+const HALO=(()=>{const pts=[];
+  for(let i=0;i<54;i++){const a=(i/54)*Math.PI*2, rr=1.05+((i*37)%23)/23*0.85;
+    pts.push(new THREE.Vector3(Math.cos(a)*rr,-0.30+((i*53)%29)/29*2.30,Math.sin(a)*rr*0.42));}
+  const o=new THREE.Points(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.PointsMaterial({color:DIM,size:0.030,transparent:true,opacity:0.4}));
+  G.add(o); return o;})();
+const SH=1.12, HP=0.06;
+window.seek=function(t){
+  const br=Math.sin(t*Math.PI*2*1.6)*0.020, gw=Math.sin(t*Math.PI*2*0.9);
+  headG.position.set(Math.sin(t*Math.PI*2*0.5)*0.020, br*0.7, 0);
+  setSeg(P.neck,[0,SH+br,0],[0,HY-RY+0.02,0]);
+  setSeg(P.spine,[0,HP,0],[0,SH+br,0]);
+  setSeg(P.shoul,[-0.50,SH+br,0],[0.50,SH+br,0]);
+  const eL=[-0.60,SH-0.46+br*0.5,0.08], hL=[eL[0]+0.06+gw*0.14,eL[1]-0.44,0.20];
+  setSeg(P.ua_l,[-0.50,SH+br,0],eL); setSeg(P.la_l,eL,hL);
+  const eR=[0.60,SH-0.46+br*0.5,0.08], hR=[eR[0]-0.06-gw*0.14,eR[1]-0.44,0.20];
+  setSeg(P.ua_r,[0.50,SH+br,0],eR); setSeg(P.la_r,eR,hR);
+  setSeg(P.hip,[-0.32,HP,0],[0.32,HP,0]);
+  setSeg(P.leg_l,[-0.32,HP,0],[-0.38,-1.28,0]);
+  setSeg(P.leg_r,[0.32,HP,0],[0.40,-1.28,0]);
+  HALO.material.opacity=0.28+0.10*Math.sin(t*Math.PI*2*1.1);
+  r.render(s,c);
+};
+window.__TOTAL=1; window.seek(0.2); document.title='ready';
+</script></body></html>

@@ -187,3 +187,119 @@ Never hardcode a key, never commit one, never echo one into output.
 | --- | --- |
 | `EXA_API_KEY` | Direct `api.exa.ai` calls only — **not** needed for `mcp__Exa__*`, which authenticates through the managed connector |
 | `FIRECRAWL_API_KEY` | Every non-interactive Firecrawl run. Format `fc-…` |
+
+---
+
+# The WOW gate — added 2026-08-24, and it is a HARD filter
+
+**Why it exists.** On 24 Aug a board of four stories was put to AC. Every one was verified
+to a primary source, every one carried a real number, and every one was *correct*. He
+killed the whole board in one line: **"I want bigger and more wow news. This is too
+informative for general users that don't keep in touch with AI."**
+
+He was right, and the failure is worth naming precisely, because "verified" had been
+doing all the work and "worth telling" had been doing none. The four were: an ad rollout,
+an adoption survey, a maturity index, and an ROI survey. That is **trade news** — it
+informs people already in the room. The replacement board led with a humanoid robot
+beating Usain Bolt's 100m record and then crashing into a wall. Same verification bar,
+completely different reach.
+
+## The dinner-table test (run this FIRST, before verifying anything)
+
+> **Would someone who does not follow AI repeat this out loud to another person?**
+
+If the story needs a setup sentence explaining what the thing *is* before the news lands,
+it is trade news. Kill it. Verification is what you do to a story that has already passed
+this test — never the other way round. Verifying first is how a whole morning gets spent
+sourcing four stories nobody would retell.
+
+## The five wow ladders — a candidate must be on at least one
+
+| Ladder | What it looks like | Why it travels |
+| --- | --- | --- |
+| **Impossible-made-real** | A machine did the thing people said needed a human | Breaks a belief the viewer holds |
+| **Price collapse** | What cost $X now costs pennies | Money is legible to everyone |
+| **Something you can SEE** | A robot, a video, a demo, a photo | Survives sound-off, survives the thumbnail |
+| **A named human consequence** | One person gained or lost something real | Empathy is the #1 share emotion, ~3x anything else |
+| **A number that breaks intuition** | Only when the unit is everyday — a year of work, a salary, a city's power | "38.6% of enterprises" is not this |
+
+## The kill list — these do not reach AC's board on their own
+
+Adoption surveys · percentage-of-businesses stats · maturity indices · ROI studies ·
+pricing-tier changes · enterprise policy · developer tooling · compliance and regulation ·
+funding rounds · model benchmark scores · partnership announcements.
+
+Not because they are false — because they are **wallpaper to a non-specialist**. Any of
+them may still ride along as scene C proof *under* a story that passed the gate. None of
+them is the story.
+
+**The meta-rule:** a story that only lands for someone who already follows AI has already
+lost the audience this page is for.
+
+## What this changes in the search layer
+
+The first board failed partly because of *where* it looked. AI trade press surfaces trade
+stories — that is its job. So:
+
+1. **Sweep mainstream and wire desks FIRST** — Reuters, AP, BBC, CNN, Guardian, CBS, and
+   the general-interest sections rather than the tech vertical. If Reuters ran it in
+   *Sports* and CNN ran the video, that is a wow signal no AI newsletter will give you.
+2. **Then check what actually travelled** — the story a mainstream outlet gave a video to
+   has already passed the dinner-table test with a real audience.
+3. **Treat AI trade press as CORROBORATION, not discovery.** It is where you confirm the
+   number, not where you find the story.
+4. Phrase the semantic query for the *reaction*, not the topic: "AI story that went viral
+   with the general public this week" beats "AI news August 2026".
+
+## Then, and only then, verify
+
+Everything above this line is selection. Everything in the rest of this file is
+verification, and none of it is relaxed: a wow story with a soft number is worse than a
+dull one, because it will actually be seen. Open the primary page before any figure
+reaches a render (the standing rule from Day 38). Where two outlets place the same figure
+at different events, put the better-sourced one on screen and leave the other off
+entirely — that is what happened with the 9.32s / 9.39s split on the Bolt story.
+
+---
+
+# The morning shortlist — rebuilt 2026-08-24 to gauge views, not just verify facts
+
+The ~6:45am HKT scheduled run used to deliver "3-5 verified candidates." On 24 Aug that
+output was rejected wholesale: every candidate was true and none was worth telling. The
+brief below replaces it. **The shortlist's job is to predict reach, not to prove accuracy** —
+accuracy is the floor, not the product.
+
+## What the run does now, in order
+
+1. **Sweep for reaction first.** Mainstream and wire desks before any AI vertical —
+   Reuters, AP, BBC, CNN, Guardian, CBS, plus general-interest and video sections. Query
+   for the reaction ("AI story the general public shared this week"), not the topic.
+2. **Apply the WOW gate above.** Anything that fails the dinner-table test is dead on
+   arrival, however well sourced. Anything on the kill list is dead as a lead story.
+3. **Only then verify** the survivors to primary sources, per the rest of this file.
+4. **Score each survivor for predicted views** on the card below, and rank by it.
+5. Deliver **3 candidates, ranked, with the score visible**, plus one line naming what was
+   killed and why — so AC can see the gate working rather than trust it blindly.
+
+## The view-gauge card (score each candidate /10 before it reaches the board)
+
+| Pts | Row |
+|---|---|
+| 3 | **Wow ladder** — on one of the five (3), arguably on one (1), on none (0). This row alone can kill a candidate. |
+| 2 | **Retells in one sentence** with no setup sentence required |
+| 2 | **Sendable to a NAMED person-type** with a motive (Gift / Mirror / Idea / Gossip / Mood) |
+| 1 | **Visible** — there is a picture, a video, or a thing the reel can SHOW |
+| 1 | **Same-week**, ideally same-day |
+| 1 | **Has a business read** under the headline that AC can land in one line |
+
+Below 7 it does not reach the board. A 10 that cannot be verified to a primary source is
+still dead — the gate selects, verification decides.
+
+## Worked example, the run this brief came from
+
+- **Robot beats Usain Bolt** (Beijing, 22 Aug) — wow 3 (impossible-made-real + you can
+  see it), retells 2, sendable 2 (Gossip AND Gift, both directions), visible 1, same-week
+  1, business read 1 = **10/10.** Shipped.
+- **ChatGPT ads reach 31 markets** — wow 0 (policy/pricing), retells 1, sendable 1,
+  visible 0, same-day 1, business read 1 = **4/10.** Killed, and it had been the
+  recommended pick under the old brief. That gap is the whole reason this card exists.

@@ -1,0 +1,50 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-SemiBold.ttf');font-weight:600}
+body{margin:0;width:1080px;background:#0A0A0A;font-family:'Poppins';color:#EFEAE0}
+.g{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+.c{padding:22px 10px 26px;border:1px solid rgba(231,199,101,.12);text-align:center}
+.n{font-size:17px;letter-spacing:3px;color:#E7C765;font-weight:600;text-transform:uppercase}
+svg{overflow:visible}
+.s{fill:none;stroke:#E7C765;stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round}
+.t{fill:none;stroke:#E7C765;stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round}.hr{fill:none;stroke:#E7C765;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.sun{fill:#E7C765}.car{fill:#F4DF95}
+</style></head><body><div class="g" id="g"></div>
+<script>
+// two-bone arm: upper along +x from shoulder, rotate S; forearm pivots at elbow, rotate E
+function arm(sx,sy,S,E,UL,FL){
+  return '<g transform="translate('+sx+','+sy+') rotate('+S+')">'+
+    '<path class="s" d="M0 0 L'+UL+' 0"/>'+
+    '<g transform="translate('+UL+',0) rotate('+E+')"><path class="s" d="M0 0 L'+FL+' 0"/></g></g>';
+}
+function fig(p,headRot){
+  const hr=headRot||0;
+  return '<svg width="180" height="250" viewBox="0 -10 210 300">'+
+  '<g transform="rotate('+(-5+hr)+' 105 104)">'+
+    '<circle cx="105" cy="58" r="46" class="s"/><path class="hr" d="M64 40 Q70 9 105 8 Q141 9 146 40"/><path class="t" d="M76 20 l4 -11"/><path class="t" d="M92 11 l-2 -11"/><path class="t" d="M110 8 l6 -10"/><path class="t" d="M128 14 l9 -6"/>'+
+    '<path class="t" d="M113 38 Q123 33 133 37"/>'+
+    '<rect x="74" y="45" width="26" height="14" rx="6" class="sun"/>'+
+    '<rect x="110" y="45" width="26" height="14" rx="6" class="sun"/>'+
+    '<path class="t" d="M100 51 h10"/><path class="t" d="M74 50 L61 46"/><path class="t" d="M136 50 L149 46"/>'+
+    '<rect x="102" y="70" width="6" height="18" class="car"/></g>'+
+  '<path class="t" d="M89 108 L96 122 L105 118"/><path class="t" d="M121 108 L114 122 L105 118"/>'+
+  '<circle cx="105" cy="127" r="2.5" class="sun"/>'+
+  '<path class="s" d="M105 104 v92"/>'+
+  arm(105,128,p.lS,p.lE,46,38)+arm(105,128,p.rS,p.rE,46,38)+
+  '<path class="s" d="M105 196 L86 258"/><path class="s" d="M105 196 L132 256"/></svg>';
+}
+const POSES={
+ 'rest / akimbo':{lS:132,lE:-108,rS:72,rE:14},
+ 'wave down':    {lS:132,lE:-108,rS:28,rE:44},
+ 'shrug':        {lS:152,lE:-88, rS:28,rE:-88},
+ 'point at it':  {lS:132,lE:-108,rS:20,rE:-8},
+ 'open palms':   {lS:196,lE:52,  rS:-16,rE:-52},
+ 'cut off':      {lS:132,lE:-108,rS:0,  rE:0},
+ 'both out':     {lS:168,lE:30,  rS:12, rE:-30},
+ 'head turn 12':{lS:132,lE:-108,rS:72,rE:14}
+};
+let h='';
+Object.entries(POSES).forEach(([n,p],i)=>{
+  h+='<div class="c"><div class="n">'+n+'</div>'+fig(p, n.indexOf('head turn')===0?12:0)+'</div>';
+});
+document.getElementById('g').innerHTML=h;
+</script></body></html>

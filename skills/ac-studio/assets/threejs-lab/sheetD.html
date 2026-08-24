@@ -1,0 +1,162 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js","three/addons/":"./jsm/"}}</script>
+<style>
+@font-face{font-family:'Poppins';font-weight:600;src:url('../fonts/Poppins-600.ttf');}
+@font-face{font-family:'DispBase';src:url('../fonts/Gloock-Regular.ttf');}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1200px;height:2040px;background:#0A0A0A;overflow:hidden;}
+.grid{display:grid;grid-template-columns:600px 600px;}
+.cell{position:relative;width:600px;height:680px;background:#0A0A0A;border:1px solid rgba(231,199,101,0.10);}
+.lbl{position:absolute;top:22px;left:0;width:100%;text-align:center;font-family:'Poppins';font-weight:600;
+  font-size:18px;letter-spacing:4px;color:#E7C765;text-transform:uppercase;}
+.note{position:absolute;bottom:18px;left:0;width:100%;text-align:center;font-family:'Poppins';font-weight:600;
+  font-size:14px;color:#6f6a60;}
+canvas.pane{position:absolute;left:100px;top:110px;width:400px;height:420px;}
+canvas.strip{position:absolute;left:60px;top:110px;width:480px;height:420px;}
+</style></head><body>
+<div class="grid">
+  <div class="cell"><div class="lbl">20 · Motion trails</div><canvas class="pane" id="d1" width="800" height="840"></canvas><div class="note">AfterimagePass · coin leaves a fading arc</div></div>
+  <div class="cell"><div class="lbl">21 · Film grain</div><canvas class="pane" id="d2" width="800" height="840"></canvas><div class="note">FilmPass · touches every pixel · law question</div></div>
+  <div class="cell"><div class="lbl">22 · Dolly zoom</div><canvas class="strip" id="d3" width="960" height="840"></canvas><div class="note">3 phases · number constant, world stretches</div></div>
+  <div class="cell"><div class="lbl">23 · Orbit reveal</div><canvas class="strip" id="d4" width="960" height="840"></canvas><div class="note">3 phases · camera arcs, object still</div></div>
+  <div class="cell"><div class="lbl">9b · Type dissolve (fixed)</div><canvas class="pane" id="d5" width="800" height="840"></canvas><div class="note">21 nearly formed into 65 · fringe in flight</div></div>
+  <div class="cell"><div class="lbl">10b · Depth of field (fixed)</div><canvas class="pane" id="d6" width="800" height="840"></canvas><div class="note">bokeh · background matched, square gone</div></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import {EffectComposer} from 'three/addons/postprocessing/EffectComposer.js';
+import {RenderPass} from 'three/addons/postprocessing/RenderPass.js';
+import {AfterimagePass} from 'three/addons/postprocessing/AfterimagePass.js';
+import {FilmPass} from 'three/addons/postprocessing/FilmPass.js';
+import {BokehPass} from 'three/addons/postprocessing/BokehPass.js';
+const GOLD=0xE7C765, INK=0x0A0A0A;
+const gMat=new THREE.MeshBasicMaterial({color:GOLD});
+function mk(id,fov=34,z=6,w=800,h=840){
+  const r=new THREE.WebGLRenderer({canvas:document.getElementById(id),antialias:true});
+  r.setSize(w,h,false);
+  const s=new THREE.Scene(); s.background=new THREE.Color(INK);
+  const c=new THREE.PerspectiveCamera(fov,w/h,0.1,100); c.position.z=z;
+  return {r,s,c};
+}
+function sample(txt,fsMax,stepPx){
+  const c=document.createElement('canvas'); c.width=900; c.height=300;
+  const x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,900,300);
+  x.fillStyle='#fff'; x.textAlign='center'; x.textBaseline='middle';
+  let fs=fsMax; x.font='700 '+fs+'px DispBase, Georgia';
+  while(x.measureText(txt).width>800&&fs>60){fs-=6;x.font='700 '+fs+'px DispBase, Georgia';}
+  x.fillText(txt,450,158);
+  const d=x.getImageData(0,0,900,300).data,out=[];
+  for(let y=0;y<300;y+=stepPx)for(let X=0;X<900;X+=stepPx) if(d[(y*900+X)*4]>128) out.push([(X-450),-(y-150)]);
+  return out;
+}
+
+/* 20 · TRAILS — a gold marker orbits; AfterimagePass keeps a decaying echo. */
+const T=mk('d1',34,6);
+const orb=new THREE.Mesh(new THREE.SphereGeometry(0.28,24,18),gMat); T.s.add(orb);
+T.s.add(new THREE.Mesh(new THREE.SphereGeometry(0.10,16,12),
+  new THREE.MeshBasicMaterial({color:0xC9A23F})));
+const tComp=new EffectComposer(T.r);
+tComp.addPass(new RenderPass(T.s,T.c));
+const after=new AfterimagePass(0.955); tComp.addPass(after);
+
+/* 21 · FILM GRAIN — grain over a flat gold disc so the texture is visible. */
+const F=mk('d2',34,6);
+F.s.add(new THREE.Mesh(new THREE.CircleGeometry(1.9,64),gMat));
+const fComp=new EffectComposer(F.r);
+fComp.addPass(new RenderPass(F.s,F.c));
+fComp.addPass(new FilmPass(0.18,false));
+
+/* 22 · DOLLY ZOOM — number plate stays constant size while FOV widens and the world
+   stretches behind it. Three phases rendered side by side (each slice ~9:16). */
+const dz=document.getElementById('d3').getContext('2d');
+const dzR=new THREE.WebGLRenderer({antialias:true}); dzR.setSize(320,840,false);
+const dzS=new THREE.Scene(); dzS.background=new THREE.Color(INK);
+dzS.fog=new THREE.FogExp2(INK,0.10);
+{ const tex=(()=>{const c=document.createElement('canvas');c.width=512;c.height=256;
+    const x=c.getContext('2d'); /* transparent ground: no fill, so no grey box */
+    x.fillStyle='#E7C765'; x.font='700 150px DispBase, Georgia'; x.textAlign='center'; x.textBaseline='middle';
+    x.fillText('$20',256,138); return new THREE.CanvasTexture(c);})();
+  const plate=new THREE.Mesh(new THREE.PlaneGeometry(2.4,1.2),
+    new THREE.MeshBasicMaterial({map:tex,transparent:true})); dzS.add(plate); }
+for(let i=0;i<30;i++){ // receding pillar corridor — the thing that visibly stretches.
+  // pillars sit INSIDE the narrow slice frustum (x ±0.62): first cut had them at ±1.35,
+  // outside a 320px-wide slice's horizontal FOV, so the dolly had nothing to stretch.
+  const side=i%2?1:-1, zP=-0.8-(i>>1)*1.05;
+  const m=new THREE.Mesh(new THREE.BoxGeometry(0.20,3.0,0.20),
+    new THREE.MeshBasicMaterial({color:GOLD,fog:true}));
+  m.position.set(side*0.62,0,zP); dzS.add(m);
+}
+function dollyShot(slot,fovDeg){
+  const cam=new THREE.PerspectiveCamera(fovDeg,320/840,0.1,100);
+  const half=1.2; cam.position.z=half/Math.tan(THREE.MathUtils.degToRad(fovDeg/2)); // plate width locked
+  dzR.render(dzS,cam);
+  dz.drawImage(dzR.domElement,slot*320,0);
+}
+
+/* 23 · ORBIT — object still, camera arcs. Reuses a mini skyline. */
+const ob=document.getElementById('d4').getContext('2d');
+const obR=new THREE.WebGLRenderer({antialias:true}); obR.setSize(320,840,false);
+const obS=new THREE.Scene(); obS.background=new THREE.Color(INK);
+const kMat=new THREE.MeshBasicMaterial({color:INK});
+[[-1.1,1.6],[-0.35,2.6],[0.4,1.9],[1.1,2.9]].forEach(([x,h])=>{
+  const g=new THREE.BoxGeometry(0.6,h,0.6), grp=new THREE.Group();
+  grp.add(new THREE.Mesh(g,kMat));
+  grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),new THREE.LineBasicMaterial({color:GOLD})));
+  grp.position.set(x,h/2-1.5,0); obS.add(grp);
+});
+function orbitShot(slot,angDeg){
+  const cam=new THREE.PerspectiveCamera(30,320/840,0.1,100);
+  const a=THREE.MathUtils.degToRad(angDeg), R=9.0;
+  cam.position.set(Math.sin(a)*R,1.4,Math.cos(a)*R); cam.lookAt(0,0.2,0);
+  obR.render(obS,cam);
+  ob.drawImage(obR.domElement,slot*320,0);
+}
+
+/* 9b · DISSOLVE fixed — frozen at m=0.82: '65' clearly formed, scatter fringe in flight. */
+const Dv=mk('d5',34,5.2);
+const A2=sample('21',230,4), B2=sample('65',230,4);
+function normed(pts,worldW){ // scale the cloud by its OWN bounds, not a fixed divisor
+  const xs=pts.map(p=>p[0]); const w=Math.max(...xs)-Math.min(...xs)||1;
+  const k=worldW/w; return pts.map(([x,y])=>[x*k,y*k]);
+}
+const An=normed(A2,3.4), Bn=normed(B2,3.4);
+const CNT=Math.max(An.length,Bn.length), dg=new THREE.BufferGeometry(), dp=new Float32Array(CNT*3);
+for(let i=0;i<CNT;i++){
+  const p1=An[i%An.length], p2=Bn[i%Bn.length];
+  // a readable mid-morph still: ~70% of points sit EXACTLY on the destination glyph so
+  // '65' is legible, ~30% are caught in flight as the scatter fringe. The first cut put
+  // jitter on every point, so nothing settled and the frame read as dust.
+  const settled=(i%10)<7, j=Math.sin(i*12.9898)*0.5;
+  const m=settled?1:Math.min(1,Math.max(0,0.45+j*0.5));
+  dp[i*3]  =p1[0]+(p2[0]-p1[0])*m;
+  dp[i*3+1]=p1[1]+(p2[1]-p1[1])*m;
+  dp[i*3+2]=settled?0:j*0.9*Math.sin(m*Math.PI);
+}
+dg.setAttribute('position',new THREE.BufferAttribute(dp,3));
+Dv.s.add(new THREE.Points(dg,new THREE.PointsMaterial({color:GOLD,size:0.055})));
+
+/* 10b · DOF fixed — background matched to the ground, bokeh reads as depth not a square. */
+const Df=mk('d6',34,7);
+for(let i=0;i<9;i++){
+  const m=new THREE.Mesh(new THREE.SphereGeometry(0.30,20,16),gMat);
+  m.position.set((i%3-1)*1.5,(Math.floor(i/3)-1)*1.5,-i*0.9+2.5); Df.s.add(m);
+}
+const dfComp=new EffectComposer(Df.r);
+dfComp.addPass(new RenderPass(Df.s,Df.c));
+dfComp.addPass(new BokehPass(Df.s,Df.c,{focus:7.0,aperture:0.0026,maxblur:0.012}));
+
+document.fonts.ready.then(()=>{
+  // trails: 34 pre-frames so the echo builds before the still is taken
+  for(let k=0;k<34;k++){
+    const t=k/33*1.35, a=t*3.4;
+    orb.position.set(Math.cos(a)*1.55,Math.sin(a)*1.05,0);
+    tComp.render();
+  }
+  fComp.render();
+  dollyShot(0,24); dollyShot(1,40); dollyShot(2,62);
+  orbitShot(0,-38); orbitShot(1,0); orbitShot(2,38);
+  Dv.r.render(Dv.s,Dv.c);
+  dfComp.render();
+  document.title='ready';
+});
+</script></body></html>

@@ -1,0 +1,49 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>@font-face{font-family:'Bric';src:url('fonts/BricolageGrotesque-Bold.ttf') format('truetype');}
+*{margin:0}html,body{width:900px;height:340px;background:transparent;overflow:hidden}
+#wrap{position:relative;width:900px;height:340px}
+canvas,#drawn{position:absolute;inset:0}
+#drawn{display:flex;align-items:center;justify-content:center;
+  font-family:'Bric','Helvetica Neue',Arial,sans-serif;font-weight:700;font-size:250px;
+  color:#E7C765;letter-spacing:-.01em;opacity:0}</style></head>
+<body><div id="wrap"><canvas id="a" width="900" height="340"></canvas><div id="drawn"></div></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const TXT=new URLSearchParams(location.search).get('t')||'9.39';
+document.getElementById('drawn').textContent=TXT;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(900,340,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(30,900/340,0.1,100); c.position.set(0,0,7.4); c.lookAt(0,0,0);
+/* THE HAND-OFF LAW (AC, 2026-08-24): particles carry the MOVE, a drawn stroke carries
+   the HOLD. So the grains only ever fly IN; the figure that gets READ is drawn type. */
+const cv=document.createElement('canvas'); cv.width=900; cv.height=340;
+const x2=cv.getContext('2d');
+x2.fillStyle='#fff'; x2.font='700 250px Georgia,serif'; x2.textAlign='center'; x2.textBaseline='middle';
+x2.fillText(TXT,450,170);
+const img=x2.getImageData(0,0,900,340).data, base=[], STEP=6;
+for(let y=0;y<340;y+=STEP)for(let x=0;x<900;x+=STEP)
+  if(img[(y*900+x)*4+3]>128) base.push(new THREE.Vector3((x-450)/78,-(y-170)/78,0));
+const geo=new THREE.BufferGeometry().setFromPoints(base.map(p=>p.clone()));
+const mat=new THREE.PointsMaterial({color:GOLD,size:0.055,transparent:true,opacity:0});
+s.add(new THREE.Points(geo,mat));
+const D=document.getElementById('drawn');
+const cl=t=>Math.max(0,Math.min(1,t));
+window.seek=function(t){
+  const IN=0.58;                                   // grains converge
+  const conv=cl(t/IN), e=1-Math.pow(1-conv,3);
+  const p=geo.attributes.position;
+  for(let i=0;i<base.length;i++){
+    const j=(1-e), sx=Math.sin(i*12.9898)*2.6, sy=Math.cos(i*78.233)*1.9;
+    p.array[i*3]=base[i].x+sx*j; p.array[i*3+1]=base[i].y+sy*j; p.array[i*3+2]=0;
+  }
+  p.needsUpdate=true;
+  const hand=cl((t-IN)/0.22);                      // hand off: grains out, stroke in
+  mat.opacity=(0.20+0.75*e)*(1-hand);
+  D.style.opacity=String(hand);
+  r.render(s,c);
+};
+window.__TOTAL=1; window.seek(1); document.title='ready';
+</script></body></html>

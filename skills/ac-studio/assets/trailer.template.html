@@ -1,0 +1,288 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<!-- AC — TRAILER cut v3 (Day 34 intro). Shot-for-shot mirror of the Squibb reel
+     (DZdWv_jMQfJ) with THE AC FIGURE playing Simon: intro address shot, one-word
+     trailer montage over posed shots, wordless b-roll poses with lighting flips,
+     the two-figure tone-flip gag, wide standing close with the CTA.
+     Same contract as the house engines: window.__TOTAL, window.seek(t), SCENES
+     global (one scene per hard cut so qa_layout audits every shot alone).
+     Figure rig copied from reel.template.html (canonical mark, two-bone arms).
+     Audio map: AUDIO_ARGS='--scenes A=0,B=2.0,C=5.0,D=12.6,E=15.4 --dur 18.5' -->
+<style>
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+@font-face{font-family:'DispMargin';src:url('fonts/InstrumentSerif-Italic.ttf');}
+:root{
+  --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
+  --white:#F4F0E7; --stone:#B9B1A1; --grey:#6f6a60;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+#frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.34);z-index:6;}
+.tick{position:absolute;width:44px;height:44px;z-index:6;}
+.tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+#progress{position:absolute;top:210px;bottom:640px;right:98px;width:7px;background:rgba(231,199,101,0.16);z-index:6;}
+#progress i{display:block;width:100%;height:0;background:linear-gradient(180deg,var(--gold-light),var(--gold-deep));}
+#wm{position:absolute;bottom:645px;left:0;width:100%;text-align:center;z-index:6;
+  font-family:'Poppins';font-weight:500;letter-spacing:6px;font-size:24px;color:rgba(231,199,101,0.5);}
+/* one scene = one hard-cut shot; composition lives in the app-safe zone */
+#S15{transform-origin:50% 96%;gap:22px;}  /* CTA punch zoom grows upward, away from the watermark */
+.scene{position:absolute;left:0;right:0;top:240px;bottom:680px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;padding:0 110px;text-align:center;visibility:hidden;
+  will-change:transform,opacity;gap:34px;}
+/* the lighting flip is FULL-BLEED: the whole frame goes gold (AC, 2026-08-18 —
+   the boxed panel read as an awkward square during cuts). #goldbg is a stage-level
+   underlay toggled by seek(); chrome inverts with it via #stage.goldmode. */
+#goldbg{position:absolute;inset:0;z-index:0;opacity:0;
+  background:linear-gradient(135deg,#F4DF95 0%,#E7C765 52%,#C9A23F 100%);}
+#stage.goldmode #frame{border-color:rgba(10,10,10,0.35);}
+#stage.goldmode .tick{border-color:#0A0A0A;}
+#stage.goldmode #progress{background:rgba(10,10,10,0.18);}
+#stage.goldmode #progress i{background:#0A0A0A;}
+.scene>*{position:relative;z-index:1;}
+/* figure ink */
+.fig svg{overflow:visible;display:block;}
+.fst{fill:none;stroke:var(--gold);stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round;}
+.fth{fill:none;stroke:var(--gold);stroke-width:4.6;stroke-linecap:round;}
+.fhr{fill:none;stroke:var(--gold);stroke-width:6;stroke-linecap:round;}
+.fsun{fill:var(--gold);stroke:none;}
+.fcar{fill:var(--gold);stroke:none;}
+.scene.inv .fst,.scene.inv .fth,.scene.inv .fhr{stroke:#0A0A0A;}
+.scene.inv .fsun,.scene.inv .fcar{fill:#0A0A0A;}
+/* the second figure (the editor) is thinner, plain-eyed */
+.fig2 .fst{stroke-width:6;}
+/* type */
+.addr{font-family:'Poppins';font-weight:600;font-size:40px;letter-spacing:10px;color:var(--gold);text-transform:uppercase;line-height:1.7;}
+.bw{font-family:'DispBase','Lora';font-weight:400;line-height:0.98;color:var(--white);letter-spacing:2px;}
+.bw.g{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 3px 18px rgba(231,199,101,0.2));}
+.bw.ink{color:#0A0A0A;letter-spacing:4px;}
+.kk{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:8px;color:var(--gold);text-transform:uppercase;}
+.gag{font-family:'Poppins';font-weight:600;font-size:44px;line-height:1.5;color:var(--gold);}
+.gag .w{color:var(--white);}
+.handle{font-family:'DispBase','Lora';font-size:88px;line-height:1.15;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+.tagl{font-family:'Poppins';font-weight:600;font-size:30px;letter-spacing:8px;color:var(--gold);text-transform:uppercase;}
+.loopcur{font-family:'Poppins';font-weight:400;font-size:29px;letter-spacing:3px;color:var(--grey);}
+#subline{position:absolute;left:0;right:0;top:372px;text-align:center;padding:0 160px;z-index:7;
+  font-family:'Poppins';font-weight:500;font-size:34px;line-height:1.4;opacity:0;}
+#subtxt{color:var(--gold);}
+#subcar{display:inline-block;width:3px;height:26px;vertical-align:-3px;margin-left:5px;background:var(--gold);}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="goldbg"></div>
+  <div id="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div id="progress"><i></i></div>
+  <div id="wm"></div>
+  <div id="scenes"></div>
+  <div id="subline"><span id="subtxt"></span><span id="subcar"></span></div>
+</div>
+<script>
+const HANDLE='@itsac.ai';
+
+/* ================= FIGURE RIG (canonical mark, from reel.template.html) =================
+   Two-bone arms: upper bone along +x from the shoulder rotated by S; forearm pivots at
+   the elbow rotated by E. A pose is a set of angles; shots interpolate between two poses
+   over their hold so no shot is a freeze-frame. uid keeps SVG ids unique per shot. */
+function acArm(uid,side){
+  return '<g id="'+uid+'-arm'+side+'" transform="translate(105,128) rotate(0)">'+
+    '<path class="fst" d="M0 0 L46 0"/>'+
+    '<g class="fore" transform="translate(46,0) rotate(0)"><path class="fst" d="M0 0 L38 0"/></g></g>';
+}
+function acFig(uid,opts){
+  opts=opts||{};
+  const hair='';   // AC's reference (2026-08-18): clean head, no hair strands
+  const eyes=opts.plain
+    ? '<circle class="fsun" cx="87" cy="52" r="6"/><circle class="fsun" cx="123" cy="52" r="6"/>'
+    : '<rect x="74" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+      '<rect x="110" y="45" width="26" height="14" rx="6" class="fsun"/>'+
+      '<path class="fth" d="M100 51 h10"/><path class="fth" d="M74 50 L61 46"/><path class="fth" d="M136 50 L149 46"/>'+
+      '<path class="fth" d="M113 38 Q123 33 133 37"/>';
+  const head='<g id="'+uid+'-head" transform="rotate(-5 105 104)">'+
+    '<circle cx="105" cy="58" r="46" class="fst"/>'+hair+eyes+
+    '<rect id="'+uid+'-mouth" x="100" y="80" width="10" height="5" rx="2.5" class="fcar"/></g>';
+  const torso='<path class="fth" d="M89 108 L96 122 L105 118"/><path class="fth" d="M121 108 L114 122 L105 118"/>'+
+    '<circle cx="105" cy="127" r="2.5" class="fsun"/><path class="fst" d="M105 104 v92"/>';
+  const legs='<path class="fst" d="M105 196 L86 258"/><path class="fst" d="M105 196 L132 256"/>';
+  /* money fan: five gold cards fanned by the right hand (the cash shot) */
+  const fan=opts.fan?'<g id="'+uid+'-fan" transform="translate(28,150)">'+
+    [-26,-13,0,13,26].map(a=>'<rect x="-14" y="-44" width="28" height="44" rx="4" class="fsun" transform="rotate('+a+')" style="opacity:0.9"/>').join('')+'</g>':'';
+  return '<svg width="'+(opts.w||210)+'" viewBox="0 0 210 290">'+
+    '<g id="'+uid+'-body">'+head+torso+acArm(uid,'L')+acArm(uid,'R')+legs+fan+'</g></svg>';
+}
+const POSES={
+  rest :{lS:132,lE:-108,rS: 72,rE: 14},
+  akimbo:{lS:145,lE:-125,rS: 40,rE:-125},
+  shrug:{lS:152,lE: -88,rS: 28,rE:-88},
+  point:{lS:132,lE:-108,rS: 20,rE: -8},
+  crossed:{lS:118,lE:-145,rS: 62,rE:145},
+  waveup:{lS:132,lE:-108,rS:-18,rE:-46},
+  think:{lS:145,lE:-125,rS:-30,rE:-120},   /* hand to chin, left arm akimbo */
+  think2:{lS:145,lE:-125,rS:-24,rE:-112},  /* the settle inside the think */
+  palms:{lS:185,lE: 40,rS: -5,rE:-40},
+  lean :{lS:150,lE:-100,rS: 55,rE: 30}
+};
+
+/* ================= THE CUT — shot-for-shot from AC's screen recording =================
+   0-2 address shot (red-caption beat) · 2-5 one-word montage over posed shots with
+   lighting flips · 5-8.6 receipts (incl. the cash shot) · 8.6-12.6 wordless b-roll ·
+   12.6-15.4 the law · 15.4-18.4 tone-flip gag (second figure leans in) · 18.4-21.5 wide.
+   fig:{pose A, pose B, headA, headB, scale, talk} — the shot interpolates A→B. */
+const SCENES=[
+  {id:'S01',start:0.0,dur:2.0,fig:{w:560,pA:'rest',pB:'akimbo',hA:-2,hB:6,talk:1},capFirst:true,
+   cap:'<div class="addr">This is a message<br>to every AI guru</div>'},
+  {id:'S02',start:2.0,dur:0.5,fig:{w:470,pA:'point',pB:'point',hA:8,hB:4},word:'<div class="bw" style="font-size:300px">MOST</div>'},
+  {id:'S03',start:2.5,dur:0.5,inv:true,fig:{w:420,pA:'akimbo',pB:'akimbo',hA:-6,hB:-2},word:'<div class="bw ink" style="font-size:380px">AI</div>'},
+  {id:'S04',start:3.0,dur:0.5,fig:{w:470,pA:'waveup',pB:'waveup',hA:0,hB:5},word:'<div class="bw" style="font-size:230px">ADVICE</div>'},
+  {id:'S05',start:3.5,dur:0.5,fig:{w:470,pA:'shrug',pB:'shrug',hA:-8,hB:-4},word:'<div class="bw" style="font-size:290px">IS AN</div>'},
+  {id:'S06',start:4.0,dur:1.0,inv:true,fig:{w:420,pA:'akimbo',pB:'akimbo',hA:3,hB:8},word:'<div class="bw ink" style="font-size:380px">AD.</div>'},
+  {id:'S07',start:5.0,dur:1.2,fig:{w:440,pA:'point',pB:'point',hA:10,hB:12,talk:1},word:'<div class="bw" style="font-size:170px">WE<br>CHECKED.</div>'},
+  {id:'S08',start:6.2,dur:1.2,fig:{w:400,pA:'point',pB:'point',hA:0,hB:4,fan:1,talk:1},word:'<div class="kk">Our count</div><div class="bw" style="font-size:150px">14 &ldquo;FREE&rdquo;<br>TOOLS</div>'},
+  {id:'S09',start:7.4,dur:1.2,fig:{w:440,pA:'shrug',pB:'palms',hA:-4,hB:2,talk:1},word:'<div class="bw g" style="font-size:160px">6 WERE<br>TRIALS.</div>'},
+  {id:'S10',start:8.6,dur:2.0,fig:{w:640,pA:'think',pB:'think2',hA:10,hB:4}},
+  {id:'S11',start:10.6,dur:2.0,inv:true,fig:{w:640,pA:'think2',pB:'think',hA:-8,hB:9}},
+  {id:'S12',start:12.6,dur:1.4,fig:{w:420,pA:'point',pB:'point',hA:-2,hB:2,talk:1},word:'<div class="bw" style="font-size:190px">NO<br>SOURCE,</div>'},
+  {id:'S13',start:14.0,dur:1.4,inv:true,fig:{w:390,pA:'akimbo',pB:'akimbo',hA:2,hB:6,talk:1},word:'<div class="bw ink" style="font-size:210px">NO<br>POST.</div>'},
+  {id:'S15',start:15.4,dur:3.1,cta:true,fig:{w:340,pA:'waveup',pB:'waveup',hA:4,hB:8,talk:1},
+   cap:'<div class="handle" style="margin-top:18px">'+HANDLE+'</div>'+
+       '<div class="tagl" style="margin-top:22px">Comment PLAIN &middot; starter kit</div>'+
+       '<div class="loopcur" id="loopc" style="margin-top:14px">this is a message&hellip; _</div>'}
+];
+
+/* the tone-flip gag: typed like the recording's yellow subs */
+const GAG=[
+  'he thinks he’s famous.',
+  'he thinks he’s famous.\nit’s a stick figure page.'
+];
+
+/* subtitle + VO groups (also the audio map) */
+const SUBS=[
+  {start:0.0,dur:2.0,txt:''},
+  {start:2.0,dur:3.0,txt:''},
+  {start:5.0,dur:3.6,txt:''},
+  {start:8.6,dur:4.0,txt:''},
+  {start:12.6,dur:2.8,txt:''},
+  {start:15.4,dur:3.1,txt:''}
+];
+
+/* ================= build DOM ================= */
+const root=document.getElementById('scenes');
+root.innerHTML=SCENES.map(s=>{
+  let inner='';
+  if(s.word)inner+=s.word;
+  if(s.cap&&s.capFirst)inner+=s.cap;
+  if(s.fig)inner+='<div class="fig" id="'+s.id+'fig">'+acFig(s.id,{w:s.fig.w,fan:s.fig.fan})+'</div>';
+  if(s.gag)inner+='<div style="display:flex;align-items:flex-end;justify-content:center;gap:30px">'+
+      '<div class="fig fig2" id="'+s.id+'fig2" style="transform:rotate(14deg) translateY(30px)">'+acFig(s.id+'e',{w:300,plain:true})+'</div>'+
+      '<div class="fig" id="'+s.id+'fig">'+acFig(s.id,{w:420})+'</div></div>';
+  if(s.cap&&!s.capFirst)inner+=s.cap;
+  return '<div class="scene'+(s.inv?' inv':'')+'" id="'+s.id+'">'+inner+'</div>';
+}).join('');
+SCENES.forEach(s=>{
+  s.el=document.getElementById(s.id);
+  if(s.fig||s.gag){
+    s.armL=document.getElementById(s.id+'-armL');s.armR=document.getElementById(s.id+'-armR');
+    s.headEl=document.getElementById(s.id+'-head');s.mouth=document.getElementById(s.id+'-mouth');
+  }
+});
+document.getElementById('wm').textContent=HANDLE.toUpperCase();
+const __prog=document.querySelector('#progress i');
+const _subL=document.getElementById('subline'),_subT=document.getElementById('subtxt'),_subC=document.getElementById('subcar');
+const gagEl=document.getElementById('gagline'),loopc=document.getElementById('loopc');
+
+/* ================= engine ================= */
+function clamp(p){return Math.min(1,Math.max(0,p));}
+function eOut(p){p=clamp(p);return 1-Math.pow(1-p,3);}
+function eExpo(p){p=clamp(p);return p>=1?1:1-Math.pow(2,-10*p);}
+function lerp(a,b,p){return a+(b-a)*p;}
+window.__TOTAL=Math.max(...SCENES.map(s=>s.start+s.dur));
+
+function subTick(t){
+  let i=-1;for(let k=0;k<SUBS.length;k++){if(t>=SUBS[k].start-0.0001)i=k;}
+  if(i<0){_subL.style.opacity=0;return;}
+  const w=SUBS[i],lt=t-w.start,txt=w.txt||'';
+  if(!txt){_subL.style.opacity=0;return;}
+  const n=Math.floor(clamp((lt-0.15)/(w.dur*0.7))*txt.length);
+  _subT.textContent=txt.slice(0,Math.max(0,n));
+  const typing=n>0&&n<txt.length;
+  _subC.style.opacity=typing?1:((Math.floor(t*2.2)%2===0)?1:0.12);
+  const fin=clamp(lt/0.25),fout=(i===SUBS.length-1)?1:clamp((w.dur-lt)/0.25);
+  _subL.style.opacity=clamp(Math.min(fin,fout));
+}
+
+function poseTick(s,lt){
+  if(!s.armL)return;
+  const f=s.fig||{w:420,pA:'rest',pB:'rest',hA:0,hB:0,talk:1};
+  const A=POSES[f.pA||'rest'],B=POSES[f.pB||f.pA||'rest'];
+  /* LINEAR drift A→B (eOut plateaued and left long shots static — gate 4),
+     plus a continuous forearm micro-sway; waveup gets a real wave. All pure
+     functions of t, so seeks stay deterministic. */
+  const p=clamp(lt/Math.max(0.6,s.dur));
+  const mix=(a,b)=>lerp(a,b,p);
+  const gt=s.start+lt;
+  const sway=3.2*Math.sin(gt*2.1)+1.4*Math.sin(gt*3.7);
+  const wave=(f.pB==='waveup'||f.pA==='waveup')?20*Math.sin(gt*4.4):0;
+  s.armL.setAttribute('transform','translate(105,128) rotate('+mix(A.lS,B.lS).toFixed(2)+')');
+  s.armL.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+(mix(A.lE,B.lE)-0.6*sway).toFixed(2)+')');
+  s.armR.setAttribute('transform','translate(105,128) rotate('+mix(A.rS,B.rS).toFixed(2)+')');
+  s.armR.querySelector('.fore').setAttribute('transform','translate(46,0) rotate('+(mix(A.rE,B.rE)+sway+wave).toFixed(2)+')');
+  s.headEl.setAttribute('transform','rotate('+(lerp(f.hA||0,f.hB||0,p)-5+1.6*Math.sin(gt*1.7)).toFixed(2)+' 105 104)');
+  /* two-state mouth, aperiodic but deterministic — talks only in talk shots */
+  const m=s.mouth;if(!m)return;
+  const osc=Math.sin((s.start+lt)*27.3)+0.55*Math.sin((s.start+lt)*41.7)+0.3*Math.sin((s.start+lt)*17.1);
+  const open=!!f.talk&&osc>0.1;
+  if(open){m.setAttribute('x',99);m.setAttribute('y',70);m.setAttribute('width',12);m.setAttribute('height',18);m.setAttribute('rx',6);}
+  else{m.setAttribute('x',100);m.setAttribute('y',80);m.setAttribute('width',10);m.setAttribute('height',5);m.setAttribute('rx',2.5);}
+}
+
+const _wm=document.getElementById('wm'),_gbg=document.getElementById('goldbg'),_stage=document.getElementById('stage');
+window.seek=function(t){
+  __prog.style.height=(clamp(t/window.__TOTAL)*100).toFixed(2)+'%';
+  subTick(t);
+  /* full-bleed lighting flip: whole frame goes gold on inv shots, chrome inverts */
+  let inv=false;for(const sc of SCENES){const st=t-sc.start;if(st>=-0.0001&&st<=sc.dur&&sc.inv)inv=true;}
+  _gbg.style.opacity=inv?1:0;
+  _stage.classList.toggle('goldmode',inv);
+  _wm.style.color=inv?'rgba(10,10,10,0.62)':'rgba(231,199,101,0.5)';
+  const LAST=SCENES.length-1;
+  SCENES.forEach((s,i)=>{
+    const lt=t-s.start;
+    /* HALF-OPEN window (AC, 2026-08-24). This was inclusive at BOTH ends
+       (lt<=s.dur), and the trailer's shots are contiguous - S01 ends at 2.0 exactly
+       where S02 starts - so on the frame that lands on a boundary both shots were
+       visible at opacity 1 at once. One frame, but it is a real double-exposure on
+       every cut in the reel. Clipping to the next shot's start makes it impossible. */
+    const on=lt>=-0.0001&&(i===LAST||t<Math.min(s.start+s.dur,SCENES[i+1].start)-0.0001);   // last shot holds through the tail
+    s.el.style.visibility=on?'visible':'hidden';
+    if(!on)return;
+    /* hard-cut slam + continuous push-in (the gate-4 device) */
+    /* grow-in, never past 1: the old 1.18 shrink-in overshot the frozen audit's
+       scale-1 measurement and pushed words up into the fixed subtitle band */
+    const slam=lerp(i===0?0.94:0.86,1,eExpo(lt/0.14));
+    /* the CTA shot holds 3.1s: a slow punch zoom (9%) keeps the whole frame
+       alive where the 3% breath was under gate 4's floor */
+    const push=1+(s.cta?0.09:0.03)*clamp(lt/Math.max(0.35,s.dur));
+    s.el.style.opacity=1;
+    s.el.style.transform='scale('+(slam*push).toFixed(4)+')';
+    poseTick(s,lt);
+    if(s.gag&&gagEl){
+      const full=lt<1.5?GAG[0]:GAG[1];
+      const n=Math.floor(clamp((lt<1.5?lt:lt-1.5)/1.0)*full.length);
+      gagEl.innerHTML=(lt<1.5?full.slice(0,n):GAG[0]+'<br><span class="w">'+GAG[1].split('\n')[1].slice(0,Math.max(0,n-GAG[0].length))+'</span>');
+    }
+    if(s.cta&&loopc)loopc.style.opacity=lt>0.8?((Math.floor(t*2.2)%2===0)?0.85:0.3):0;
+  });
+};
+window.seek(0);
+</script>
+</body>
+</html>

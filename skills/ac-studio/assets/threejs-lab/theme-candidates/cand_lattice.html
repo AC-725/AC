@@ -1,0 +1,55 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Fraunces';src:url('fonts/Fraunces.woff2') format('woff2');font-weight:600}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-500.ttf');font-weight:500}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;background:#0A0A0A;overflow:hidden;position:relative}
+#gl{position:absolute;inset:0;z-index:0}
+.txt{position:absolute;z-index:2;font-family:'Poppins',sans-serif}
+#tag{bottom:36px;right:44px;font-weight:600;font-size:20px;letter-spacing:.18em;color:#5d5546}
+#kick{top:392px;left:88px;font-weight:600;font-size:26px;letter-spacing:.38em;color:#E7C765}
+#hero{top:472px;left:88px;width:920px;font-family:'Fraunces',serif;font-weight:600;font-size:104px;line-height:1.14;color:#F2EDE4;letter-spacing:-0.015em}
+#hero i{font-style:normal;color:#E7C765}
+#sub{top:920px;left:88px;width:820px;font-weight:400;font-size:29px;line-height:1.55;color:#B7AE9C}
+#sub b{color:#F2EDE4;font-weight:500}
+#wm{bottom:56px;left:88px;font-weight:500;font-size:24px;letter-spacing:.12em;color:#6b6155}
+.tick{position:absolute;z-index:2;width:34px;height:34px;border-color:#E7C765;border-style:solid}
+#tl{top:40px;left:40px;border-width:3px 0 0 3px}
+#tr{top:40px;right:40px;border-width:3px 3px 0 0}
+</style></head><body>
+<canvas id="gl" width="1080" height="1350"></canvas>
+<div class="txt" id="tag">B · LATTICE</div>
+<div class="txt" id="kick">AI NEWS</div>
+<div class="txt" id="hero">Email eats<br><i>11.7 hours</i><br>every week.</div>
+<div class="txt" id="sub">Randomized trial, <b>7,137 workers</b> across 66 firms. AI took a third of it back.</div>
+<div class="txt" id="wm">@itsac.ai</div>
+<div class="tick" id="tl"></div><div class="tick" id="tr"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+r.setSize(1080,1350,false); r.setClearColor(0x0A0A0A,1);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(40,1080/1350,0.1,100); c.position.set(0,0,9);
+// lattice slab across the ceiling — crest's band, given depth
+const g=new THREE.Group(), nodes=[];
+const NX=10,NY=3,NZ=3, sph=new THREE.SphereGeometry(0.055,12,10),
+      nmz=[0.9,0.55,0.3].map(o=>new THREE.MeshBasicMaterial({color:GOLD,transparent:true,opacity:o}));
+for(let x=0;x<NX;x++)for(let y=0;y<NY;y++)for(let z=0;z<NZ;z++){
+  const p=new THREE.Vector3((x-(NX-1)/2)*0.86,(y)*0.62,(z-1)*0.7);
+  nodes.push(p); const m=new THREE.Mesh(sph,nmz[z]); m.position.copy(p); g.add(m);}
+const lp=[];
+nodes.forEach((a,i)=>nodes.forEach((b,j)=>{if(j>i&&a.distanceTo(b)<0.98)lp.push(a,b);}));
+g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(lp),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.35})));
+// progress — 5 anchor nodes on the band's lower edge, 2 lit
+const lit=new THREE.MeshBasicMaterial({color:GOLD}),
+      dim=new THREE.MeshBasicMaterial({color:0x655838});
+for(let i=0;i<5;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(0.125,18,14),i<2?lit:dim);
+  m.position.set((i-2)*1.55,-0.5,0.75); g.add(m);}
+g.position.set(0,3.6,-6); g.rotation.set(0.10,-0.22,0); s.add(g);
+r.render(s,c); document.title='ready';
+</script></body></html>

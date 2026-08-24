@@ -1,0 +1,58 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+  #stage{position:relative;width:1080px;height:1920px;background:#0A0A0A;}
+  #gl{position:absolute;left:465px;top:1745px;width:150px;height:150px;}
+  #label{position:absolute;left:465px;top:1745px;width:150px;height:150px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,serif;font-weight:600;font-size:60px;color:#E7C765;letter-spacing:1px;}
+  /* reference: current flat 2D ring, offset left for compare */
+  #ref{position:absolute;left:465px;top:1420px;width:150px;height:150px;}
+  #reflabel{position:absolute;left:465px;top:1420px;width:150px;height:150px;
+    display:flex;align-items:center;justify-content:center;
+    font-family:Georgia,serif;font-weight:600;font-size:60px;color:#E7C765;letter-spacing:1px;}
+  .tag{position:absolute;color:#B9B1A1;font-family:Georgia;font-size:26px;}
+</style></head>
+<body>
+<div id="stage">
+  <div class="tag" style="left:180px;top:1420px;">CURRENT (2D SVG stroke)</div>
+  <svg id="ref" viewBox="0 0 150 150"><circle cx="75" cy="75" r="70" style="fill:none;stroke:#E7C765;stroke-width:2.5"/></svg>
+  <div id="reflabel">AC</div>
+
+  <div class="tag" style="left:180px;top:1745px;">NEW (three.js torus, unlit, tilted)</div>
+  <canvas id="gl" width="150" height="150"></canvas>
+  <div id="label">AC</div>
+</div>
+<script type="module">
+import * as THREE from './three.module.min.js';
+
+const canvas = document.getElementById('gl');
+const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+renderer.setSize(150,150,false);
+renderer.setPixelRatio(2); // supersample for crisp edges at render scale
+
+const scene = new THREE.Scene();
+// Orthographic — no perspective distortion, stays "flat/quiet" like the rest of the brand
+const cam = new THREE.OrthographicCamera(-1,1,1,-1,0.1,10);
+cam.position.z = 3;
+
+const geo = new THREE.TorusGeometry(0.62, 0.045, 24, 100);
+const mat = new THREE.MeshBasicMaterial({color:0xE7C765}); // UNLIT — no shading, no gradient, matches brand law
+const ring = new THREE.Mesh(geo, mat);
+scene.add(ring);
+
+// seek(t)-style deterministic driver — NOT requestAnimationFrame, matches engine architecture
+window.seek = function(t){
+  // entrance: ring unfurls from a tilted 3D angle to flat-on-camera, then holds flat
+  const d=0.1, dur=0.5;
+  const p = Math.min(1, Math.max(0, (t-d)/dur));
+  const eOut = 1 - Math.pow(1-p, 3);
+  ring.rotation.x = (1-eOut) * 1.1;      // tilts up out of the page on entry
+  ring.rotation.y = (1-eOut) * -0.7;
+  ring.scale.setScalar(0.85 + 0.15*eOut);
+  renderer.render(scene, cam);
+};
+window.seek(0);
+document.title='ready';
+</script>
+</body></html>

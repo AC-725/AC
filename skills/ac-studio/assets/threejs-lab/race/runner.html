@@ -1,0 +1,204 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>*{margin:0}html,body{width:1000px;height:620px;background:transparent;overflow:hidden}
+canvas{display:block}</style></head>
+<body><canvas id="a" width="1000" height="620"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765, DIM=0x655838, STONE=0xBFB49A;
+const JGREEN=0x1F8A4C, JBLACK=0x14140F;   // Jamaica: green + black. Gold is shared brand ink.
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(1000,620,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(31,1000/620,0.1,100);
+c.position.set(0,1.16,9.9); c.lookAt(0,1.02,0);
+
+/* ---------------------------------------------------------------
+   FILLED SILHOUETTES, not stick figures. Every limb is a tapered
+   quad between two joints; round caps at the joints keep the chain
+   continuous, which is what gives a body real mass. Built from
+   scratch - the reference image is a watermarked stock product and
+   is not traced here.
+   --------------------------------------------------------------- */
+function quad(col,op){
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.BufferAttribute(new Float32Array(18),3));
+  return new THREE.Mesh(g,new THREE.MeshBasicMaterial(
+    {color:col,transparent:true,opacity:op===undefined?1:op,side:THREE.DoubleSide}));
+}
+function setQuad(m,a,b,w0,w1,z){
+  const dx=b[0]-a[0],dy=b[1]-a[1],L=Math.hypot(dx,dy)||1e-6,nx=-dy/L,ny=dx/L;
+  const A=m.geometry.attributes.position.array;
+  const P=[[a[0]+nx*w0,a[1]+ny*w0],[a[0]-nx*w0,a[1]-ny*w0],
+           [b[0]-nx*w1,b[1]-ny*w1],[b[0]+nx*w1,b[1]+ny*w1]];
+  const put=(i,p)=>{A[i*3]=p[0];A[i*3+1]=p[1];A[i*3+2]=z;};
+  put(0,P[0]);put(1,P[1]);put(2,P[2]); put(3,P[0]);put(4,P[2]);put(5,P[3]);
+  m.geometry.attributes.position.needsUpdate=true;
+}
+function disc(col,rad,op){
+  const m=new THREE.Mesh(new THREE.CircleGeometry(rad,22),
+    new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:op===undefined?1:op}));
+  return m;
+}
+function plate(col,w,h){ // robot joints: square, not round
+  const m=new THREE.Mesh(new THREE.PlaneGeometry(w,h),
+    new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:1}));
+  return m;
+}
+function buildFigure(kind,C){
+  const col=C.limb;
+  const G=new THREE.Group(); s.add(G);
+  const PART={torso:C.torso,neck:C.limb,ua1:C.limb,la1:C.limb,ua2:C.limb,la2:C.limb,
+              th1:C.limb,sh1:C.limb,th2:C.limb,sh2:C.limb,ft1:C.foot,ft2:C.foot};
+  const L={}; Object.keys(PART).forEach(k=>{L[k]=quad(PART[k]); G.add(L[k]);});
+  const caps=[];
+  const nCap=6;
+  for(let i=0;i<nCap;i++){
+    const m = kind==='robot' ? plate(col,0.098,0.098) : disc(C.limb,0.062);
+    caps.push(m); G.add(m);
+  }
+  let head;
+  if(kind==='robot'){
+    head=new THREE.Mesh(new THREE.PlaneGeometry(0.215,0.195),
+      new THREE.MeshBasicMaterial({color:C.head}));
+    const visor=new THREE.Mesh(new THREE.PlaneGeometry(0.140,0.034),
+      new THREE.MeshBasicMaterial({color:0x0A0A0A}));
+    visor.position.set(0,0.012,0.01); head.add(visor);
+    const ant=quad(col); setQuad(ant,[0.04,0.097],[0.062,0.170],0.011,0.008,0.005); head.add(ant);
+  }else{
+    head=disc(C.head,0.125); head.scale.set(0.90,1.14,1);
+  }
+  G.add(head);
+  let kit=null;
+  if(kind==='human'){
+    kit={sash:quad(GOLD),band:quad(JBLACK),hb:quad(GOLD),hair:quad(JBLACK)};
+    Object.values(kit).forEach(m=>G.add(m));
+  }
+  return {G,L,caps,head,kind,kit};
+}
+const ROBOT=buildFigure('robot',{torso:GOLD,limb:GOLD,head:GOLD,foot:GOLD});
+const HUMAN=buildFigure('human',{torso:JGREEN,limb:STONE,head:STONE,foot:GOLD});
+
+/* widths: the human is tapered and athletic, the robot is blockier and even */
+const Wm={human:{tor:[0.205,0.120],ua:[0.080,0.058],la:[0.058,0.040],
+                 th:[0.112,0.076],sh:[0.076,0.044],ft:[0.044,0.026],nk:[0.056,0.050]},
+          robot:{tor:[0.185,0.140],ua:[0.070,0.066],la:[0.058,0.052],
+                 th:[0.094,0.084],sh:[0.078,0.066],ft:[0.048,0.034],nk:[0.052,0.048]}};
+function paint(F,J,z){
+  const w=Wm[F.kind], L=F.L;
+  setQuad(L.torso,J.sho,J.hip,w.tor[0],w.tor[1],z);
+  setQuad(L.neck,[J.sho[0],J.sho[1]],[J.head[0],J.head[1]-0.10],w.nk[0],w.nk[1],z);
+  setQuad(L.ua1,J.sho,J.elb1,w.ua[0],w.ua[1],z); setQuad(L.la1,J.elb1,J.hnd1,w.la[0],w.la[1],z);
+  setQuad(L.ua2,J.sho,J.elb2,w.ua[0],w.ua[1],z); setQuad(L.la2,J.elb2,J.hnd2,w.la[0],w.la[1],z);
+  setQuad(L.th1,J.hip,J.kne1,w.th[0],w.th[1],z); setQuad(L.sh1,J.kne1,J.ank1,w.sh[0],w.sh[1],z);
+  setQuad(L.th2,J.hip,J.kne2,w.th[0],w.th[1],z); setQuad(L.sh2,J.kne2,J.ank2,w.sh[0],w.sh[1],z);
+  setQuad(L.ft1,J.ank1,J.toe1,w.ft[0],w.ft[1],z); setQuad(L.ft2,J.ank2,J.toe2,w.ft[0],w.ft[1],z);
+  const cp=[J.sho,J.elb1,J.elb2,J.hip,J.kne1,J.kne2];
+  F.caps.forEach((m,i)=>{m.position.set(cp[i][0],cp[i][1],z+0.004);});
+  F.head.position.set(J.head[0],J.head[1],z+0.006);
+  F.head.rotation.z=J.headRot||0;
+  if(F.kit){
+    const sh=J.sho, hp=J.hip;
+    const mx=(a,b,f)=>[a[0]+(b[0]-a[0])*f, a[1]+(b[1]-a[1])*f];
+    // gold saltire band across the singlet (the flag's cross, worn as kit)
+    const dx=hp[0]-sh[0], dy=hp[1]-sh[1], LL=Math.hypot(dx,dy)||1e-6;
+    const px=-dy/LL, py=dx/LL;                       // across-body axis
+    const a=[sh[0]+px*0.150+dx*0.10, sh[1]+py*0.150+dy*0.10];
+    const b=[hp[0]-px*0.130-dx*0.06, hp[1]-py*0.130-dy*0.06];
+    setQuad(F.kit.sash, a, b, 0.052, 0.052, z+0.008);
+    // black waistband seals the singlet against the legs
+    setQuad(F.kit.band, mx(sh,hp,0.88), mx(sh,hp,1.06), 0.122, 0.116, z+0.010);
+    // gold headband
+    const hd=J.head;
+    setQuad(F.kit.hair,[hd[0]-0.104,hd[1]+0.098],[hd[0]+0.104,hd[1]+0.098],0.050,0.050,z+0.011);
+    setQuad(F.kit.hb,[hd[0]-0.108,hd[1]+0.040],[hd[0]+0.108,hd[1]+0.040],0.026,0.026,z+0.013);
+  }
+}
+const HIP=[0,1.14], SHO=[0.05,1.90];
+function jointsRun(ph){
+  const p=ph, S=Math.sin(p), S2=Math.sin(p+Math.PI);
+  // hip swing is wide; knee tucks ONLY on the forward (recovery) leg, so the
+  // trailing leg extends straight behind - that is what reads as a sprint.
+  const hA1=S*1.10, hA2=S2*1.10;
+  const kF1=0.16+2.00*Math.max(0,S), kF2=0.16+2.00*Math.max(0,S2);
+  const sA1=S2*0.95, sA2=S*0.95;
+  const EL=1.52;                                   // sprinters hold ~90deg elbows
+  const TH=0.58, SH=0.56, UA=0.35, LA=0.33;
+  const elb1=[SHO[0]+Math.sin(sA1)*UA,SHO[1]-Math.cos(sA1)*UA];
+  const elb2=[SHO[0]+Math.sin(sA2)*UA,SHO[1]-Math.cos(sA2)*UA];
+  const hnd1=[elb1[0]+Math.sin(sA1+EL)*LA,elb1[1]-Math.cos(sA1+EL)*LA];
+  const hnd2=[elb2[0]+Math.sin(sA2+EL)*LA,elb2[1]-Math.cos(sA2+EL)*LA];
+  const kne1=[HIP[0]+Math.sin(hA1)*TH,HIP[1]-Math.cos(hA1)*TH];
+  const kne2=[HIP[0]+Math.sin(hA2)*TH,HIP[1]-Math.cos(hA2)*TH];
+  const ank1=[kne1[0]+Math.sin(hA1-kF1)*SH,kne1[1]-Math.cos(hA1-kF1)*SH];
+  const ank2=[kne2[0]+Math.sin(hA2-kF2)*SH,kne2[1]-Math.cos(hA2-kF2)*SH];
+  return {sho:SHO,hip:HIP,head:[SHO[0]+0.085,SHO[1]+0.255],
+    elb1,hnd1,elb2,hnd2,
+    kne1,ank1,toe1:[ank1[0]+0.26+Math.max(0,-S)*0.06,ank1[1]-0.045],
+    kne2,ank2,toe2:[ank2[0]+0.26+Math.max(0,-S2)*0.06,ank2[1]-0.045]};
+}
+function jointsDown(u){
+  const e=1-Math.pow(1-Math.min(1,u),3);
+  const hipY=1.14-e*0.98, shoY=1.90-e*1.50, shoX=0.05+e*0.40;
+  const sho=[shoX,shoY], hip=[0,hipY];
+  const elb1=[sho[0]+0.36+e*0.10,sho[1]-0.20+e*0.06];
+  const elb2=[sho[0]+0.12,sho[1]-0.40+e*0.22];
+  const kne1=[hip[0]-0.48,hipY-0.16], kne2=[hip[0]-0.42,hipY+0.24];
+  const ank1=[hip[0]-0.94,hipY-0.02], ank2=[hip[0]-0.88,hipY+0.30];
+  return {sho,hip,head:[sho[0]+0.15+e*0.20,sho[1]+0.255-e*0.18],headRot:-e*1.15,
+    elb1,hnd1:[sho[0]+0.70+e*0.16,sho[1]-0.30+e*0.16],
+    elb2,hnd2:[sho[0]+0.48,sho[1]-0.46+e*0.34],
+    kne1,ank1,toe1:[hip[0]-1.08,hipY+0.14],
+    kne2,ank2,toe2:[hip[0]-1.02,hipY+0.44]};
+}
+function jointsStand(u){
+  const e=1-Math.pow(1-Math.min(1,u),2);
+  const up=0.34+e*0.86;
+  const elb1=[SHO[0]+0.40, SHO[1]-0.12+up*0.44];
+  const elb2=[SHO[0]-0.38, SHO[1]-0.12+up*0.44];
+  return {sho:SHO,hip:HIP,head:[SHO[0]+0.02,SHO[1]+0.265],
+    elb1,hnd1:[SHO[0]+0.66+e*0.10, SHO[1]+0.10+up*0.52],
+    elb2,hnd2:[SHO[0]-0.62-e*0.10, SHO[1]+0.10+up*0.52],
+    kne1:[-0.27,0.58],ank1:[-0.35,0.02],toe1:[-0.61,-0.02],
+    kne2:[0.25,0.60],ank2:[0.31,0.02],toe2:[0.57,-0.02]};
+}
+const ZR=0.62, ZH=-0.92, YH=0.66;
+[[ZR,0.55,0],[ZH,0.34,YH]].forEach(([z,op,yy])=>{
+  const g=new THREE.BufferGeometry().setFromPoints(
+    [new THREE.Vector3(-4.6,yy,z),new THREE.Vector3(2.9,yy,z)]);
+  s.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:DIM,transparent:true,opacity:op})));
+});
+const PADX=1.62, pad=new THREE.Group(); s.add(pad);
+{const pts=[],H=1.76,W=0.30;
+ for(let i=0;i<=10;i++){const x=PADX+(i/10)*W; pts.push(new THREE.Vector3(x,0,ZR),new THREE.Vector3(x,H,ZR));}
+ for(let i=0;i<=5;i++){const y=(i/5)*H; pts.push(new THREE.Vector3(PADX,y,ZR),new THREE.Vector3(PADX+W,y,ZR));}
+ pad.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),
+   new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.42})));}
+{const g=new THREE.BufferGeometry().setFromPoints(
+   [new THREE.Vector3(PADX,YH,ZH),new THREE.Vector3(PADX,YH+1.66,ZH)]);
+ s.add(new THREE.Line(g,new THREE.LineBasicMaterial({color:STONE,transparent:true,opacity:0.34})));}
+const cl=t=>Math.max(0,Math.min(1,t));
+const STOPX=PADX-0.60;
+window.seek=function(t){
+  t=cl(t);
+  const R_RUN=0.56,R_HIT=0.66;
+  let rx;
+  if(t<R_RUN){const u=t/R_RUN; rx=-3.10+(STOPX+3.10)*(u*u*0.5+u*0.5);
+    ROBOT.G.rotation.z=-0.24-u*0.06; paint(ROBOT,jointsRun(t*46),ZR);}
+  else if(t<R_HIT){ROBOT.G.rotation.z=-0.30+((t-R_RUN)/(R_HIT-R_RUN))*0.34;
+    paint(ROBOT,jointsRun(R_RUN*46),ZR); rx=STOPX;}
+  else{const u=(t-R_HIT)/(1-R_HIT); ROBOT.G.rotation.z=0;
+    paint(ROBOT,jointsDown(u),ZR); rx=STOPX-u*0.16;}
+  ROBOT.G.position.set(rx,0,0);
+  const H_RUN=0.74; let hx;
+  if(t<H_RUN){const u=t/H_RUN; hx=-4.95+(STOPX+4.95)*(u*u*0.46+u*0.54);
+    HUMAN.G.rotation.z=-0.22-u*0.05; paint(HUMAN,jointsRun(t*40),ZH);}
+  else{const u=(t-H_RUN)/(1-H_RUN); hx=STOPX+u*0.30;
+    HUMAN.G.rotation.z=0; paint(HUMAN,jointsStand(u),ZH);}
+  HUMAN.G.position.set(hx,YH,0);
+  const flex=t>=R_HIT?Math.sin(cl((t-R_HIT)/0.09)*Math.PI):0;
+  pad.scale.x=1-flex*0.22; pad.children[0].material.opacity=0.42+flex*0.5;
+  r.render(s,c);
+};
+window.__TOTAL=1; window.seek(0.4); document.title='ready';
+</script></body></html>
