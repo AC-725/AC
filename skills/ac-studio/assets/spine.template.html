@@ -347,14 +347,27 @@ function subTick(t){
 window.__TOTAL=Math.max(...SCENES.map(s=>s.start+s.dur));
 window.seek=function(t){
   let activeIdx=0;
+  const LAST=SCENES.length-1;
   SCENES.forEach((s,idx)=>{
-    const st=t-s.start,IN=0.22,OUT=0.24;let vis=0;
-    if(st>=-0.0001&&st<=s.dur){
-      if(s.start<=0.0001){ vis=(st>s.dur-OUT)?(s.dur-st)/OUT:1; }
-      else if(st<IN)vis=st/IN; else if(st>s.dur-OUT)vis=(s.dur-st)/OUT; else vis=1;
-    }
-    vis=clamp(vis);s.el.style.opacity=vis;s.el.style.visibility=vis>0.002?'visible':'hidden';
-    if(vis>0.002){ activeIdx=idx; s.anims.forEach(n=>applyA(n,st));
+    /* HARD CUT - zero overlap (AC, 2026-08-24). Every scene owns the HALF-OPEN
+       window [start, cut), where cut is the next scene's start. The outgoing scene
+       is gone on the exact frame the incoming one appears, so no two scenes are ever
+       painted in the same frame. What this replaces: the scene windows in SCENES
+       genuinely overlap (a scene's start+dur runs past the next scene's start), and
+       the cross-fade rendered BOTH scenes through that window - measured at 9 of 10
+       sampled cut moments, each scene at 0.2-0.36 opacity. That is two full-bleed
+       layouts stacked on top of each other AND a luminance dip at every cut. It is
+       the ghosting AC flagged (a headline reading through the next scene's kicker).
+       Element entrances still carry the motion through data-a, so a cut reads as a
+       cut, not as a jump. The last scene holds through the render tail (loop seam),
+       so the reel closes on a full frame instead of dying to black - required here,
+       because without it a hard cut would leave the tail empty.
+       SCENES timings are UNTOUCHED, so every audio cue map still matches. */
+    const st=t-s.start,isLast=(idx===LAST);
+    const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[idx+1].start);
+    const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
+    s.el.style.opacity=live?1:0;s.el.style.visibility=live?'visible':'hidden';
+    if(live){ activeIdx=idx; s.anims.forEach(n=>applyA(n,st));
       if(s.id==='B') strikeB.style.transform='scaleX('+eOut((st-0.30)/0.30).toFixed(3)+')';
     }
   });

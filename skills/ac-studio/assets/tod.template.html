@@ -686,13 +686,30 @@ window.seek=function(t){
   if(__prog){const pc=(clamp(t/window.__TOTAL)*100).toFixed(2)+'%';
     if(__VBAR){__prog.style.height=pc;__prog.style.width='100%';}
     else{__prog.style.width=pc;__prog.style.height='100%';}}
-  SCENES.forEach(s=>{
-    const st=t-s.start,IN=0.24,OUT=0.24;let vis=0;
+  const LAST=SCENES.length-1;
+  SCENES.forEach((s,i)=>{
+    const st=t-s.start,isLast=(i===LAST);
     /* FRAME-ONE LAW: the first scene has NO fade-in. It is live at full strength on
        frame 0 (hard cut in), because a fade from black spends the most valuable
        half-second saying nothing. Every later scene keeps its 0.24s cross-fade. */
-    if(st>=-0.0001&&st<=s.dur){if(st<IN&&s.start>0.0001)vis=st/IN;else if(st>s.dur-OUT)vis=(s.dur-st)/OUT;else vis=1;}
-    vis=clamp(vis);s.el.style.opacity=vis;s.el.style.visibility=vis>0.002?'visible':'hidden';
+    /* HARD CUT - zero overlap (AC, 2026-08-24). Every scene owns the HALF-OPEN
+       window [start, cut), where cut is the next scene's start. The outgoing scene
+       is gone on the exact frame the incoming one appears, so no two scenes are ever
+       painted in the same frame. What this replaces: the scene windows in SCENES
+       genuinely overlap (a scene's start+dur runs past the next scene's start), and
+       the cross-fade rendered BOTH scenes through that window - measured at 9 of 10
+       sampled cut moments, each scene at 0.2-0.36 opacity. That is two full-bleed
+       layouts stacked on top of each other AND a luminance dip at every cut. It is
+       the ghosting AC flagged (a headline reading through the next scene's kicker).
+       Element entrances still carry the motion through data-a, so a cut reads as a
+       cut, not as a jump. The last scene holds through the render tail (loop seam),
+       so the reel closes on a full frame instead of dying to black - required here,
+       because without it a hard cut would leave the tail empty.
+       SCENES timings are UNTOUCHED, so every audio cue map still matches. */
+    const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[i+1].start);
+    const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
+    const vis=live?1:0;
+    s.el.style.opacity=vis;s.el.style.visibility=live?'visible':'hidden';
     /* settle, then a slow continuous PUSH-IN (ported from the News engine's Day 30
        fix on 2026-08-18, Day 35): TOD settled in 0.35s then sat truly static, which
        was the whole of the gate-4 motion debt logged since Day 24. Result on Day 35:

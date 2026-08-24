@@ -68,9 +68,23 @@
      wrong digits, so it composes with the never-counts guard instead of fighting it. */
   /* padding+negative margin extends the CLIP box below the baseline without changing
      layout height, so descenders (g, y, p) survive the overflow:hidden the mask needs. */
+  /* HORIZONTAL BLEED (AC, 2026-08-24) - .odc had bottom bleed only, so glyph ink
+     that overhangs its ADVANCE box was shorn off on the left and right. Measured on
+     the stress string "$725B": margin lost 63.7px of ink, base 51.2px, vault 10.2px,
+     column 2.0px (crest was clean). That is the sliced figure AC flagged. Two separate
+     clippers had to be widened, which is why bleeding the mask alone did not fix it:
+       1. .odc overflow:hidden  - shears the ink outright;
+       2. .odc>i background-clip:text with a transparent fill - the glyph is painted
+          ONLY where the gradient box covers it, so ink outside that box renders
+          invisible even with the mask open.
+     Both get the same 0.16em bleed, cancelled by an equal negative margin, so layout
+     and the cue-driven cascade are byte-identical. TOP stays clipped deliberately:
+     that edge is the masked reveal the digits descend through, and bleeding it would
+     leak the incoming glyph early. Re-measured after: 0.0px lost on all five themes. */
   .odc{display:inline-block;overflow:hidden;line-height:1;vertical-align:bottom;
-    padding-bottom:0.24em;margin-bottom:-0.24em;}
-  .odc>i{display:inline-block;font-style:normal;will-change:transform;}
+    padding:0 0.16em 0.24em;margin:0 -0.16em -0.24em;}
+  .odc>i{display:inline-block;font-style:normal;will-change:transform;
+    padding:0 0.16em;margin:0 -0.16em;}
   /* a word space set at display size is enormous — "Aug 2" opened a hole between the
      word and the figure. Narrow it optically; text-size word spacing does not scale. */
   .odc.sp{width:0.24em;}
@@ -964,14 +978,25 @@ window.seek=function(t){
        0.150 threshold, where Day 37 read 0.020. Checked at every cut: the incoming
        scene is ~80% up as the outgoing one reaches zero, so no cut dips to black.
        SCENES timings are untouched, so reel_audio.py's cue map still matches. */
-    const st=t-s.start,IN=0.24,OUT=0.16,isLast=(i===LAST);let vis=0;
-    if(st>=-0.0001&&(isLast||st<=s.dur)){
-      if(s.start<=0.0001){ vis=(st>s.dur-OUT)?eOut((s.dur-st)/OUT):1; }   // loud open: scene A live on frame 0
-      else if(st<IN)vis=eOut(st/IN);
-      else if(!isLast&&st>s.dur-OUT)vis=eOut((s.dur-st)/OUT);
-      else vis=1;
-    }
-    vis=clamp(vis);s.el.style.opacity=vis;s.el.style.visibility=vis>0.002?'visible':'hidden';
+    /* HARD CUT - zero overlap (AC, 2026-08-24). Every scene owns the HALF-OPEN
+       window [start, cut), where cut is the next scene's start. The outgoing scene
+       is gone on the exact frame the incoming one appears, so no two scenes are ever
+       painted in the same frame. What this replaces: the scene windows in SCENES
+       genuinely overlap (a scene's start+dur runs past the next scene's start), and
+       the cross-fade rendered BOTH scenes through that window - measured at 9 of 10
+       sampled cut moments, each scene at 0.2-0.36 opacity. That is two full-bleed
+       layouts stacked on top of each other AND a luminance dip at every cut. It is
+       the ghosting AC flagged (a headline reading through the next scene's kicker).
+       Element entrances still carry the motion through data-a, so a cut reads as a
+       cut, not as a jump. The last scene holds through the render tail (loop seam),
+       so the reel closes on a full frame instead of dying to black - required here,
+       because without it a hard cut would leave the tail empty.
+       SCENES timings are UNTOUCHED, so every audio cue map still matches. */
+    const st=t-s.start,isLast=(i===LAST);
+    const cut=isLast?(s.start+s.dur):Math.min(s.start+s.dur,SCENES[i+1].start);
+    const live=(st>=-0.0001)&&(isLast||t<cut-0.0001);
+    const vis=live?1:0;
+    s.el.style.opacity=vis;s.el.style.visibility=live?'visible':'hidden';
     /* SETTLE, then a slow continuous PUSH-IN for the rest of the scene.
        Found 2026-08-14 (Day 30): gate 4 had been passing on the scene FADES, not on
        content. The moment the loop-seam fix above removed the last fade, four windows

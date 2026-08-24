@@ -256,7 +256,12 @@ window.seek=function(t){
   const LAST=SCENES.length-1;
   SCENES.forEach((s,i)=>{
     const lt=t-s.start;
-    const on=lt>=-0.0001&&(i===LAST||lt<=s.dur+0.0001);   // last shot holds through the tail
+    /* HALF-OPEN window (AC, 2026-08-24). This was inclusive at BOTH ends
+       (lt<=s.dur), and the trailer's shots are contiguous - S01 ends at 2.0 exactly
+       where S02 starts - so on the frame that lands on a boundary both shots were
+       visible at opacity 1 at once. One frame, but it is a real double-exposure on
+       every cut in the reel. Clipping to the next shot's start makes it impossible. */
+    const on=lt>=-0.0001&&(i===LAST||t<Math.min(s.start+s.dur,SCENES[i+1].start)-0.0001);   // last shot holds through the tail
     s.el.style.visibility=on?'visible':'hidden';
     if(!on)return;
     /* hard-cut slam + continuous push-in (the gate-4 device) */

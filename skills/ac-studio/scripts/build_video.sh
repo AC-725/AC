@@ -45,13 +45,17 @@ echo "==> Engine audio: $(basename "$AUDIO")"
 
 echo "==> 1/3 Rendering frames"
 rm -rf "$FRAMES"; mkdir -p "$FRAMES"
-node "$ASSETS/render_frames.js" "$HTML" "$FRAMES" 30 0.3
+# 60fps + lossless PNG frames (AC, 2026-08-24). See the header of render_frames.js
+# for why; the short version is that 30fps juddered and the JPEG intermediate cost a
+# whole extra generation of loss on gradients that are mostly gold-on-black.
+node "$ASSETS/render_frames.js" "$HTML" "$FRAMES" 60 0.3
 
 if [ "$SILENT" == "--silent" ]; then
   echo "==> 2/3 (skipped audio)"
-  ffmpeg -y -framerate 30 -i "$FRAMES/f%05d.jpg" \
-    -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=44100 \
-    -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 18 -preset slow -r 30 \
+  ffmpeg -y -framerate 60 -i "$FRAMES/f%05d.png" \
+    -f lavfi -i anullsrc=channel_layout=stereo:sample_rate=48000 \
+    -c:v libx264 -profile:v high -level 4.2 -pix_fmt yuv420p -crf 16 -preset slow -r 60 \
+    -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
     -shortest -c:a aac -b:a 128k -movflags +faststart "$OUT"
 else
   echo "==> 2/3 Synthesizing sound design"
@@ -62,8 +66,13 @@ else
   # shellcheck disable=SC2086
   python3 "$AUDIO" "$WAV" ${AUDIO_ARGS:-}
   echo "==> 3/3 Encoding + muxing"
-  ffmpeg -y -framerate 30 -i "$FRAMES/f%05d.jpg" -i "$WAV" \
-    -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 18 -preset slow -r 30 \
+  # CRF 18 -> 16 and explicit bt709 tags: the ground is flat #0A0A0A with gold
+  # gradients over it, which is the exact content H.264 bands on, and an untagged
+  # yuv420p file leaves the player to guess the transfer curve (gold drifts warm on
+  # some phones). 60fps in, 60fps out.
+  ffmpeg -y -framerate 60 -i "$FRAMES/f%05d.png" -i "$WAV" \
+    -c:v libx264 -profile:v high -level 4.2 -pix_fmt yuv420p -crf 16 -preset slow -r 60 \
+    -colorspace bt709 -color_primaries bt709 -color_trc bt709 \
     -c:a aac -b:a 192k -movflags +faststart -shortest "$OUT"
 fi
 
