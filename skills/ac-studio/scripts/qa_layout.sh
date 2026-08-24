@@ -35,6 +35,32 @@ set -euo pipefail
 # depending on whatever NODE_PATH the calling shell happened to export.
 export NODE_PATH="${NODE_PATH:+$NODE_PATH:}$(npm root -g 2>/dev/null || echo /opt/node22/lib/node_modules)"
 
+# ffmpeg + ffprobe (added 2026-08-24). This script resolved NODE_PATH only, but the
+# MP4 branch shells out to audit_motion.py, which needs BOTH - and this container
+# ships neither on PATH. Gates 3, 4 and 5 therefore died with FileNotFoundError on a
+# fresh shell instead of reporting anything, which is the same class of fault the
+# toolchain note in references/qa-audit.md was written about: a gate that only runs
+# in the shell that happened to set it up is not a gate. Best-effort on purpose -
+# the HTML branch needs neither, so a missing ffmpeg must not block the scene gates.
+[ -d /root/bin ] && export PATH="/root/bin:$PATH"
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  _FFBIN="$(python3 -c 'import imageio_ffmpeg,sys; sys.stdout.write(imageio_ffmpeg.get_ffmpeg_exe())' 2>/dev/null || true)"
+  if [ -n "${_FFBIN:-}" ]; then
+    mkdir -p /root/bin && ln -sf "$_FFBIN" /root/bin/ffmpeg
+    export PATH="/root/bin:$PATH"
+  fi
+fi
+if ! command -v ffprobe >/dev/null 2>&1 && command -v ffmpeg >/dev/null 2>&1; then
+  _SHIM="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/ffprobe_shim.py"
+  if [ -f "$_SHIM" ]; then
+    mkdir -p /root/bin
+    printf '#!/usr/bin/env bash\nFFMPEG_BIN=%q exec python3 %q "$@"\n' \
+      "$(command -v ffmpeg)" "$_SHIM" > /root/bin/ffprobe
+    chmod +x /root/bin/ffprobe
+    export PATH="/root/bin:$PATH"
+  fi
+fi
+
 HERE="$(cd "$(dirname "$0")" && pwd)"
 WORK="$(pwd)"; SHOTS="$WORK/_inkshots_$$"
 rm -rf "$SHOTS"; trap 'rm -rf "$SHOTS"' EXIT

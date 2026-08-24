@@ -1433,6 +1433,36 @@ sheet.
 17px-vs-18px gap on TOD scene E — it reproduces identically on the unpatched files, so it is
 pre-existing and was left alone rather than folded into this change.
 
+Gate 3 **PASS at row-decorrelation 0.623** against a 0.150 threshold, strongest change at
+2.70s. Day 38 measured 0.404 with the cross-fade in place, so removing it roughly halved
+again the correlation across the cut. Gate 4 **PASS** — worth stating plainly, because the
+Day 30 note warned the cross-fades had been papering over static stretches, and the concern
+was that deleting them would re-expose that. It did not; the push-in carries it.
+
+### Gates 3-5 had been unrunnable, and gate 5 cannot see this brand's cuts
+
+Running the gates rather than reading them turned up two things.
+
+`audit_motion.py` calls `ffprobe` and does NOT swallow the error, so gates 3, 4 and 5 died
+with `FileNotFoundError` on any container without a system ffprobe — and the toolchain
+resolves ffmpeg from the imageio-ffmpeg wheel, which ships **ffmpeg only**. `qa_layout.sh`
+made it worse by resolving `NODE_PATH` and nothing else, so the MP4 branch had no ffmpeg
+either. The same missing binary silently voided the verify step in both `build_video.sh` and
+`produce.sh`, where `|| true` swallowed it and the build reported success having checked
+nothing. Fixed by shipping `scripts/ffprobe_shim.py` (ffprobe's three used invocation shapes,
+answered from ffmpeg's own banner) and having all three scripts install it on PATH. Proven
+from an `env -i` shell with nothing pre-resolved.
+
+Then gate 5 reported **0 cuts** on a reel with four. It selects on `gt(scene,0.25)`, but the
+measured scene scores at the real cuts are **0.046, 0.035 and 0.042** — an order of magnitude
+under the threshold. On a flat `#0A0A0A` ground a cut changes only a small area of sparse gold
+ink, so 0.25 never fires. This is not a regression from the hard cut (an instant change
+produces a LARGER inter-frame delta than a fade), and it is the same class of limitation
+already documented for gate 4. Left as-is rather than retuned: thresholds here are
+look-dependent and the skill wants them set from `--calibrate` on a render AC already trusts.
+The detector firing at exactly 2.6s, 5.0s and 7.5s is independent confirmation that the cuts
+land precisely on the SCENES boundaries.
+
 **Open:** with the ghosting gone, scenes are visibly composing over ~1.25s (element delays
 0.05→0.95 on a 2.5s scene) — the cross-fade had been covering that hole. AC is watching a
 draft before deciding whether to tighten the entrance cascades.

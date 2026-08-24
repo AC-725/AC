@@ -36,6 +36,22 @@ if ! command -v ffmpeg >/dev/null 2>&1; then
 fi
 command -v ffmpeg >/dev/null 2>&1 || { echo "no ffmpeg: pip install imageio-ffmpeg" >&2; exit 1; }
 
+# ffprobe: the imageio-ffmpeg wheel resolved above ships ffmpeg ONLY, so `ffprobe`
+# is missing on a fresh container - which silently voided this script's verify step
+# and made audit_motion.py (gates 3, 4 and 5) die outright with FileNotFoundError.
+# Install the shim as a real ffprobe on PATH so every caller gets the same answer.
+# See scripts/ffprobe_shim.py for what it implements.
+if ! command -v ffprobe >/dev/null 2>&1; then
+  _SHIM="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/ffprobe_shim.py"
+  if [ -f "$_SHIM" ]; then
+    mkdir -p /root/bin
+    printf '#!/usr/bin/env bash\nFFMPEG_BIN=%q exec python3 %q "$@"\n' \
+      "$(command -v ffmpeg)" "$_SHIM" > /root/bin/ffprobe
+    chmod +x /root/bin/ffprobe
+    export PATH="/root/bin:$PATH"
+  fi
+fi
+
 HERE="$(cd "$(dirname "$0")" && pwd)"
 HTML="${1:?usage: produce.sh <working.html> <BaseName> [--light <light.html>] [--silent-also] [--serial]}"
 BASE="${2:?BaseName required}"
