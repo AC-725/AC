@@ -1,51 +1,93 @@
-# Brand — the fixed look
+# Brand law — the visual system
 
-One system, infinitely repeatable. Every reel = **black canvas, one gold idea, elegant
-serif headline.** That consistency is what turns a feed into a brand. The engine already
-encodes all of this; use this page when building a cover or checking a frame.
+One system, infinitely repeatable. Every frame = **flat black ground, one gold idea,
+elegant display type**. This file owns the palette, the type and the laws. If a change
+would alter any of them system-wide, it belongs here — not in a template.
 
-## Who
-- **Brand:** AC — *AI in Plain English*. **Person:** Austin (goes by AC).
-- **Handle:** `@itsac.ai`, on every frame (footer watermark + the CTA card), set in ONE
-  place — the `HANDLE` constant in `reel.template.html` and `tod.template.html`. Keep
-  `cover.template.html` in sync. Never hardcode a handle elsewhere or mix two on one
-  reel: a frame carrying the old `@ac.wins` alongside the new one reads as a mistake
-  and costs more trust than the frame is worth.
-- **Promise:** making AI make sense for normal businesses. One real AI trend, plain English,
-  zero jargon.
-- **Feeling:** premium, calm, confident. "Quiet luxury," not "hustle bro."
+---
+
+## The ground
+
+**Flat `#0A0A0A`. One value.** No gradient, no glow, no film grain, no background motif,
+no drifting particles. If you are tempted to put something behind the type, don't.
+
+*History, so it doesn't get reintroduced:* the § background motif was retired 2026-07-27.
+Drifting ember particles and the living glow were removed 2026-07-29. A circled AC
+monogram was trialled as a replacement mark and also removed. The ground is now the
+absence of all of it, and that is the design.
 
 ## Palette (exact values — gold is the only accent)
-| Hex | Name | Where |
-|-----|------|-------|
-| `#0A0A0A` | Base Black | background of every frame |
-| `#16130E` | Warm Charcoal | gradient depth |
-| `#E7C765` | Signal Gold | primary accent & monogram |
+
+| Hex | Name | Use |
+|---|---|---|
+| `#0A0A0A` | Base Black | the ground of every frame |
 | `#C9A23F` | Deep Gold | gradient mid-tone |
-| `#F4DF95` | Light Gold | gradient highlight / sheen |
-| `#F4F0E7` | Warm White | main headline text |
-| `#B9B1A1` | Muted Stone | body / supporting text |
+| `#E7C765` | Signal Gold | primary accent |
+| `#F4DF95` | Light Gold | highlight / sheen |
+| `#F4F0E7` | Warm White | headline text |
+| `#B9B1A1` | Muted Stone | supporting text |
 
-Gold gradient (numbers, the `to` chip, buttons): `linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F)`.
+Gold gradient (figures, the `to` chip, blocks): `linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F)`.
 
-## Type — two fonts, never more
-- **Lora** — headlines & big numbers. Elegant high-contrast serif; this is the "luxury" in
-  black & gold. Weights 400–700.
-- **Poppins** — kickers, labels & body. Clean geometric sans for clarity. Weights 400–700.
+**On gold ground the accent inverts to black.** This is the only exception to "gold means
+look here", and it exists because gold-on-gold carries no signal. See COLUMN.
 
-Both are available on the system; the engine references them by name.
+## Type
+
+**Poppins** — kickers, labels, body, chips. Every small element, every theme, always.
+Weights 400–700. Never substitute.
+
+**One display face per theme** — the headline, the figure and the handle. This replaced
+the single-serif rule on 2026-07-29 because four themes that share a face do not read as
+four themes. Lora remains the fallback if a face fails to load.
+
+| Theme | Display face | Character |
+|---|---|---|
+| `base` | **Gloock** | high-contrast luxury serif |
+| `crest` | **Bricolage Grotesque Bold** | contemporary grotesque, set in caps |
+| `column` | **Italiana** | ultra-fine elegant serif |
+| `margin` | **Instrument Serif Italic** | editorial italic |
+
+The `.ttf` files ship in `assets/fonts/` and are referenced relatively. **Keep them with
+the templates.** If they go missing every theme silently falls back to Lora and you get
+no error — the frames just quietly stop being four themes.
 
 ## Fixed frame elements
-- Thin gold frame border inset ~46px, plus gold **corner ticks** at the four corners.
+
+- Thin gold frame border inset ~46px.
+- Gold **corner ticks** — but only two per theme. See the block law below.
 - Top **kicker**: a gold live-dot + the section label, letter-spaced, uppercase.
-- The faint **§ motif** drifting in the background — the same mark used on the carousels,
-  tying the reel and grid into one brand. Keep it barely visible.
-- Footer **watermark** = the handle (from `HANDLE`), centered, muted gold.
+- Footer **watermark** = the handle (from `HANDLE`), centred, muted gold.
+- **The progress block** — full bleed, and it is the theme's signature.
+
+## The block law
+
+> **The progress indicator IS the theme's block.** Where it sits and how much mass it
+> carries is the identity. The corner ticks mark the edge it runs along. Hierarchy,
+> type case and colour balance all move with it.
+
+This exists because the previous system separated themes by lighting and by a 4px inset
+hairline, and at feed size all four collapsed into "display type on black". A distinction
+that only survives in a spec sheet is not a distinction. **Test every theme at 140px
+before you believe it works.**
 
 ## On-screen guardrails
-- One gold accent per scene. Gold means "look here." The retouch FX are texture, not accents.
+
+- **No day number and no date on any post graphic.** Not on a reel frame, not on a cover,
+  not on a carousel slide, not in the caption's first line. AC ruled 2026-07-30: the page
+  is not a numbered series, and a "Day 17" badge both dates the post and implies a run the
+  viewer thinks they have missed the start of. Day numbers stay in `run-log.md` as internal
+  bookkeeping only. The kicker carries the pillar (`AI News`, `Tool of the Day`) and nothing
+  else. A source's own date inside a stat line ("Meta Q2 2026 earnings call") is a citation,
+  not a post date, and is fine.
+- One gold accent per scene. Gold means "look here."
 - No em-dashes on screen, ever. Period, comma, or line break.
 - Plain English only. Kill buzzwords and "this changes everything."
 - ~30 words max on any single frame; lots of black breathing room.
-- Never add other colors, stock photos, or clip-art. If a company must be named, use a clean
-  gold wordmark, not a multicolor logo.
+- Never add other colours, stock photos, or clip-art. If a company must be named, use a
+  clean gold wordmark, not a multicolour logo.
+- **`text-transform: lowercase` is banned on any element that can carry a figure.** It
+  turns `$725B` into `$725b`. MARGIN uses italic instead, for exactly this reason.
+- **Nothing may overlap.** Separate content groups keep ≥18px of clear glyph space; two
+  lines of one headline are judged proportionally. Enforced by `scripts/qa_layout.sh`,
+  which is not optional — see `references/qa-audit.md`.

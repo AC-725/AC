@@ -1,0 +1,72 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;background:#0A0A0A;overflow:hidden;position:relative}
+#gl{position:absolute;inset:0;z-index:0}
+.txt{position:absolute;z-index:2;font-family:'Poppins',sans-serif;width:1080px;text-align:center}
+#handle{top:1035px;font-weight:600;font-size:46px;letter-spacing:.14em;color:#F2EDE4}
+#tag{top:1112px;font-weight:400;font-size:30px;letter-spacing:.06em;color:#B7AE9C}
+.tick{position:absolute;z-index:2;width:34px;height:34px;border-color:#E7C765;border-style:solid}
+#tl{bottom:40px;left:40px;border-width:0 0 3px 3px}
+#tr{bottom:40px;right:40px;border-width:0 3px 3px 0}
+</style></head><body>
+<canvas id="gl" width="1080" height="1920"></canvas>
+<div class="txt" id="handle">@itsac.ai</div>
+<div class="txt" id="tag">AI in Plain English</div>
+<div class="tick" id="tl"></div><div class="tick" id="tr"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+// ---- the mark, bail IN ----
+const MW=600,MH=660;
+const mc=document.createElement('canvas'); mc.width=MW; mc.height=MH;
+const m=mc.getContext('2d');
+m.lineCap='butt'; m.strokeStyle='#fff';
+const LW=26;
+function Carc(from,to,lw){m.lineWidth=lw??LW; m.beginPath(); m.arc(412,315,140,from,to); m.stroke();}
+Carc(0.8,2*Math.PI-0.5);
+m.lineWidth=LW; m.lineJoin='miter'; m.miterLimit=8;
+m.beginPath(); m.moveTo(150,505); m.lineTo(285,132); m.lineTo(408,505); m.stroke();
+m.beginPath(); m.moveTo(206,388); m.lineTo(378,388); m.stroke();
+m.lineWidth=9;
+m.beginPath(); m.moveTo(263,140); m.lineTo(122,505); m.stroke();
+Carc(1.4,2.3);
+m.lineWidth=9;
+m.beginPath(); m.moveTo(285,62); m.lineTo(316,93); m.lineTo(285,124); m.lineTo(254,93); m.closePath(); m.stroke();
+m.beginPath(); m.moveTo(285,77); m.lineTo(301,93); m.lineTo(285,109); m.lineTo(269,93); m.closePath(); m.stroke();
+m.lineWidth=16;
+m.beginPath(); m.arc(285,34,22,0.35,Math.PI-0.35,true); m.stroke();
+m.beginPath(); m.moveTo(266,42); m.lineTo(272,62); m.stroke();
+m.beginPath(); m.moveTo(304,42); m.lineTo(298,62); m.stroke();
+const img=m.getImageData(0,0,MW,MH).data;
+const ink=(x,y)=>x>=0&&y>=0&&x<MW&&y<MH&&img[(y*MW+x)*4+3]>128;
+function samples(step){const out=[];
+  for(let y=0;y<MH;y+=step)for(let x=0;x<MW;x+=step)
+    if(ink(x,y)) out.push([(x-285)/150,(300-y)/150]);
+  return out;}
+// ---- scene ----
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+r.setSize(1080,1920,false); r.setClearColor(0x0A0A0A,1);
+const s=new THREE.Scene(); s.fog=new THREE.FogExp2(0x0A0A0A,0.05);
+const c=new THREE.PerspectiveCamera(50,1080/1920,0.1,120);
+c.position.set(0,0.4,8.2); c.lookAt(0,-0.4,-10);
+// vault floor
+const near=[],far=[];
+for(let i=-7;i<=7;i++){near.push(new THREE.Vector3(i*1.2,-2.35,3),new THREE.Vector3(i*1.2,-2.35,-9));
+  far.push(new THREE.Vector3(i*1.2,-2.35,-9),new THREE.Vector3(i*1.2,-2.35,-40));}
+for(let z=3;z>=-40;z-=1.2)(z>-9?near:far).push(new THREE.Vector3(-8.4,-2.35,z),new THREE.Vector3(8.4,-2.35,z));
+s.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(near),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.5})));
+s.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(far),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.24})));
+// solid mark, bail in, standing on the floor
+const pts=samples(2);
+const geo=new THREE.BoxGeometry(0.032,0.032,0.2), mat=new THREE.MeshBasicMaterial({color:GOLD});
+const mk=new THREE.Group();
+pts.forEach(([x,y])=>{const b=new THREE.Mesh(geo,mat); b.position.set(x,y,0); mk.add(b);});
+mk.scale.setScalar(0.62); mk.position.set(0,1.05,0); mk.rotation.y=0.26; s.add(mk);
+r.render(s,c); document.title='ready';
+</script></body></html>

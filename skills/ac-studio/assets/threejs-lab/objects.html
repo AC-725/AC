@@ -1,0 +1,106 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+@font-face{font-family:'Poppins';font-weight:600;src:url('fonts/Poppins-600.ttf');}
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+html,body{width:1200px;height:1360px;background:#0A0A0A;overflow:hidden;}
+.grid{display:grid;grid-template-columns:600px 600px;grid-template-rows:680px 680px;}
+.cell{position:relative;width:600px;height:680px;background:#0A0A0A;border:1px solid rgba(231,199,101,0.10);}
+.lbl{position:absolute;top:22px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:600;font-size:19px;letter-spacing:5px;color:#E7C765;text-transform:uppercase;}
+.note{position:absolute;bottom:20px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:600;font-size:15px;letter-spacing:1px;color:#6f6a60;}
+canvas{position:absolute;left:100px;top:120px;width:400px;height:400px;}
+/* --- extruded type via CSS 3D stack: native Gloock, real depth, no WebGL --- */
+#extWrap{position:absolute;left:0;top:150px;width:100%;height:340px;
+  perspective:1200px;display:flex;align-items:center;justify-content:center;}
+#ext{position:relative;transform-style:preserve-3d;transform:rotateX(14deg) rotateY(-20deg);}
+#ext span{position:absolute;left:0;top:0;font-family:'DispBase';font-size:150px;line-height:1;letter-spacing:-5px;white-space:nowrap;}
+#ext span:first-child{position:relative;}
+</style></head><body>
+<div class="grid">
+  <div class="cell"><div class="lbl">Wireframe globe</div><canvas id="c1" width="800" height="800"></canvas><div class="note">geography · "worldwide" · EU / HK / US stories</div></div>
+  <div class="cell"><div class="lbl">Node graph</div><canvas id="c2" width="800" height="800"></canvas><div class="note">automation · connecting tools · workflows</div></div>
+  <div class="cell"><div class="lbl">Comparison bars</div><canvas id="c3" width="800" height="800"></canvas><div class="note">price gaps · US$630K vs US$20/mo</div></div>
+  <div class="cell"><div class="lbl">Extruded type (CSS 3D)</div><div id="extWrap"><div id="ext"></div></div><div class="note">native Gloock · not WebGL · stays crisp</div></div>
+</div>
+<script type="module">
+import * as THREE from './three.module.min.js';
+const GOLD=0xE7C765;
+function mk(canvas){
+  const r=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  r.setSize(800,800,false); r.setPixelRatio(1);
+  const s=new THREE.Scene();
+  const c=new THREE.PerspectiveCamera(34,1,0.1,100); c.position.z=6;
+  return {r,s,c};
+}
+function eOut(p){p=Math.min(1,Math.max(0,p));return 1-Math.pow(1-p,3);}
+
+/* 1 — GLOBE: lat/long wireframe only. No sphere fill, no lighting, no texture:
+      a filled shaded globe would introduce gradient + light direction, which the
+      flat-ground brand law forbids. Lines only reads as a diagram, not a render. */
+const G=mk(document.getElementById('c1'));
+const globe=new THREE.Group();
+globe.add(new THREE.LineSegments(
+  new THREE.WireframeGeometry(new THREE.SphereGeometry(1.75,18,12)),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.30})));
+globe.add(new THREE.Mesh(new THREE.SphereGeometry(1.74,48,32),
+  new THREE.MeshBasicMaterial({color:0x0A0A0A})));           // occluder: hides back-face lines
+globe.add(new THREE.LineLoop(new THREE.CircleGeometry(1.78,64),
+  new THREE.LineBasicMaterial({color:GOLD})));               // crisp gold limb
+G.s.add(globe);
+
+/* 2 — NODE GRAPH: points + edges assembling. The literal picture of "connect your tools". */
+const N=mk(document.getElementById('c2'));
+const nodes=[[0,0,0],[1.5,.9,.3],[-1.5,.7,-.4],[1.2,-1.1,-.3],[-1.3,-1.2,.4],[0,1.7,-.2],[0,-1.8,.2]];
+const ng=new THREE.Group();
+nodes.forEach((p,i)=>{
+  const m=new THREE.Mesh(new THREE.SphereGeometry(i===0?0.20:0.115,20,16),
+    new THREE.MeshBasicMaterial({color:GOLD}));
+  m.position.set(...p); ng.add(m);
+});
+const pts=[]; for(let i=1;i<nodes.length;i++){pts.push(new THREE.Vector3(0,0,0),new THREE.Vector3(...nodes[i]));}
+ng.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.42})));
+N.s.add(ng);
+
+/* 3 — COMPARISON BARS: two boxes, edge-outlined. Solid faces get flat gold with NO shading
+      so there is no gradient; the depth reads from the silhouette and the edge lines. */
+const B=mk(document.getElementById('c3'));
+const bars=new THREE.Group();
+function bar(x,h,solid){
+  const g=new THREE.BoxGeometry(0.85,h,0.85);
+  const grp=new THREE.Group();
+  if(solid) grp.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:GOLD})));
+  grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),
+    new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:solid?0.55:1})));
+  grp.position.set(x,h/2-1.4,0); bars.add(grp);
+}
+bar(-0.75,2.6,true); bar(0.75,0.45,false);
+bars.rotation.set(0.16,-0.5,0);
+B.s.add(bars);
+
+/* deterministic seek — same architecture as the reel engine, no rAF */
+window.seek=function(t){
+  const e=eOut(t/0.9);
+  globe.rotation.y = -0.5 + t*0.32; globe.rotation.x = 0.22;
+  ng.rotation.y = -0.35 + t*0.22; ng.rotation.x = 0.18;
+  ng.scale.setScalar(0.82+0.18*e);
+  G.r.render(G.s,G.c); N.r.render(N.s,N.c); B.r.render(B.s,B.c);
+};
+
+/* 4 — EXTRUDED TYPE: 26 stacked copies of real DOM text, each 1px deeper in Z.
+      Front copy is the live gradient face; the copies behind form the extruded side wall.
+      Type stays native so it renders as crisply as everything else in the reel. */
+const ext=document.getElementById('ext'), TXT='Aug 2', LAYERS=26;
+for(let i=LAYERS;i>=0;i--){
+  const s=document.createElement('span');
+  s.textContent=TXT;
+  s.style.transform='translateZ('+(-i*1.6)+'px)';
+  if(i===0){ s.style.background='linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%)';
+    s.style.webkitBackgroundClip='text'; s.style.backgroundClip='text'; s.style.color='transparent'; }
+  else { const k=1-(i/LAYERS)*0.72; s.style.color='rgb('+Math.round(201*k)+','+Math.round(162*k)+','+Math.round(63*k)+')'; }
+  ext.appendChild(s);
+}
+window.seek(0.9);
+document.title='ready';
+</script></body></html>

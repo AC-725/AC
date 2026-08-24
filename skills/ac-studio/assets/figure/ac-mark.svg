@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="600" viewBox="0 -10 210 300">
+<!-- THE AC MARK - canonical, 2026-08-13.
+     Akimbo stance, head tilted 5 degrees, eye-level sunglasses WITH temple arms
+     (armless bars read as a visor), one raised brow, caret mouth, polo collar
+     with button dot, no feet ticks. Hair is variant T3 "tousled" - four uneven
+     strands; the unevenness is the point, a symmetrical set reads as a crown.
+     Judged at 140px, not at full size: fine separate strands dissolve at reel
+     scale, so what survives is anything that changes the SILHOUETTE.
+     viewBox starts at y=-10 because the strand tips sit above the old origin.
+     Strokes: 7.2 structure / 6 hair / 4.6 detail. -->
+<style>.fst{fill:none;stroke:#E7C765;stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round}.fhr{fill:none;stroke:#E7C765;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}.fth{fill:none;stroke:#E7C765;stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round}.fsun{fill:#E7C765}.fcar{fill:#F4DF95}</style>
+<g transform="rotate(-5 105 104)"><circle cx="105" cy="58" r="46" class="fst"/><path class="fhr" d="M64 40 Q70 9 105 8 Q141 9 146 40"/><path class="fth" d="M76 20 l4 -11"/><path class="fth" d="M92 11 l-2 -11"/><path class="fth" d="M110 8 l6 -10"/><path class="fth" d="M128 14 l9 -6"/><path class="fth" d="M113 38 Q123 33 133 37"/><rect x="74" y="45" width="26" height="14" rx="6" class="fsun"/><rect x="110" y="45" width="26" height="14" rx="6" class="fsun"/><path class="fth" d="M100 51 h10"/><path class="fth" d="M74 50 L61 46"/><path class="fth" d="M136 50 L149 46"/><rect x="102" y="70" width="6" height="18" class="fcar"/></g>
+<path class="fth" d="M89 108 L96 122 L105 118"/><path class="fth" d="M121 108 L114 122 L105 118"/><circle cx="105" cy="127" r="2.5" class="fsun"/><path class="fst" d="M105 104 v92"/><path class="fst" d="M105 128 L62 150 L88 172"/><path class="fst" d="M105 130 L142 160 L148 188"/><path class="fst" d="M105 196 L86 258"/><path class="fst" d="M105 196 L132 256"/>
+</svg>

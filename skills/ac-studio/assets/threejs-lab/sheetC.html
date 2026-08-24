@@ -1,0 +1,189 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js","three/addons/":"./jsm/"}}</script>
+<style>
+@font-face{font-family:'Poppins';font-weight:600;src:url('fonts/Poppins-600.ttf');}
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+*{margin:0;padding:0;box-sizing:border-box;}
+html,body{width:1200px;height:2720px;background:#0A0A0A;overflow:hidden;}
+.grid{display:grid;grid-template-columns:600px 600px;}
+.cell{position:relative;width:600px;height:680px;background:#0A0A0A;border:1px solid rgba(231,199,101,0.10);}
+.lbl{position:absolute;top:22px;left:0;width:100%;text-align:center;font-family:'Poppins';font-weight:600;
+  font-size:18px;letter-spacing:4px;color:#E7C765;text-transform:uppercase;}
+.note{position:absolute;bottom:18px;left:0;width:100%;text-align:center;font-family:'Poppins';font-weight:600;
+  font-size:14px;color:#6f6a60;}
+canvas{position:absolute;left:100px;top:110px;width:400px;height:420px;}
+</style></head><body>
+<div class="grid">
+  <div class="cell"><div class="lbl">12 · HK skyline</div><canvas id="k1" width="800" height="840"></canvas><div class="note">geography anchor · HK stories</div></div>
+  <div class="cell"><div class="lbl">13 · Coin flip</div><canvas id="k2" width="800" height="840"></canvas><div class="note">money and pricing stories</div></div>
+  <div class="cell"><div class="lbl">14 · Padlock</div><canvas id="k3" width="800" height="840"></canvas><div class="note">privacy · security · watermark stories</div></div>
+  <div class="cell"><div class="lbl">15 · Neural layers</div><canvas id="k4" width="800" height="840"></canvas><div class="note">how-AI-works explainers</div></div>
+  <div class="cell"><div class="lbl">16 · Data stream</div><canvas id="k5" width="800" height="840"></canvas><div class="note">data flowing through an automation</div></div>
+  <div class="cell"><div class="lbl">17 · Liquid gold</div><canvas id="k6" width="800" height="840"></canvas><div class="note">GLSL shader · BREAKS flat-gold law</div></div>
+  <div class="cell"><div class="lbl">18 · AC monogram extruded</div><canvas id="k7" width="800" height="840"></canvas><div class="note">true ring extrusion · letters voxel-sampled</div></div>
+  <div class="cell"><div class="lbl">19 · Camera flight (fixed)</div><canvas id="k8" width="800" height="840"></canvas><div class="note">denser · fog depth fade</div></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765, INK=0x0A0A0A;
+const gMat=new THREE.MeshBasicMaterial({color:GOLD});
+const kMat=new THREE.MeshBasicMaterial({color:INK});
+function mk(id,fov=34,z=6){
+  const r=new THREE.WebGLRenderer({canvas:document.getElementById(id),alpha:true,antialias:true});
+  r.setSize(800,840,false);
+  const s=new THREE.Scene(), c=new THREE.PerspectiveCamera(fov,800/840,0.1,100);
+  c.position.z=z; return {r,s,c};
+}
+function edges(geo,op=1){return new THREE.LineSegments(new THREE.EdgesGeometry(geo),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:op<1,opacity:op}));}
+function sample(txt,fsMax,stepPx){
+  const c=document.createElement('canvas'); c.width=900; c.height=300;
+  const x=c.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,900,300);
+  x.fillStyle='#fff'; x.textAlign='center'; x.textBaseline='middle';
+  let fs=fsMax; x.font='700 '+fs+'px DispBase, Georgia';
+  while(x.measureText(txt).width>800&&fs>60){fs-=6;x.font='700 '+fs+'px DispBase, Georgia';}
+  x.fillText(txt,450,158);
+  const d=x.getImageData(0,0,900,300).data, out=[];
+  for(let y=0;y<300;y+=stepPx)for(let X=0;X<900;X+=stepPx) if(d[(y*900+X)*4]>128) out.push([(X-450),-(y-150)]);
+  return out;
+}
+
+/* 12 · HK SKYLINE — black towers with gold edge lines, so occlusion makes it read
+   as a line drawing of a real city, not a bar chart. Heights echo the harbour front. */
+const K1=mk('k1',30,9.5); const sky=new THREE.Group();
+const towers=[[-2.6,1.3,.7],[-1.9,2.2,.6],[-1.15,1.7,.65],[-0.4,3.1,.72],[0.4,2.5,.6],[1.05,1.5,.6],[1.75,2.8,.66],[2.5,1.9,.6]];
+towers.forEach(([x,h,w])=>{
+  const g=new THREE.BoxGeometry(w,h,w), grp=new THREE.Group();
+  grp.add(new THREE.Mesh(g,kMat)); grp.add(edges(g));
+  grp.position.set(x,h/2-1.7,(Math.sin(x*3.7)*0.5)); sky.add(grp);
+});
+{ // the IFC-style taper that makes it read as HK, not generic
+  const g=new THREE.CylinderGeometry(0.16,0.34,3.9,4), grp=new THREE.Group();
+  grp.add(new THREE.Mesh(g,kMat)); grp.add(edges(g));
+  grp.position.set(-0.4,3.1+1.95-1.7-3.1/2+0,0); grp.position.y=3.9/2-1.7; grp.position.x=0.75; sky.add(grp); }
+{ const pts=[new THREE.Vector3(-3.2,-1.7,0),new THREE.Vector3(3.2,-1.7,0)];
+  sky.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),new THREE.LineBasicMaterial({color:GOLD}))); }
+sky.rotation.set(0.10,-0.35,0); K1.s.add(sky);
+
+/* 13 · COIN mid-flip — thin cylinder, AC face via canvas texture (gold ink on black). */
+const K2=mk('k2',34,5.6);
+const face=document.createElement('canvas'); face.width=face.height=512;
+{ const x=face.getContext('2d');
+  x.fillStyle='#E7C765'; x.beginPath(); x.arc(256,256,250,0,7); x.fill();
+  x.fillStyle='#0A0A0A'; x.beginPath(); x.arc(256,256,214,0,7); x.fill();
+  x.fillStyle='#E7C765'; x.font='700 190px DispBase, Georgia'; x.textAlign='center'; x.textBaseline='middle';
+  x.fillText('AC',256,276); }
+const faceTex=new THREE.CanvasTexture(face);
+const coin=new THREE.Group();
+coin.add(new THREE.Mesh(new THREE.CylinderGeometry(1.5,1.5,0.16,64),
+  new THREE.MeshBasicMaterial({color:0xC9A23F})));
+[-1,1].forEach(s=>{
+  const m=new THREE.Mesh(new THREE.CircleGeometry(1.5,64),new THREE.MeshBasicMaterial({map:faceTex}));
+  m.rotation.x=-Math.PI/2*s; m.position.y=0.081*s; coin.add(m);
+});
+coin.rotation.set(0.9,0.35,0.55); K2.s.add(coin);
+
+/* 14 · PADLOCK — extruded rounded body + torus-arc shackle, flat gold + ink edge lines. */
+const K3=mk('k3',34,6.4); const lock=new THREE.Group();
+{ const s=new THREE.Shape(); const w=1.5,h=1.25,r=0.25;
+  s.moveTo(-w/2+r,-h/2); s.lineTo(w/2-r,-h/2); s.absarc(w/2-r,-h/2+r,r,-Math.PI/2,0);
+  s.lineTo(w/2,h/2-r); s.absarc(w/2-r,h/2-r,r,0,Math.PI/2);
+  s.lineTo(-w/2+r,h/2); s.absarc(-w/2+r,h/2-r,r,Math.PI/2,Math.PI);
+  s.lineTo(-w/2,-h/2+r); s.absarc(-w/2+r,-h/2+r,r,Math.PI,Math.PI*1.5);
+  const g=new THREE.ExtrudeGeometry(s,{depth:0.5,bevelEnabled:true,bevelSize:0.04,bevelThickness:0.04,bevelSegments:2});
+  const body=new THREE.Mesh(g,gMat); body.position.set(0,-0.55,-0.25); lock.add(body);
+  const kh=new THREE.Mesh(new THREE.CircleGeometry(0.16,24),kMat); kh.position.set(0,-0.45,0.30); lock.add(kh);
+  const ks=new THREE.Mesh(new THREE.PlaneGeometry(0.13,0.34),kMat); ks.position.set(0,-0.70,0.30); lock.add(ks); }
+{ const g=new THREE.TorusGeometry(0.62,0.13,16,48,Math.PI);
+  const sh=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:0xC9A23F}));
+  sh.position.set(0,0.10,-0.25); lock.add(sh); }
+lock.rotation.set(0.08,-0.35,0); lock.scale.setScalar(1.35); K3.s.add(lock);
+
+/* 15 · NEURAL LAYERS — 3-4-3 columns, gold nodes, connections thin gold. */
+const K4=mk('k4',34,7.4); const net=new THREE.Group();
+const cols=[[-1.7,3],[0,4],[1.7,3]], nodePos=[];
+cols.forEach(([x,n],ci)=>{ nodePos[ci]=[];
+  for(let i=0;i<n;i++){ const y=(i-(n-1)/2)*1.05, z=(i%2?0.18:-0.18);
+    nodePos[ci].push([x,y,z]);
+    const m=new THREE.Mesh(new THREE.SphereGeometry(0.17,18,14),gMat);
+    m.position.set(x,y,z); net.add(m); }});
+const cpts=[];
+for(let a=0;a<nodePos[0].length;a++)for(let b=0;b<nodePos[1].length;b++)
+  cpts.push(new THREE.Vector3(...nodePos[0][a]),new THREE.Vector3(...nodePos[1][b]));
+for(let a=0;a<nodePos[1].length;a++)for(let b=0;b<nodePos[2].length;b++)
+  cpts.push(new THREE.Vector3(...nodePos[1][a]),new THREE.Vector3(...nodePos[2][b]));
+net.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(cpts),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.28})));
+net.rotation.y=-0.25; K4.s.add(net);
+
+/* 16 · DATA STREAM — particles flowing along a curve between two endpoints. */
+const K5=mk('k5',34,6.6);
+const curve=new THREE.CatmullRomCurve3([
+  new THREE.Vector3(-2.1,-1.4,0), new THREE.Vector3(-0.9,0.3,0.7),
+  new THREE.Vector3(0.9,-0.4,-0.6), new THREE.Vector3(2.1,1.3,0)]);
+[[-2.1,-1.4,0],[2.1,1.3,0]].forEach(p=>{
+  const m=new THREE.Mesh(new THREE.SphereGeometry(0.22,20,16),gMat); m.position.set(...p); K5.s.add(m);});
+const NP=340, sg=new THREE.BufferGeometry(), sp=new Float32Array(NP*3);
+sg.setAttribute('position',new THREE.BufferAttribute(sp,3));
+K5.s.add(new THREE.Points(sg,new THREE.PointsMaterial({color:GOLD,size:0.055})));
+function streamAt(t){
+  for(let i=0;i<NP;i++){
+    const u=(i/NP + t*0.22)%1, P=curve.getPoint(u);
+    const wob=0.05*Math.sin(i*7.3+t*3);
+    sp[i*3]=P.x; sp[i*3+1]=P.y+wob; sp[i*3+2]=P.z;
+  } sg.attributes.position.needsUpdate=true;
+}
+
+/* 17 · LIQUID GOLD — GLSL vertex noise + mild normal shading. LAW-BREAKER by design. */
+const K6=mk('k6',34,5.6);
+const liqMat=new THREE.ShaderMaterial({
+  uniforms:{uT:{value:0}},
+  vertexShader:`uniform float uT; varying vec3 vN;
+    void main(){ vec3 p=position;
+      float w=0.10*sin(4.0*p.x+uT)+0.08*sin(5.0*p.y+uT*1.3)+0.06*sin(6.0*p.z+uT*0.7);
+      p+=normal*w; vN=normalMatrix*normal;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.0);}`,
+  fragmentShader:`varying vec3 vN;
+    void main(){ float l=0.72+0.28*max(dot(normalize(vN),normalize(vec3(0.4,0.7,1.0))),0.0);
+      gl_FragColor=vec4(vec3(0.906,0.780,0.396)*l,1.0);}`
+});
+const liq=new THREE.Mesh(new THREE.SphereGeometry(1.5,96,64),liqMat);
+liq.rotation.y=0.5; K6.s.add(liq);
+
+/* 18 · MONOGRAM — ring truly extruded (Shape with hole); AC letters voxel-sampled at
+   two depth layers. Honest cap: EXACT glyph extrusion needs the logo as SVG paths —
+   supply the file and SVGLoader turns this into the real thing. */
+const K7=mk('k7',34,7); const mono=new THREE.Group();
+{ const s=new THREE.Shape(); s.absarc(0,0,2.0,0,Math.PI*2);
+  const hole=new THREE.Path(); hole.absarc(0,0,1.78,0,Math.PI*2); s.holes.push(hole);
+  const g=new THREE.ExtrudeGeometry(s,{depth:0.34,bevelEnabled:true,bevelSize:0.05,bevelThickness:0.05,bevelSegments:2,curveSegments:64});
+  const ring=new THREE.Mesh(g,gMat); ring.position.z=-0.17; mono.add(ring); }
+{ const pts=sample('AC',210,6), inst=new THREE.InstancedMesh(new THREE.BoxGeometry(0.052,0.052,0.30),gMat,pts.length);
+  const d=new THREE.Object3D(); let k=0;
+  for(const [px,py] of pts){ d.position.set(px/160,py/160,0); d.updateMatrix(); inst.setMatrixAt(k++,d.matrix); }
+  inst.count=k; inst.instanceMatrix.needsUpdate=true; mono.add(inst); }
+mono.rotation.set(0.18,-0.42,0.02); K7.s.add(mono);
+
+/* 19 · CAMERA FLIGHT, fixed — denser sampling, black exp fog for depth fade. */
+const K8=mk('k8',58,0); K8.s.fog=new THREE.FogExp2(INK,0.30);
+{ const pts=sample('AI',230,3);
+  const inst=new THREE.InstancedMesh(new THREE.BoxGeometry(0.020,0.020,0.020),
+    new THREE.MeshBasicMaterial({color:GOLD,fog:true}),pts.length*3);
+  const d=new THREE.Object3D(); let k=0;
+  for(let layer=0;layer<3;layer++) for(const [px,py] of pts){
+    d.position.set(px/210,py/210,-layer*1.9); d.updateMatrix(); inst.setMatrixAt(k++,d.matrix); }
+  inst.count=k; inst.instanceMatrix.needsUpdate=true; K8.s.add(inst); }
+K8.c.position.set(0,0,2.4);
+
+window.seek=function(t){
+  sky.rotation.y=-0.35+t*0.10;
+  coin.rotation.y=0.35+t*2.2;
+  net.rotation.y=-0.25+t*0.14;
+  streamAt(t);
+  liqMat.uniforms.uT.value=t*2.4;
+  mono.rotation.y=-0.42+t*0.18;
+  K8.c.position.z=2.4-t*0.9;
+  [K1,K2,K3,K4,K5,K6,K7,K8].forEach(o=>o.r.render(o.s,o.c));
+};
+document.fonts.ready.then(()=>{ window.seek(1.1); document.title='ready'; });
+</script></body></html>

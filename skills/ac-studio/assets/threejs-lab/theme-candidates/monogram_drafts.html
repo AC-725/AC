@@ -1,0 +1,89 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Gloock';src:url('fonts/Gloock-Regular.ttf')}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+body{background:#0A0A0A;font-family:'Poppins',sans-serif;width:1400px;padding:40px}
+h1{color:#E7C765;font-size:28px;font-weight:600}
+.sub{color:#8f8574;font-size:16px;margin:6px 0 24px}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tile{background:#0D0C0A;border:1px solid #2a2620;padding:10px}
+.tile canvas{display:block;width:400px;height:360px}
+.nm{color:#F2EDE4;font-size:19px;font-weight:600;margin:10px 0 2px}
+.uc{color:#8f8574;font-size:14px}
+</style></head><body>
+<h1>3 · MONOGRAM — stand-ins from Gloock, your SVG makes it exact</h1>
+<div class="sub">sampled from the brand display face's real "AC" ink · pick a treatment now, swap in the true logo geometry when the SVG arrives</div>
+<div id="grid"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const lm=o=>new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:o});
+const solid=c=>new THREE.MeshBasicMaterial({color:c});
+const edges=(g,o)=>new THREE.LineSegments(new THREE.EdgesGeometry(g),lm(o));
+
+await document.fonts.load('600px Gloock','AC');
+// sample "AC" ink once
+const cv2=document.createElement('canvas'); cv2.width=360; cv2.height=200;
+const cx=cv2.getContext('2d');
+cx.fillStyle='#fff'; cx.font='150px Gloock'; cx.textAlign='center'; cx.textBaseline='middle';
+cx.fillText('AC',180,105);
+const img=cx.getImageData(0,0,360,200).data;
+function samples(step){
+  const out=[];
+  for(let y=0;y<200;y+=step)for(let x=0;x<360;x+=step){
+    if(img[(y*360+x)*4+3]>128) out.push([(x-180)/62,(105-y)/62]);}
+  return out;}
+
+const defs=[];
+function tile(name,use,build){defs.push({name,use,build});}
+
+// A — particle monogram
+tile('M-A · PARTICLE','the mark as a settled point cloud',g=>{
+  const pts=samples(3), flat=[];
+  pts.forEach(([x,y])=>flat.push(x,y,(Math.random()-0.5)*0.12));
+  g.add(new THREE.Points(new THREE.BufferGeometry().setAttribute('position',
+    new THREE.Float32BufferAttribute(flat,3)),
+    new THREE.PointsMaterial({color:GOLD,size:0.045,transparent:true,opacity:0.95})));
+  g.rotation.y=0.22; g.scale.setScalar(1.06);});
+
+// B — voxel extrusion
+tile('M-B · VOXEL','glyph ink extruded as gold columns',g=>{
+  const pts=samples(5);
+  const geo=new THREE.BoxGeometry(0.075,0.075,0.34);
+  const mat=solid(GOLD);
+  pts.forEach(([x,y])=>{const m=new THREE.Mesh(geo,mat);
+    m.position.set(x,y,0); g.add(m);});
+  g.rotation.set(0.12,0.42,0); g.scale.setScalar(0.98);});
+
+// C — particle mark inside the extruded ring (lab move 18's ring, kept)
+tile('M-C · RING','the mark held in the extruded ring',g=>{
+  const ring=edges(new THREE.TorusGeometry(1.78,0.08,10,72),0.5);
+  ring.rotation.set(0.28,0.5,0); g.add(ring);
+  const pts=samples(3), flat=[];
+  pts.forEach(([x,y])=>flat.push(x*0.58,y*0.58,(Math.random()-0.5)*0.08));
+  g.add(new THREE.Points(new THREE.BufferGeometry().setAttribute('position',
+    new THREE.Float32BufferAttribute(flat,3)),
+    new THREE.PointsMaterial({color:GOLD,size:0.04,transparent:true,opacity:0.95})));
+  g.scale.setScalar(1.02);});
+
+const grid=document.getElementById('grid');
+defs.forEach(({name,use,build})=>{
+  const t=document.createElement('div'); t.className='tile';
+  const cvv=document.createElement('canvas'); cvv.width=800; cvv.height=720; t.appendChild(cvv);
+  const nm=document.createElement('div'); nm.className='nm'; nm.textContent=name; t.appendChild(nm);
+  const uc=document.createElement('div'); uc.className='uc'; uc.textContent=use; t.appendChild(uc);
+  grid.appendChild(t);
+  try{
+    const r=new THREE.WebGLRenderer({canvas:cvv,antialias:true});
+    r.setSize(800,720,false); r.setClearColor(0x0A0A0A,1);
+    const s=new THREE.Scene(), c=new THREE.PerspectiveCamera(34,800/720,0.1,60);
+    c.position.set(0,0,6.4);
+    const g=new THREE.Group(); build(g); s.add(g);
+    r.render(s,c);
+  }catch(e){nm.textContent+=' ERR'; uc.textContent=String(e).slice(0,80);}
+});
+document.title='ready';
+</script></body></html>

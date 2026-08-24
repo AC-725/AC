@@ -1,0 +1,91 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+body{background:#0A0A0A;font-family:'Poppins',sans-serif;width:1760px;padding:40px}
+h1{color:#E7C765;font-size:28px;font-weight:600}
+.sub{color:#8f8574;font-size:16px;margin:6px 0 24px}
+#grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.tile{background:#0D0C0A;border:1px solid #2a2620;padding:10px;position:relative}
+.tile canvas{display:block;width:520px;height:924px}
+.nm{color:#F2EDE4;font-size:19px;font-weight:600;margin:10px 0 2px}
+.uc{color:#8f8574;font-size:14px}
+.kick{position:absolute;top:70px;left:52px;font-weight:600;font-size:15px;letter-spacing:.35em;color:#E7C765;z-index:2}
+</style></head><body>
+<h1>REEL OPEN · the mark assembles on frame 0</h1>
+<div class="sub">L-B particle, bail in · kicker live from frame one (loud-open law) · headline lands as the mark settles, ~0.8s</div>
+<div id="grid"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const MW=600,MH=660;
+const mc=document.createElement('canvas'); mc.width=MW; mc.height=MH;
+const m=mc.getContext('2d');
+m.lineCap='butt'; m.strokeStyle='#fff';
+const LW=26;
+function Carc(from,to,lw){m.lineWidth=lw??LW; m.beginPath(); m.arc(412,315,140,from,to); m.stroke();}
+Carc(0.8,2*Math.PI-0.5);
+m.lineWidth=LW; m.lineJoin='miter'; m.miterLimit=8;
+m.beginPath(); m.moveTo(150,505); m.lineTo(285,132); m.lineTo(408,505); m.stroke();
+m.beginPath(); m.moveTo(206,388); m.lineTo(378,388); m.stroke();
+m.lineWidth=9;
+m.beginPath(); m.moveTo(263,140); m.lineTo(122,505); m.stroke();
+Carc(1.4,2.3);
+m.lineWidth=9;
+m.beginPath(); m.moveTo(285,62); m.lineTo(316,93); m.lineTo(285,124); m.lineTo(254,93); m.closePath(); m.stroke();
+m.beginPath(); m.moveTo(285,77); m.lineTo(301,93); m.lineTo(285,109); m.lineTo(269,93); m.closePath(); m.stroke();
+m.lineWidth=16;
+m.beginPath(); m.arc(285,34,22,0.35,Math.PI-0.35,true); m.stroke();
+m.beginPath(); m.moveTo(266,42); m.lineTo(272,62); m.stroke();
+m.beginPath(); m.moveTo(304,42); m.lineTo(298,62); m.stroke();
+const img=m.getImageData(0,0,MW,MH).data;
+const ink=(x,y)=>x>=0&&y>=0&&x<MW&&y<MH&&img[(y*MW+x)*4+3]>128;
+const targets=[];
+for(let y=0;y<MH;y+=3)for(let x=0;x<MW;x+=3)
+  if(ink(x,y)) targets.push([(x-285)/150,(300-y)/150]);
+// deterministic per-particle scatter + arrival order
+const frac=v=>v-Math.floor(v);
+const P=targets.map(([tx,ty],i)=>{
+  const a1=frac(Math.sin(i*127.1)*43758.5453)*Math.PI*2;
+  const a2=frac(Math.sin(i*311.7)*12543.853)*Math.PI-Math.PI/2;
+  const d=1.6+frac(Math.sin(i*74.3)*9631.41)*2.6;
+  return {tx,ty,
+    sx:tx+Math.cos(a1)*Math.cos(a2)*d, sy:ty+Math.sin(a2)*d*0.8, sz:Math.sin(a1)*d*0.7,
+    arrive:0.12+frac(Math.sin(i*57.9)*7919.7)*0.78};
+});
+const ease=t=>1-Math.pow(1-Math.min(1,Math.max(0,t)),3);
+function phase(p){
+  const flat=[];
+  P.forEach(q=>{
+    const t=ease((p-0)/(q.arrive));           // each particle finishes at its own arrive time
+    const tt=Math.min(1,Math.max(0,(p<=0?0:t)));
+    flat.push(q.sx+(q.tx-q.sx)*tt, q.sy+(q.ty-q.sy)*tt, q.sz*(1-tt));
+  });
+  return flat;}
+const defs=[
+  {name:'FRAME 0',use:'loud from the first pixel: cloud already gathering, kicker live',p:0.10},
+  {name:'~0.4s',use:'seventy percent settled, mark already readable (lab morph law)',p:0.55},
+  {name:'~0.8s',use:'settled solid read, headline enters next beat',p:1.0}];
+const grid=document.getElementById('grid');
+defs.forEach(({name,use,p})=>{
+  const t=document.createElement('div'); t.className='tile';
+  const kick=document.createElement('div'); kick.className='kick'; kick.textContent='AI NEWS'; t.appendChild(kick);
+  const cv=document.createElement('canvas'); cv.width=1040; cv.height=1848; t.appendChild(cv);
+  const nm=document.createElement('div'); nm.className='nm'; nm.textContent=name; t.appendChild(nm);
+  const uc=document.createElement('div'); uc.className='uc'; uc.textContent=use; t.appendChild(uc);
+  grid.appendChild(t);
+  try{
+    const r=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+    r.setSize(1040,1848,false); r.setClearColor(0x0A0A0A,1);
+    const s=new THREE.Scene(), c=new THREE.PerspectiveCamera(50,1040/1848,0.1,60);
+    c.position.set(0,0,7.0);
+    s.add(new THREE.Points(new THREE.BufferGeometry().setAttribute('position',
+      new THREE.Float32BufferAttribute(phase(p),3)),
+      new THREE.PointsMaterial({color:GOLD,size:0.055,transparent:true,opacity:0.95})));
+    r.render(s,c);
+  }catch(e){nm.textContent+=' ERR'; uc.textContent=String(e).slice(0,90);}
+});
+document.title='ready';
+</script></body></html>

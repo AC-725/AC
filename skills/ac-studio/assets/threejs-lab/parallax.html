@@ -1,0 +1,109 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"><style>
+@font-face{font-family:'Poppins';font-weight:400;src:url('fonts/Poppins-400.ttf');}
+@font-face{font-family:'Poppins';font-weight:600;src:url('fonts/Poppins-600.ttf');}
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+html,body{width:1080px;height:3860px;overflow:hidden;background:#0A0A0A;}
+.panel{position:relative;width:1080px;height:1920px;background:#0A0A0A;overflow:hidden;}
+.tag{position:absolute;top:20px;left:20px;color:#B9B1A1;font-family:Georgia;font-size:26px;z-index:99;}
+#frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.34);}
+.tick{position:absolute;width:44px;height:44px;}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid #E7C765;border-left:2.5px solid #E7C765;}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid #E7C765;border-right:2.5px solid #E7C765;}
+#wm{position:absolute;bottom:700px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:500;letter-spacing:6px;font-size:24px;color:rgba(231,199,101,0.5);}
+#block{position:absolute;bottom:0;left:0;width:100%;height:400px;background:#E7C765;}
+.scene{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:150px 110px 400px;text-align:center;}
+.kicker{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:7px;color:#E7C765;text-transform:uppercase;}
+.h1{font-family:'DispBase','Lora';font-weight:600;font-size:54px;line-height:1.26;color:#F4F0E7;letter-spacing:-0.5px;}
+.h1.gold{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.odometer{font-family:'DispBase','Lora';font-weight:700;font-size:276px;line-height:1;letter-spacing:-9px;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);-webkit-background-clip:text;background-clip:text;color:transparent;}
+.sub{font-family:'Poppins';font-weight:400;font-size:33px;line-height:1.4;color:#B9B1A1;max-width:820px;}
+.grule{height:3px;width:300px;margin:6px 0 26px;border-radius:2px;
+  background:linear-gradient(90deg,rgba(231,199,101,0.10) 0%,#E7C765 26%,#E7C765 74%,rgba(231,199,101,0.10) 100%);}
+
+/* ===== PARALLAX RIG ===== */
+#stage3d{position:absolute;inset:0;perspective:1400px;perspective-origin:50% 50%;}
+.layer{position:absolute;inset:0;transform-style:preserve-3d;will-change:transform;}
+</style></head>
+<body>
+
+<div class="panel" id="A">
+  <div class="tag">CURRENT — flat CSS scale push-in (3%)</div>
+  <div id="frame"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div id="block"></div>
+  <div id="wm">@ITSAC.AI</div>
+  <div class="scene" id="flatScene">
+    <div class="kicker">● BREAKING · AI</div>
+    <div style="height:12px"></div>
+    <div class="h1" style="font-size:50px">Claude signs</div>
+    <div class="h1 gold" style="font-size:50px">every word.</div>
+    <div class="grule"></div>
+    <div class="odometer">Aug 2</div>
+    <div class="sub" style="margin-top:34px">EU AI Act, Article 50(2). Worldwide.</div>
+  </div>
+</div>
+
+<div class="panel" id="B">
+  <div class="tag">NEW — real depth parallax (CSS 3D, no WebGL)</div>
+  <div id="stage3d">
+    <!-- FAR layer: frame, ticks, watermark, block — barely moves -->
+    <div class="layer" id="layFar">
+      <div id="frame"></div><div class="tick bl"></div><div class="tick br"></div>
+      <div id="block"></div>
+      <div id="wm">@ITSAC.AI</div>
+    </div>
+    <!-- MID layer: kicker, sub label -->
+    <div class="layer" id="layMid">
+      <div class="scene" style="justify-content:flex-start;padding-top:150px">
+        <div class="kicker">● BREAKING · AI</div>
+      </div>
+      <div class="scene" style="justify-content:flex-end;padding-bottom:466px">
+        <div class="sub">EU AI Act, Article 50(2). Worldwide.</div>
+      </div>
+    </div>
+    <!-- NEAR layer: the actual claim + the number — closest to camera, moves most -->
+    <div class="layer" id="layNear">
+      <div class="scene" style="justify-content:center">
+        <div style="height:53px"></div>
+        <div class="h1" style="font-size:50px">Claude signs</div>
+        <div class="h1 gold" style="font-size:50px">every word.</div>
+        <div class="grule"></div>
+        <div class="odometer">Aug 2</div>
+        <div style="height:96px"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function clamp(p){return Math.min(1,Math.max(0,p));}
+function eOut(p){p=clamp(p);return 1-Math.pow(1-p,3);}
+
+// depth in px (three.js-equivalent world units, just expressed in CSS translateZ)
+const DEPTH = {far:-70, mid:0, near:110};
+
+window.seekFlat = function(t){
+  const settle=1.03 - 0.03*clamp(t/0.35);
+  const push=1+0.03*clamp((t-0.35)/(2.7-0.35));
+  document.getElementById('flatScene').style.transform='scale('+(settle*push).toFixed(4)+')';
+};
+window.seekParallax = function(t){
+  // SAME timing budget as the flat version: 0.35s settle-in, then a slow continuous dolly.
+  // Difference is WHERE the motion comes from: one shared camera dolly (translateZ) applied
+  // once per layer, but each layer's DEPTH means the SAME dolly amount projects to a
+  // DIFFERENT amount of on-screen movement -- that difference IS parallax, and it's real
+  // 3D math (perspective foreshortening), not three separate hand-tuned animations.
+  const settleZ = -14*(1-eOut(t/0.35));   // pulls everything back at t=0, same "start slightly further" beat
+  const dollyZ  = 34*clamp((t-0.35)/(2.7-0.35)); // continuous forward dolly, mirrors the old 3% push
+  const cam = settleZ + dollyZ;
+  document.getElementById('layFar').style.transform  = 'translateZ('+(DEPTH.far +cam*0.35).toFixed(2)+'px)';
+  document.getElementById('layMid').style.transform  = 'translateZ('+(DEPTH.mid +cam*0.7 ).toFixed(2)+'px)';
+  document.getElementById('layNear').style.transform = 'translateZ('+(DEPTH.near+cam*1.0 ).toFixed(2)+'px)';
+};
+window.seek = function(t){ window.seekFlat(t); window.seekParallax(t); };
+window.seek(0);
+document.title='ready';
+</script>
+</body></html>

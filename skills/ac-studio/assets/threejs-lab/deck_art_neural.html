@@ -1,0 +1,24 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>*{margin:0}html,body{width:1000px;height:860px;background:transparent;overflow:hidden}</style>
+</head><body><canvas id="a" width="1000" height="860"></canvas>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765,gMat=new THREE.MeshBasicMaterial({color:GOLD});
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('a'),alpha:true,antialias:true});
+r.setSize(1000,860,false); r.setClearColor(0x000000,0);
+const s=new THREE.Scene(),c=new THREE.PerspectiveCamera(34,1000/860,0.1,100);c.position.z=7;
+const net=new THREE.Group();
+const cols=[[-1.7,3],[0,4],[1.7,3]],np=[];
+cols.forEach(([x,n],ci)=>{np[ci]=[];
+  for(let i=0;i<n;i++){const y=(i-(n-1)/2)*1.05,z=(i%2?0.18:-0.18);
+    np[ci].push([x,y,z]);
+    const m=new THREE.Mesh(new THREE.SphereGeometry(0.17,20,16),gMat);m.position.set(x,y,z);net.add(m);}});
+const cp=[];
+for(let a2=0;a2<np[0].length;a2++)for(let b=0;b<np[1].length;b++)cp.push(new THREE.Vector3(...np[0][a2]),new THREE.Vector3(...np[1][b]));
+for(let a2=0;a2<np[1].length;a2++)for(let b=0;b<np[2].length;b++)cp.push(new THREE.Vector3(...np[1][a2]),new THREE.Vector3(...np[2][b]));
+net.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(cp),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.5})));
+net.rotation.y=-0.28; net.scale.setScalar(1.02); s.add(net);
+r.render(s,c); document.title='ready';
+</script></body></html>

@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  AC — STUDIO · SPINE REEL ENGINE  1080x1920 (deterministic seek(t))
+  ============================================================================
+  Built 2026-08-06 to fix two defects AC flagged from screenshots of an earlier,
+  now-lost working copy: (1) headline text overlapping a second line / the
+  spine hairline, (2) stray white (#F4F0E7) text where the brand's three
+  ON-SCREEN TEXT colours are black ink, stone grey, and gold — never white.
+
+  REVISED SAME DAY for the INSTAGRAM APP FRAME. AC posted a test cut and sent
+  a screenshot from the Reels player: the bottom of the frame is covered by
+  IG's own username / music / caption overlay, and the right edge from about
+  mid-frame down is covered by the like/comment/share rail. The old layout put
+  the typed caption and watermark at the very bottom (covered) and ran the
+  spine's last node to the right edge (under the rail). EVERYTHING THAT MUST
+  BE READ now lives inside the app-safe window:
+
+      SAFE WINDOW (design constants, from AC's own screenshot + Meta specs):
+        top     : keep readable content below y=180
+        bottom  : keep readable content above y=1300  (IG caption block)
+        right   : below y=900, keep readable content left of x=930 (action rail)
+
+  Layout that falls out of that:
+    0–640     gold fold (fixed) — kicker + headline, ink on gold
+    684–~740  typed caption band, DIRECTLY UNDER THE FOLD (gold on black).
+              This is where the old posted reel put its loop line, and it is
+              the one line the app never covers. Bottom placement is dead.
+    ~780–1180 the scene's black-zone content, centred by equal flex spacers
+    1180–1260 the spine lane (fixed, reserved) — last node at x=870, clear of
+              the rail; only the decorative exit line continues right
+    below 1300  NOTHING readable. IG owns it. The tiny watermark sits at the
+              boundary (1268) as file furniture, not as content.
+
+  EDIT ONLY: the CONTENT object and the SUBS array near the bottom. Do not
+  change SCENES timings without retiming reel_audio.py (references/variants.md).
+  ============================================================================
+-->
+<style>
+@font-face{font-family:'DispSpine';src:url('fonts/Gloock-Regular.ttf');}
+:root{
+  --black:#0A0A0A; --ink:#12100A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
+  --stone:#B9B1A1;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;font-family:'Poppins';}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
+
+/* ---- THE FOLD — fixed at 640px, never content-measured ----
+   Gold owns the top 640px; ink-black text sits on it (the same inversion
+   COLUMN already uses: on gold ground, text goes black, never white).
+   Fixed height means the headline's safe zone is known up front and tested
+   with real copy, not discovered by a runtime measurement. */
+#goldbg{position:absolute;left:0;right:0;top:0;height:640px;z-index:1;
+  background:linear-gradient(135deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);}
+
+#frame{position:absolute;inset:46px;border:1.5px solid rgba(18,16,10,0.32);pointer-events:none;z-index:9;
+  clip-path:inset(0 0 calc(100% - 594px) 0);}                 /* ink frame — over the gold zone only */
+#frame2{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.30);pointer-events:none;z-index:9;
+  clip-path:inset(594px 0 0 0);}                               /* gold frame — over the black zone only */
+.tick{position:absolute;width:40px;height:40px;z-index:9;}
+.tick.tl{top:34px;left:34px;border-top:2.5px solid var(--ink);border-left:2.5px solid var(--ink);}
+.tick.tr{top:34px;right:34px;border-top:2.5px solid var(--ink);border-right:2.5px solid var(--ink);}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+
+/* ---- scene shell — flex column, content-length-agnostic ----
+   goldpad (640) then capband (140, reserves the typed-caption lane under the
+   fold) then two EQUAL spacers centring the black-zone block in 780–1180,
+   then reserved (740) covering the spine lane and the app-owned dead zone.
+   The block's position never depends on how tall its own copy is, and the
+   reserved band means the spine can never be drifted into by text. */
+.scene{position:absolute;inset:0;z-index:2;display:flex;flex-direction:column;align-items:center;
+  text-align:center;visibility:hidden;}
+.goldpad{flex:none;width:100%;height:640px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;padding:170px 96px 56px;}   /* top pad clears the app's top chrome */
+.capband{flex:none;width:100%;height:140px;}         /* typed caption lane — page-level #subline */
+.gap{flex:1 1 auto;}
+.blk{flex:none;width:100%;display:flex;flex-direction:column;align-items:center;padding:0 120px;}
+.reserved{flex:none;width:100%;height:740px;}        /* spine lane + IG-owned bottom. NEVER text. */
+
+.el{opacity:0;will-change:transform,opacity;}
+
+.gk{font-family:'Poppins';font-weight:700;font-size:27px;letter-spacing:6px;color:var(--ink);
+  text-transform:uppercase;}
+.ghead{font-family:'DispSpine','Lora',serif;font-weight:600;font-size:68px;line-height:1.24;
+  color:var(--ink);letter-spacing:-0.5px;max-width:860px;margin-top:20px;}
+.ghead b{font-weight:700;}
+
+.kicker{font-family:'Poppins';font-weight:600;font-size:26px;letter-spacing:6px;color:var(--gold);
+  text-transform:uppercase;display:flex;align-items:center;justify-content:center;}
+.livedot{display:inline-block;width:13px;height:13px;border-radius:50%;background:var(--gold);
+  margin-right:14px;box-shadow:0 0 12px var(--gold);flex:none;}
+.stat{font-family:'DispSpine','Lora',serif;font-weight:600;font-size:172px;line-height:1;margin-top:26px;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);-webkit-background-clip:text;
+  background-clip:text;color:transparent;filter:drop-shadow(0 3px 16px rgba(231,199,101,0.18));}
+/* desc max-width 780 => centred it spans x 150–930, clear of the app's
+   right-hand action rail (which owns x>930 in the lower half). */
+.desc{font-family:'Poppins';font-weight:400;font-size:36px;line-height:1.5;color:var(--stone);
+  max-width:780px;margin-top:26px;}
+/* emphasis inside body copy is GOLD + bold, never white — this is the exact
+   spot AC's screenshot showed white ("That is your number.") */
+.desc b{color:var(--gold);font-weight:700;}
+
+/* ---- toggle (scene B) — CUTS -> HIRES. Colours held to brand spec:
+   .now is an ink-on-gold chip; nothing white anywhere in the scene. ---- */
+.toggle{display:flex;align-items:center;gap:28px;margin-top:6px;}
+.chip{font-family:'Poppins';font-weight:700;font-size:38px;letter-spacing:2px;padding:14px 36px;
+  border-radius:14px;text-transform:uppercase;position:relative;}
+.chip.was{color:var(--stone);border:2.5px solid rgba(185,177,161,0.55);}
+.chip.now{color:var(--ink);background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  border:2.5px solid var(--gold);box-shadow:0 0 40px rgba(231,199,101,0.22);}
+.arrow{font-family:'Poppins';font-weight:700;font-size:44px;color:var(--gold);}
+.strike{position:absolute;left:18px;right:18px;top:calc(50% - 3px);height:6px;border-radius:4px;
+  background:linear-gradient(90deg,#F4DF95,#C9A23F);transform-origin:left center;transform:scaleX(0);}
+
+/* ---- the two-line reveal (scene B headline) — THE OVERLAP FIX.
+   Both lines are normal flex children (no absolute positioning, no negative
+   margin), so they stack in document flow and CANNOT occupy the same box.
+   The margin below is larger than the entrance's translateY travel (36px),
+   so even mid-animation the two boxes cannot intersect. ---- */
+.h2{font-family:'DispSpine','Lora',serif;font-weight:600;font-size:56px;line-height:1.32;max-width:820px;}
+.h2.was{color:var(--stone);margin-top:38px;}
+.h2.now{margin-top:16px;background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;}
+
+/* ---- CTA (scene E): monogram + handle + tagline, all in the safe window.
+   The monogram matches the posted reel's circled AC, drawn in gold on black. */
+.mono{width:132px;height:132px;position:relative;display:flex;align-items:center;justify-content:center;
+  font-family:'DispSpine','Lora',serif;font-weight:600;font-size:60px;color:var(--gold);}
+.mono svg{position:absolute;inset:0;}
+.handle{font-family:'DispSpine','Lora',serif;font-weight:600;font-size:78px;margin-top:20px;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);-webkit-background-clip:text;
+  background-clip:text;color:transparent;}
+.tagline{font-family:'Poppins';font-weight:400;font-size:31px;letter-spacing:2px;color:var(--stone);margin-top:16px;}
+
+/* ---- the spine — a FIXED, RESERVED lane at 1180–1260. Page-level, never
+   measured against scene content, so it cannot drift into text. Arc bumps
+   between ring-and-dot nodes, matching the posted reel's look. The five
+   nodes end at x=870: the app's action rail owns the right edge below
+   mid-frame, so only the decorative exit line continues under it. ---- */
+#spine{position:absolute;left:0;right:0;top:1180px;height:80px;z-index:3;pointer-events:none;}
+#spine svg{position:absolute;inset:0;overflow:visible;}
+#spine path{fill:none;stroke:rgba(185,177,161,0.26);stroke-width:2.5;stroke-linecap:round;}
+/* NO css transitions anywhere in this engine: it renders frame-by-frame via
+   seek(t), so anything keyed to wall-clock time (which a CSS transition is)
+   renders non-deterministically and ghosts the ink audit. States snap. */
+.nd{position:absolute;width:22px;height:22px;border-radius:50%;
+  border:2.5px solid rgba(185,177,161,0.40);transform:translate(-50%,-50%);}
+.nd i{display:none;position:absolute;inset:0;margin:auto;width:8px;height:8px;border-radius:50%;
+  background:var(--gold-deep);}
+.nd.done{border-color:var(--gold-deep);}
+.nd.done i{display:block;}
+.nd.now{width:30px;height:30px;border-color:var(--gold-light);
+  box-shadow:0 0 18px rgba(231,199,101,0.50);}
+.nd.now i{display:block;width:10px;height:10px;background:var(--gold);}
+
+/* ---- typed caption — UNDER THE FOLD, not at the bottom. The app's
+   username/music/caption block owns the bottom of the frame; the band right
+   under the fold is the one line it never covers (AC's posted reel proved
+   it: its loop line sat exactly here and read perfectly in the app). ---- */
+#subline{position:absolute;left:120px;right:120px;top:684px;text-align:center;z-index:6;
+  font-family:'Poppins';font-weight:600;font-size:33px;line-height:1.4;opacity:0;pointer-events:none;}
+#subtxt{color:var(--gold);}
+#subcar{display:inline-block;width:4px;height:29px;vertical-align:-5px;margin-left:5px;
+  background:var(--gold);border-radius:2px;}
+
+/* watermark rides just under the spine, at the safe-window boundary — small
+   file furniture; the handle the audience reads is scene E's. */
+#wm{position:absolute;top:1268px;left:0;width:100%;text-align:center;z-index:6;
+  font-family:'Poppins';font-weight:500;letter-spacing:6px;font-size:21px;color:rgba(231,199,101,0.45);}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="goldbg"></div>
+  <div id="frame"></div><div id="frame2"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div id="scenes"></div>
+  <div id="spine"><svg viewBox="0 0 1080 80" preserveAspectRatio="none"></svg></div>
+  <div id="subline"><span id="subtxt"></span><span id="subcar"></span></div>
+  <div id="wm"></div>
+</div>
+<script>
+/* ===== ONE PLACE FOR THE HANDLE ===== */
+const HANDLE='@itsac.ai';
+
+/* =========================== CONTENT (EDIT) ===========================
+   Five beats, matching the AI News reel shape: A hook, B shift, C proof,
+   D rule, E CTA. A/B/D and the caption lines are AC's own copy from the
+   posted test cut, carried over verbatim. C is DERIVED from the pair
+   already inside AC's scene-A caption ("Revenue went up. Down for 2%.") —
+   it introduces no new figure, but AC confirms it before shipping.
+   Never invent a number to fill a beat; cut to four and say so.
+   ======================================================================= */
+const CONTENT={
+  hook:{ gk:'The number', ghead:'Revenue went up.<br>Down for <b>2%</b>.',
+         stat:'43%', desc:'of US businesses say AI increased their revenue' },
+  shift:{ gk:"Here's the shift",
+          was:'CUTS', now:'HIRES',
+          line1:'Four times as many businesses', line2:'say AI increased hiring.' },
+  proof:{ gk:'The proof', ghead:'And who lost<br>revenue?',
+          kicker:'The same survey', stat:'2%',
+          desc:'of US businesses say AI decreased their revenue. 43% grew. 2% shrank.' },
+  rule:{ gk:'The rule', ghead:'Don’t take the number.<br>Take one job and test it.',
+         desc:'Pick the task that eats your morning, run it a week, and measure. <b>That is your number.</b>' },
+  cta:{ mono:'AC', ghead:'Pick <b>one.</b><br>Start today.',
+        tagline:'DAILY AI · NO HYPE, NO JARGON' }
+};
+
+/* ===== SCENE TIMINGS — match reel.template.html's AI News windows. Do not
+   change without retiming reel_audio.py (references/variants.md). ===== */
+const SCENES=[
+  {id:'A',start:0.0,dur:2.7},{id:'B',start:2.6,dur:2.5},{id:'C',start:5.0,dur:2.6},
+  {id:'D',start:7.5,dur:2.2},{id:'E',start:9.6,dur:1.8}
+];
+
+/* ===== TYPED SUBTITLE — one glanceable fragment per scene, in order.
+   Leave "" to skip a scene. references/subtitles.md governs the words. ===== */
+const SUBS=[
+  'Revenue went up. Down for 2%.',
+  'Four times as many say AI increased hiring.',
+  '43% up. 2% down.',
+  'Take one job and test it.',
+  'Save this. '+HANDLE
+];
+
+/* ===== helpers (shared pattern with reel.template.html / tod.template.html) ===== */
+function el(cls,html,a,st){return '<div class="'+cls+' el"'+(a?' data-a="'+a+'"':'')+(st?' style="'+st+'"':'')+'>'+(html||'')+'</div>';}
+function clamp(p){return Math.min(1,Math.max(0,p));}
+function eOut(p){p=clamp(p);return 1-Math.pow(1-p,3);}
+function eBack(p){p=clamp(p);const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2);}
+function lerp(a,b,p){return a+(b-a)*p;}
+function applyA(node,lt){
+  const s=node.dataset.a.split(','),d=parseFloat(s[0]),du=parseFloat(s[1]),t=s[2];
+  const p=(lt-d)/du,e=eOut(p),b=eBack(p);let tr='';
+  if(t==='rise')tr='translateY('+((1-e)*24).toFixed(2)+'px)';
+  else if(t==='up')tr='translateY('+((1-e)*36).toFixed(2)+'px)';
+  else if(t==='pop')tr='scale('+lerp(0.6,1,b).toFixed(3)+')';
+  node.style.opacity=clamp(p);node.style.transform=tr;
+}
+const C=CONTENT, dot='<span class="livedot"></span>';
+const CAP='<div class="capband"></div>';
+
+/* ===== BUILD SCENE DOM =====
+   Every content element is a normal flex child — never absolutely
+   positioned, never negative-margined — so document flow itself guarantees
+   no two can occupy the same box. Every entrance finishes well before its
+   scene's settle mark (start + dur*0.55), so QA frames capture rest state. */
+const root=document.getElementById('scenes');
+root.innerHTML=
+'<div class="scene" id="A">'+
+  '<div class="goldpad">'+el('gk',C.hook.gk,'-0.3,0.25,fade')+el('ghead',C.hook.ghead,'-0.2,0.3,up')+'</div>'+CAP+
+  '<div class="gap"></div>'+
+  '<div class="blk">'+el('kicker',dot+'The stat','0.25,0.25,fade')+el('stat',C.hook.stat,'0.45,0.45,pop')+
+    el('desc',C.hook.desc,'0.95,0.35,rise')+'</div>'+
+  '<div class="gap"></div><div class="reserved"></div>'+
+'</div>'+
+'<div class="scene" id="B">'+
+  '<div class="goldpad">'+el('gk',C.shift.gk,'-0.3,0.3,fade')+'</div>'+CAP+
+  '<div class="gap"></div>'+
+  '<div class="blk">'+
+    '<div class="toggle">'+
+      '<div class="chip was el" data-a="0.05,0.22,pop">'+C.shift.was+'<div class="strike" id="strikeB"></div></div>'+
+      '<div class="arrow el" data-a="0.40,0.22,pop">&rarr;</div>'+
+      '<div class="chip now el" data-a="0.55,0.28,pop">'+C.shift.now+'</div>'+
+    '</div>'+
+    el('h2 was',C.shift.line1,'0.78,0.30,up')+el('h2 now',C.shift.line2,'0.95,0.30,up')+
+  '</div>'+
+  '<div class="gap"></div><div class="reserved"></div>'+
+'</div>'+
+'<div class="scene" id="C">'+
+  '<div class="goldpad">'+el('gk',C.proof.gk,'-0.3,0.25,fade')+el('ghead',C.proof.ghead,'-0.2,0.3,up')+'</div>'+CAP+
+  '<div class="gap"></div>'+
+  '<div class="blk">'+el('kicker',dot+C.proof.kicker,'0.25,0.25,fade')+el('stat',C.proof.stat,'0.45,0.45,pop')+
+    el('desc',C.proof.desc,'0.95,0.35,rise')+'</div>'+
+  '<div class="gap"></div><div class="reserved"></div>'+
+'</div>'+
+'<div class="scene" id="D">'+
+  '<div class="goldpad">'+el('gk',C.rule.gk,'-0.3,0.25,fade')+el('ghead',C.rule.ghead,'-0.2,0.32,up')+'</div>'+CAP+
+  '<div class="gap"></div>'+
+  '<div class="blk">'+el('desc',C.rule.desc,'0.35,0.45,rise')+'</div>'+
+  '<div class="gap"></div><div class="reserved"></div>'+
+'</div>'+
+'<div class="scene" id="E">'+
+  '<div class="goldpad">'+el('ghead',C.cta.ghead,'-0.2,0.3,up')+'</div>'+CAP+
+  '<div class="gap"></div>'+
+  '<div class="blk">'+
+    '<div class="mono el" data-a="0.10,0.30,pop"><svg width="132" height="132" viewBox="0 0 132 132">'+
+      '<circle cx="66" cy="66" r="62" pathLength="1" style="fill:none;stroke:var(--gold);stroke-width:2.5"/></svg>'+C.cta.mono+'</div>'+
+    el('handle',HANDLE,'0.30,0.30,up')+el('tagline',C.cta.tagline,'0.50,0.30,rise')+
+  '</div>'+
+  '<div class="gap"></div><div class="reserved"></div>'+
+'</div>';
+
+/* ===== the spine — fixed geometry, drawn once. Arcs bow up between nodes;
+   entry and exit run flat. Node 5 stops at x=870 (rail-safe); the exit line
+   alone continues toward the frame edge, purely decorative. ===== */
+const SPX=[150,330,510,690,870], SPY=52;
+(function(){
+  const svg=document.querySelector('#spine svg');
+  let pieces='<path id="sp_in" d="M 46 '+SPY+' L '+SPX[0]+' '+SPY+'"/>';
+  for(let i=0;i<SPX.length-1;i++)
+    pieces+='<path id="sp_a'+i+'" d="M '+SPX[i]+' '+SPY+' A 90 46 0 0 1 '+SPX[i+1]+' '+SPY+'"/>';
+  pieces+='<path id="sp_out" d="M '+SPX[4]+' '+SPY+' L 1034 '+SPY+'"/>';
+  svg.innerHTML=pieces;
+  const lane=document.getElementById('spine');
+  SPX.forEach((x,i)=>{
+    const n=document.createElement('div'); n.className='nd'; n.id='nd'+i;
+    n.style.left=x+'px'; n.style.top=SPY+'px'; n.innerHTML='<i></i>'; lane.appendChild(n);
+  });
+})();
+const GOLDLINE='#E7C765', FAINT='rgba(185,177,161,0.26)';
+function spineTick(a){
+  for(let i=0;i<5;i++){
+    const n=document.getElementById('nd'+i);
+    n.className='nd '+(i<a?'done':(i===a?'now':''));
+  }
+  document.getElementById('sp_in').style.stroke=GOLDLINE;
+  for(let i=0;i<4;i++)
+    document.getElementById('sp_a'+i).style.stroke=(i<a)?GOLDLINE:FAINT;
+  document.getElementById('sp_out').style.stroke=(a>=4)?GOLDLINE:FAINT;
+}
+
+/* ===== ENGINE — mirrors reel.template.html's seek(t) contract exactly:
+   window.__TOTAL and window.seek(t) so scripts/qa_layout.sh (audit_bounds.js
+   + audit_capture.js) work on this template with zero changes. ===== */
+SCENES.forEach(s=>{s.el=document.getElementById(s.id);s.anims=[...s.el.querySelectorAll('[data-a]')];});
+const strikeB=document.getElementById('strikeB');
+document.getElementById('wm').textContent=HANDLE.toUpperCase();
+
+const _subL=document.getElementById('subline'),_subT=document.getElementById('subtxt'),_subC=document.getElementById('subcar');
+function subTick(t){
+  let i=-1; for(let k=0;k<SCENES.length;k++){ if(t>=SCENES[k].start-0.0001) i=k; }
+  if(i<0){ _subL.style.opacity=0; return; }
+  const s=SCENES[i], lt=t-s.start, txt=SUBS[i]||'';
+  if(!txt){ _subL.style.opacity=0; return; }
+  const n=Math.floor(clamp((lt-0.3)/2.0)*txt.length);
+  _subT.textContent=txt.slice(0,Math.max(0,n));
+  const typing=n>0&&n<txt.length;
+  _subC.style.opacity=typing?1:((Math.floor(t*2.2)%2===0)?1:0.12);
+  const fin=clamp(lt/0.35),fout=clamp((s.dur-lt)/0.35);
+  _subL.style.opacity=clamp(Math.min(fin,fout));
+}
+window.__TOTAL=Math.max(...SCENES.map(s=>s.start+s.dur));
+window.seek=function(t){
+  let activeIdx=0;
+  SCENES.forEach((s,idx)=>{
+    const st=t-s.start,IN=0.22,OUT=0.24;let vis=0;
+    if(st>=-0.0001&&st<=s.dur){
+      if(s.start<=0.0001){ vis=(st>s.dur-OUT)?(s.dur-st)/OUT:1; }
+      else if(st<IN)vis=st/IN; else if(st>s.dur-OUT)vis=(s.dur-st)/OUT; else vis=1;
+    }
+    vis=clamp(vis);s.el.style.opacity=vis;s.el.style.visibility=vis>0.002?'visible':'hidden';
+    if(vis>0.002){ activeIdx=idx; s.anims.forEach(n=>applyA(n,st));
+      if(s.id==='B') strikeB.style.transform='scaleX('+eOut((st-0.30)/0.30).toFixed(3)+')';
+    }
+  });
+  spineTick(activeIdx);
+  subTick(t);
+};
+window.seek(0);document.title='ready';
+</script>
+</body>
+</html>

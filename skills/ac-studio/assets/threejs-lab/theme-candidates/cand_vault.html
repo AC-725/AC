@@ -1,0 +1,53 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Marcellus';src:url('fonts/Marcellus.woff2') format('woff2')}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-500.ttf');font-weight:500}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;background:#0A0A0A;overflow:hidden;position:relative}
+#gl{position:absolute;inset:0;z-index:0}
+.txt{position:absolute;z-index:2;font-family:'Poppins',sans-serif}
+#tag{top:36px;right:44px;font-weight:600;font-size:20px;letter-spacing:.18em;color:#5d5546}
+#kick{top:118px;left:88px;font-weight:600;font-size:26px;letter-spacing:.38em;color:#E7C765}
+#hero{top:400px;left:0;width:1080px;text-align:center;font-family:'Marcellus',serif;font-size:308px;line-height:1;color:#F2EDE4;letter-spacing:-0.01em}
+#hero i{font-style:normal;color:#E7C765}
+#sub{top:742px;left:0;width:1080px;text-align:center;font-weight:400;font-size:29px;line-height:1.55;color:#B7AE9C}
+#sub b{color:#F2EDE4;font-weight:500}
+#wm{bottom:56px;left:0;width:1080px;text-align:center;font-weight:500;font-size:24px;letter-spacing:.12em;color:#6b6155}
+.tick{position:absolute;z-index:2;width:34px;height:34px;border-color:#E7C765;border-style:solid}
+#tl{bottom:40px;left:40px;border-width:0 0 3px 3px}
+#tr{bottom:40px;right:40px;border-width:0 3px 3px 0}
+</style></head><body>
+<canvas id="gl" width="1080" height="1350"></canvas>
+<div class="txt" id="tag">A · VAULT</div>
+<div class="txt" id="kick">AI NEWS</div>
+<div class="txt" id="hero">11.7<i>h</i></div>
+<div class="txt" id="sub">a week goes to email, in a randomized trial<br>across <b>66 companies</b>.</div>
+<div class="txt" id="wm">@itsac.ai</div>
+<div class="tick" id="tl"></div><div class="tick" id="tr"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+r.setSize(1080,1350,false); r.setClearColor(0x0A0A0A,1);
+const s=new THREE.Scene(); s.fog=new THREE.FogExp2(0x0A0A0A,0.055);
+const c=new THREE.PerspectiveCamera(52,1080/1350,0.1,120);
+c.position.set(0,1.55,7.2); c.lookAt(0,-0.1,-14);
+// receding floor grid — the block seals the floor and runs to the horizon
+const near=[],far=[];
+for(let i=-7;i<=7;i++){near.push(new THREE.Vector3(i*1.35,0,3),new THREE.Vector3(i*1.35,0,-10));
+  far.push(new THREE.Vector3(i*1.35,0,-10),new THREE.Vector3(i*1.35,0,-46));}
+for(let z=3;z>=-46;z-=1.35){(z>-10?near:far).push(new THREE.Vector3(-9.5,0,z),new THREE.Vector3(9.5,0,z));}
+s.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(near),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.62})));
+s.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(far),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.30})));
+// progress rail — 5 nodes down the centre lane, 2 lit
+const lit=new THREE.MeshBasicMaterial({color:GOLD}),
+      dim=new THREE.MeshBasicMaterial({color:0x655838});
+for(let i=0;i<5;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(0.085,20,16),i<2?lit:dim);
+  m.position.set(-1.68+i*0.84,0.085,2.35); s.add(m);}
+r.render(s,c); document.title='ready';
+</script></body></html>
