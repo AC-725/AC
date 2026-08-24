@@ -67,6 +67,36 @@ def icon_sauropod(d, box, s, c):
         d.line([X(u), Y(.58), X(u), Y(.86)], fill=c, width=s if near else thin)
 '''
 
+TAG = """
+def icon_tag(d, box, s, c):
+    \"\"\"A garment care label / hang tag. Strokes only.
+
+    Used by SPLIT on seq 45, where the same icon is passed as both icon_a and
+    icon_b and the theme's own palette does the arguing - grey tag for the plain
+    label, gold tag for the one carrying the word 'only'. Kept deliberately plain
+    so it survives the 160px thumbnail check; a tag with legible text on it does
+    not.\"\"\"
+    x0, y0, x1, y1 = box
+    W, H = x1 - x0, y1 - y0
+    X = lambda u: x0 + W * u
+    Y = lambda v: y0 + H * v
+    thin = max(2, int(s * 0.7))
+
+    # the tag body, corner clipped top-left where the string goes
+    d.line([X(.30), Y(.22), X(.82), Y(.22)], fill=c, width=s)
+    d.line([X(.82), Y(.22), X(.82), Y(.78)], fill=c, width=s)
+    d.line([X(.82), Y(.78), X(.30), Y(.78)], fill=c, width=s)
+    d.line([X(.30), Y(.78), X(.18), Y(.50)], fill=c, width=s)
+    d.line([X(.18), Y(.50), X(.30), Y(.22)], fill=c, width=s)
+
+    # the eyelet
+    _ring(d, X(.30), Y(.50), H * .055, thin, c)
+
+    # three ruled lines standing in for care instructions
+    for v in (.38, .50, .62):
+        d.line([X(.44), Y(v), X(.74), Y(v)], fill=c, width=thin)
+"""
+
 def main():
     if not TARGET.exists():
         sys.exit(f"generator not found at {TARGET} — is the skill synced?")
@@ -77,6 +107,14 @@ def main():
         src = src.replace("\nICONS = {", BEZIER + "\nICONS = {"); added.append("_bez")
     if "def icon_sauropod(" not in src:
         src = src.replace("\nICONS = {", SAUROPOD + "\nICONS = {"); added.append("icon_sauropod")
+
+    if "def icon_tag(" not in src:
+        src = src.replace("\nICONS = {", TAG.strip('\n') + "\nICONS = {"); added.append("icon_tag")
+
+    if '"tag"' not in src:
+        src = re.sub(r"(ICONS = \{.*?)\}", r'\1,\n         "tag": icon_tag}',
+                     src, count=1, flags=re.S)
+        added.append("tag registry")
 
     if '"sauropod"' not in src:
         # append to the ICONS dict literal, before its closing brace

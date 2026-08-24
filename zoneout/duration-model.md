@@ -52,6 +52,19 @@ binomials, chemical names or long place names it may be as few as 44.
 **Count the long words before writing the seventh beat, not after the render.** The
 render is the expensive place to discover a script is polysyllabic.
 
+### Two counting traps
+
+**Initialisms under-count.** A syllable counter looking for vowels reads `FTC` as one
+syllable. Spoken it is three — *eff-tee-see*. Same for `FDA`, `USB`, `PhD`. Acronyms
+said as a word (`NASA`, `NATO`) are fine; letter-by-letter initialisms are not.
+Seq 45 was 86 by script and 88 by mouth.
+This is the exact mirror of seq 44's failure: Latin binomials broke the *per-word* model,
+initialisms break the *per-syllable* counter.
+
+**Numerals under-count worse.** `1995` is one token and four syllables minimum
+(*nineteen ninety-five*), `2015` the same. Seq 44 carried two of them. Always expand a
+numeral to the words the voice will actually say before counting.
+
 ## Still to verify
 
 Three renders is a thin calibration and all three are the same voice at the same speed.
