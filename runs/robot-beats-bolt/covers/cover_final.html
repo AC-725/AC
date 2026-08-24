@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!-- AC — AI News cover. Robot beats Usain Bolt. 1080x1920.
+     Concept C "Finish Line". Key ink sits inside the centre 1080x1350 grid crop
+     (y 285..1635), kicker included — the previous cover put the kicker at y190,
+     which the profile grid cropped off. -->
+<style>
+@font-face{font-family:'Poppins';font-weight:400;src:url('fonts/Poppins-400.ttf');}
+@font-face{font-family:'Poppins';font-weight:500;src:url('fonts/Poppins-500.ttf');}
+@font-face{font-family:'Poppins';font-weight:600;src:url('fonts/Poppins-600.ttf');}
+@font-face{font-family:'Poppins';font-weight:700;src:url('fonts/Poppins-700.ttf');}
+@font-face{font-family:'DispCrest';src:url('fonts/BricolageGrotesque-Bold.ttf');}
+
+:root{--black:#0A0A0A;--gold:#E7C765;--gold-deep:#C9A23F;--gold-light:#F4DF95;
+      --white:#F4F0E7;--stone:#B9B1A1;--dead:#5E5A52;}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--black);}
+#stage{position:relative;width:1080px;height:1920px;overflow:hidden;background:var(--black);}
+#frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.38);}
+.tick{position:absolute;width:44px;height:44px;}
+.tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+
+.kick{position:absolute;top:330px;left:104px;display:flex;align-items:center;gap:18px;}
+.kick .dot{width:14px;height:14px;border-radius:50%;background:var(--gold);}
+.kick .lbl{font-family:'Poppins';font-weight:600;font-size:29px;letter-spacing:8px;
+  color:var(--gold);text-transform:uppercase;}
+
+/* the one gold idea: the figure */
+.fig{position:absolute;left:96px;top:452px;font-family:'DispCrest';font-size:340px;
+  letter-spacing:-7px;line-height:.86;
+  background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 4px 26px rgba(231,199,101,0.18));}
+.figl{position:absolute;left:112px;top:812px;font-family:'Poppins';font-weight:600;
+  font-size:27px;letter-spacing:6px;text-transform:uppercase;color:var(--stone);}
+
+/* THE LANE — solid to the post, then it breaks and drops.
+   Drawn strokes, not particles: a mark that must be READ gets drawn (hand-off law). */
+.lane{position:absolute;left:104px;top:900px;width:556px;height:5px;
+  background:linear-gradient(90deg,rgba(231,199,101,.35),var(--gold) 22%,var(--gold));}
+.post{position:absolute;left:660px;top:846px;width:4px;height:112px;background:var(--gold);}
+.postl{position:absolute;left:686px;top:836px;font-family:'Poppins';font-weight:600;
+  font-size:23px;letter-spacing:5px;color:rgba(231,199,101,.8);text-transform:uppercase;}
+/* fragments: each one further right, lower, and more tilted — the collapse */
+.frag{position:absolute;height:5px;background:var(--gold);transform-origin:left center;}
+.f1{left:690px;top:906px;width:78px;opacity:.9;transform:rotate(4deg);}
+.f2{left:786px;top:928px;width:58px;opacity:.68;transform:rotate(11deg);}
+.f3{left:860px;top:962px;width:42px;opacity:.46;transform:rotate(21deg);}
+.f4{left:918px;top:1006px;width:28px;opacity:.26;transform:rotate(34deg);}
+
+.h1{position:absolute;left:104px;top:1050px;font-family:'DispCrest';font-size:94px;
+  line-height:1.06;letter-spacing:-2px;color:var(--white);text-transform:uppercase;}
+.h2{position:absolute;left:104px;top:1274px;font-family:'DispCrest';font-size:88px;
+  line-height:1.06;letter-spacing:-2px;color:var(--dead);text-transform:uppercase;}
+.kickr{position:absolute;left:104px;top:1410px;font-family:'Poppins';font-weight:400;
+  font-size:42px;line-height:1.32;color:var(--stone);}
+.kickr b{color:var(--white);font-weight:600;}
+
+.mark{position:absolute;right:104px;bottom:352px;width:118px;height:140px;
+  background:url('mark_corner.png') no-repeat center/contain;opacity:.92;}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div class="kick"><div class="dot"></div><div class="lbl">AI News</div></div>
+
+  <div class="fig">9.39</div>
+  <div class="figl">100 metres &middot; Beijing</div>
+
+  <div class="lane"></div>
+  <div class="post"></div><div class="postl">Finish</div>
+  <div class="frag f1"></div><div class="frag f2"></div>
+  <div class="frag f3"></div><div class="frag f4"></div>
+
+  <div class="h1">Faster than<br>Usain Bolt.</div>
+  <div class="h2">Then it fell over.</div>
+  <div class="kickr"><b>Brilliant inside the task.</b><br>Blind at the edges of it.</div>
+  <div class="mark"></div>
+</div>
+</body>
+</html>
