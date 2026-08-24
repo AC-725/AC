@@ -1,0 +1,50 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>html,body{margin:0;background:#0A0A0A;overflow:hidden}canvas{display:block}</style>
+</head><body><canvas id="gl" width="1080" height="1920"></canvas>
+<script type="module">
+/* SIGN-OFF STING — the mark stands on the vault floor and sways. Bakes to
+ * sting_00..23.png (1080x1920 RGB) and vault_floor.png (the same scene, mark hidden).
+ *
+ * These are BACKGROUNDS, swapped into scene E through the --vbg CSS var, not elements.
+ * That is deliberate and load-bearing: the geometry gates measure ink, and a background
+ * is the theme's ground exactly like the floor it replaces, so the sting cannot trip
+ * them. Ending law: the figure narrates, the mark signs.
+ *
+ * MOTION, recovered from the shipped frames rather than invented: rotation.y sweeps one
+ * full sine over the 24 frames. The proof is in the file hashes — frames 3 and 9 are
+ * byte-identical, so are 4 and 8, and 16 and 20, which is exactly the symmetry
+ * sin(2pi k/24) predicts and nothing else does. It loops seamlessly because frame 24
+ * would equal frame 0.
+ *
+ * seek(t) takes t in 0..1 as one full sway cycle. Carries NO text or ticks: scene E
+ * supplies those as DOM. */
+import * as THREE from 'three';
+import { PALETTE, markSamples, markInstanced, vaultFloor, stage } from '../lib/vault.js';
+
+const { renderer, scene, camera } = stage(THREE, document.getElementById('gl'),
+  { w: 1080, h: 1920, fov: 50, fog: 0.05 });
+camera.position.set(0, 0.4, 8.2);
+camera.lookAt(0, -0.4, -10);
+
+scene.add(vaultFloor(THREE));
+
+const mark = markInstanced(THREE, markSamples(2));
+mark.scale.setScalar(0.62);
+mark.position.set(0, 1.05, 0);
+scene.add(mark);
+
+const REST = 0.26;      // the draft's resting yaw
+/* Sway amplitude. Exposed on window so it can be swept against the shipped frames
+ * without editing this file - see the calibration note in bake_vault.js. */
+window.SWAY = 0.26;
+
+window.__TOTAL = 1;
+window.MARK = mark;     // bake_vault.js hides this to render vault_floor.png
+window.seek = (t) => {
+  mark.rotation.y = REST + window.SWAY * Math.sin(2 * Math.PI * t);
+  renderer.render(scene, camera);
+};
+window.seek(0);
+window.__READY = true; document.title = 'ready';
+</script></body></html>

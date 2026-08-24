@@ -1,6 +1,6 @@
-# three.js lab — PROTOTYPES, NOT SHIPPED (2026-08-22)
+# three.js lab — SHIPPED (vault soft launch, Day 38 · 2026-08-24)
 
-Status: **draft library**. Nothing here is wired into reel.template.html or any engine.
+Status: **in production**, was a draft library. Nothing here is wired into reel.template.html or any engine.
 AC deferred the brand-law question ("draft first, ask me later"), so integrating ANY of
 these into a shipping reel first needs his call on the law-breakers, then a per-move
 integration behind the one-canvas-in-a-scene pattern (new scene element, existing scenes
@@ -103,9 +103,11 @@ Build lessons (cost 3 blind rounds before switching to computed placement):
   pasted before position/rotation assignment projects the untransformed geometry).
 - Frustum reality check: at depth d with vertical FOV f and aspect 0.8, halfWidth =
   d·tan(f/2)·0.8 — a rail spaced wider than that leaves one orphan node on screen.
-NEXT: AC picks/kills/mixes → winner gets a deck CONFIG entry + baked-art builders +
-qa_deck run, ships one real carousel, THEN a reel t-<theme> with live seek(t) canvas and
-the full gate battery. New faces vendored here under theme-candidates/fonts/.
+~~NEXT: AC picks/kills/mixes~~ **RESOLVED 2026-08-23: A · VAULT WINS**, the first new
+theme since the original four. B · LATTICE remains the named second candidate,
+unscheduled. C and D are not scheduled. New faces vendored under theme-candidates/fonts/.
+The winner shipped as `t-vault` on Day 38 via the BAKED-frame route, not the live
+seek(t) canvas this line anticipated — see STATUS.
 
 ### v2 fine-tune (2026-08-22, same day)
 AC: "ABCD looks great but more fine tuned." Applied: VAULT floor split near/far
@@ -171,5 +173,120 @@ floor too low, voxels chunky — fixed by scale 0.62 + floor -2.35 + finer sampl
 OPEN_DRAFT (open_draft.html): 3-phase frame-0 assemble — deterministic per-particle
 scatter (sin-hash seeds, NO Math.random so phases are reproducible across canvases),
 per-particle arrival times so ~70% are settled mid-phase (lab morph law), kicker live
-from frame 0. NEXT on GO: wire scene-E restage + open sting into reel.template.html
-behind the FIGURE/theme constants, run full gate battery + 140px, one real reel ships it.
+from frame 0. ~~NEXT on GO: wire scene-E restage + open sting into reel.template.html
+behind the FIGURE/theme constants, run full gate battery + 140px, one real reel ships it.~~
+**DONE — Day 38, see STATUS at the foot of this file.** Left struck rather than deleted:
+it read as pending work for a day after it had already shipped, which is exactly the
+failure this file exists to prevent.
+
+---
+
+## STATUS — what is shipped, what is not (2026-08-24)
+
+**SHIPPED.** Day 38, the vault soft launch, carries all of it:
+- `t-vault` theme in `reel.template.html` (Marcellus, baked floor grid, rail on the floor)
+- the **mark particle open** over scene A — 20 baked frames, `vaultTick()` drives 0–0.85s,
+  then holds and fades before scene B
+- the **mark sign-off sting** as scene E's ground — 24 baked frames swapped through the
+  `--vbg` CSS var
+- Gates: 1/2/6 CLEAN · 3 PASS (row-decorrelation 0.482) · 4 PASS · 5 WARN-by-design ·
+  7 READ · 8 CLEAN 3.6
+
+The sting is a **background, not an element**, and that is load-bearing rather than
+incidental: the geometry gates measure ink, so a background is the theme's ground exactly
+like the floor it replaces and cannot trip them.
+
+**NOT shipped: the live `seek(t)` canvas.** The theme-candidate notes above anticipated a
+reel driving three.js live. What actually shipped bakes to PNG and lets the existing
+engine composite them. Keep it that way unless something needs per-reel variation — the
+baked route inherits every gate for free and adds no three.js dependency to a shipping
+reel. "Bake, don't embed" earned its place twice now.
+
+**Open, unchanged by the launch:** the robot-arm icon verdict, and AC's actual logo file
+(the mark here is still a redraw). A 48-hour watch on the vault reel decides whether the
+look rolls to everything.
+
+## THE BAKE PIPELINE — `bake_vault.js`
+
+    node bake_vault.js            # regenerate assets/baked-vault/ in place
+    node bake_vault.js --check    # bake to a temp dir and diff against the shipped set
+    node bake_vault.js /some/dir  # bake somewhere else
+
+Built 2026-08-24 to close a real hole: **the 46 shipped PNGs had no generator anywhere in
+the skill.** `open_draft.html` and `signoff_draft.html` are three-tile contact sheets
+frozen at fixed phases — they never produced a frame sequence. Since the mark is a redraw
+standing in until AC's file arrives, every one of those frames is going to need rebuilding,
+and until now that meant by hand.
+
+Everything the frames depend on now lives in **`lib/vault.js`** — palette, mark geometry,
+the deterministic scatter, the floor, the stage. Change the mark there, re-run, and the
+whole set moves together. `lib/vault.js` also ends the `const GOLD=0xE7C765` duplication:
+it was declared **17 times** across this lab, and duplicated helper names are precisely
+what silently deleted five icon tiles in the incident logged above.
+
+Scenes live in `bake/`, each exposing the same `window.__TOTAL` / `window.seek(t)` /
+`window.__READY` contract as `render_frames.js`, so a scene that bakes here also renders in
+the reel engine unchanged.
+
+### Reconstructing the shipped motion, and how close it gets
+
+The original parameters were lost with the generator, so they were recovered from the
+frames themselves:
+
+- **The sting is `rotation.y = REST + SWAY·sin(2πk/24)`.** Proven, not guessed: frames 3
+  and 9 are *byte-identical*, so are 4 and 8, and 16 and 20. That is exactly the symmetry
+  a single sine over 24 frames predicts and nothing else does. It also explains why the
+  loop is seamless — frame 24 would equal frame 0.
+- **`open` framing was solved, not eyeballed**: PAD 1.148 makes the settled cloud span
+  444×525 of 720×792, matching the shipped frames exactly. At PAD 1.0 it rendered 15% large.
+
+Fidelity actually achieved, measured rather than asserted:
+
+| asset | agreement with the shipped frames |
+|---|---|
+| `vault_floor.png` | exact |
+| `sting` at rest (k=0, k=12) | exact — same gold count, same centroid |
+| `sting` under sway | centroid within ~3px of 1080 (0.3%) |
+| `open` frames 0–10, 16–19 | exact spread |
+| `open` frames 12–14 | ~10px of 720 (1.5%), assemble runs marginally ahead |
+| `mark_corner.png` | identical ink bbox, 0..149 × 0..177 |
+
+**No single sway amplitude fits both extremes** — k=6 wants ~0.36, k=18 wants ~0.20 — so
+the original carried one more degree of freedom that 24 PNGs cannot reveal. 0.26 is kept:
+it ties for the lowest maximum error and is the clean value (yaw sweeping 0 → 0.52).
+
+⚠ **Do not re-bake over the shipped Day 38 frames.** They are not reproducible to the byte
+and there is no reason to disturb a reel that already shipped. This pipeline is for the
+*next* regeneration — when AC's real logo lands there is no ground truth to match anyway,
+only `lib/vault.js` to change.
+
+## CHROMIUM FLAGS — settled 2026-08-24
+
+This README previously claimed WebGL works in the render engine's launch args, and
+`zoneout/anim/README.md` claimed the opposite: that the ANGLE/SwiftShader flags are
+required. **This README was right.** Measured with `render_frames.js`'s exact args and none
+of the GL flags: `hasGL: true`, renderer `ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device
+(Subzero)), SwiftShader driver)` — ANGLE is already the default. The same scene renders at
+~1,971 gold pixels without the flags against ~2,001 with them, which is antialiasing jitter
+between runs.
+
+The ZoneOut note has been corrected. The reasoning error there is worth carrying: a missing
+module and an absent GL context produce the **identical** symptom, a silent black frame, and
+both were "fixed" in one step so the credit went to the wrong change.
+
+## THE INSTALLED three.js SKILLS, mapped to what is still open here
+
+A three.js skill pack is installed. Reach for the reference rather than re-deriving:
+
+| open item in this lab | skill |
+|---|---|
+| coin(13) face reads upside-down at the frozen flip angle | `threejs-fundamentals` (transforms, quaternions) |
+| data stream(16) endpoint spheres clip the frame | `threejs-fundamentals` (camera frustum) — and see the frustum reality check above |
+| monogram(18) exact glyph extrusion, waiting on AC's SVG | `threejs-loaders` (SVGLoader, available offline) |
+| the vendored `jsm/postprocessing` passes | `threejs-postprocessing` |
+| particle / voxel ink sampling, instancing | `threejs-geometry` |
+| `Vector3.project` on stale matrices | `threejs-fundamentals` |
+
+`markInstanced()` in `lib/vault.js` came out of that pack: `signoff_draft.html` built a
+Group of ~4,000 individual `Mesh`es for a shape that never changes, which is ~96,000 draw
+calls across a 24-frame bake. One `InstancedMesh` makes it 24.

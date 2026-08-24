@@ -1,0 +1,54 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}</style>
+</head><body><canvas id="gl" width="720" height="792"></canvas>
+<script type="module">
+/* REEL OPEN — the mark assembles on frame 0. Bakes to open_00..19.png, 720x792 RGBA.
+ *
+ * The shipped frames are TRANSPARENT and framed tight to the mark's own bounding box
+ * (4.0 x 4.4 normalised units, aspect 0.909 = 720/792). The template then places them
+ * in a 224x246 CSS box over scene A. Do not change the frame size without changing
+ * #markopen's width/height in reel.template.html to match.
+ *
+ * seek(t) takes t in 0..1 as assemble progress. Pure function of t, no clock. */
+import * as THREE from 'three';
+import { PALETTE, MARK_BOX, markSamples, scatterField, markPoints, stage } from '../lib/vault.js';
+
+const W = 720, H = 792;
+const { renderer, scene, camera } = stage(THREE, document.getElementById('gl'),
+  { w: W, h: H, fov: 50, alpha: true });
+
+/* Frame the mark box exactly: at fov 50 the visible height at the mark plane is
+ * 2*dist*tan(25deg), so dist = (boxH/2)/tan(25deg). Solved, never guessed — the lab
+ * paid three blind rounds for guessing where 3D lands on screen. */
+const boxH = MARK_BOX.y1 - MARK_BOX.y0;
+
+/* PAD: how much air sits around the mark. 1.0 frames MARK_BOX edge to edge, which
+ * renders the settled mark ~15% larger than the shipped frames - measured, not guessed:
+ * the shipped settled cloud spans 444x525 of 720x792, mine spanned 510x603 at PAD 1.
+ * GAMMA: the assemble schedule. Linear p ran the morph ~1.5x too fast against the
+ * shipped sequence, which holds full scatter through frame ~10 and settles near 16.
+ * Both are on window so they can be swept without editing this file. */
+window.PAD = 1.148;
+window.GAMMA = 2.45;
+
+function frame() {
+  const dist = (boxH / 2) / Math.tan(THREE.MathUtils.degToRad(25)) * window.PAD;
+  camera.position.set((MARK_BOX.x0 + MARK_BOX.x1) / 2, (MARK_BOX.y0 + MARK_BOX.y1) / 2, dist);
+}
+
+const field = scatterField(markSamples(3));   // step 3 = the particle density of the draft
+let pts = null;
+
+window.__TOTAL = 1;
+window.seek = (t) => {
+  frame();
+  const p = Math.pow(Math.min(1, Math.max(0, t)), window.GAMMA);
+  if (pts) { scene.remove(pts); pts.geometry.dispose(); pts.material.dispose(); }
+  pts = markPoints(THREE, field, p, { color: PALETTE.gold, size: 0.055, opacity: 0.95 });
+  scene.add(pts);
+  renderer.render(scene, camera);
+};
+window.seek(0);
+window.__READY = true; document.title = 'ready';
+</script></body></html>

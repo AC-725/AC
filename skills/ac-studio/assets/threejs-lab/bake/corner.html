@@ -1,0 +1,34 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}</style>
+</head><body><canvas id="gl" width="150" height="178"></canvas>
+<script type="module">
+/* COVER CORNER MARK — bakes to mark_corner.png, 150x178 RGBA.
+ *
+ * Per the cover rule locked 2026-08-23: every cover carries ONE hero, kicker top-left,
+ * and this mark small bottom-right. Solid treatment (L-A), matching the sign-off — the
+ * particle treatment (L-B) is the reel open only.
+ *
+ * Framed on the mark's TRUE ink bounds with no margin, which is why 150x178 and not the
+ * mask's 0.909 aspect: the shipped asset has ink touching all four edges. */
+import * as THREE from 'three';
+import { markSamples, markInstanced, markInkBox, stage } from '../lib/vault.js';
+
+const W = 150, H = 178;
+const { renderer, scene, camera } = stage(THREE, document.getElementById('gl'),
+  { w: W, h: H, fov: 50, alpha: true });
+
+const pts = markSamples(2);
+const box = markInkBox(pts);
+scene.add(markInstanced(THREE, pts, { voxel: 0.030, depth: 0.02 }));
+
+/* Fit the taller of the two constraints so nothing clips, then sit dead centre. */
+const vFit = (box.h / 2) / Math.tan(THREE.MathUtils.degToRad(25));
+const hFit = (box.w / 2) / Math.tan(THREE.MathUtils.degToRad(25)) / (W / H);
+camera.position.set((box.x0 + box.x1) / 2, (box.y0 + box.y1) / 2, Math.max(vFit, hFit));
+
+window.__TOTAL = 0;
+window.seek = () => renderer.render(scene, camera);
+window.seek(0);
+window.__READY = true; document.title = 'ready';
+</script></body></html>
