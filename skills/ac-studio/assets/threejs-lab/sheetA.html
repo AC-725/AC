@@ -1,0 +1,154 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js","three/addons/":"./jsm/"}}</script>
+<style>
+@font-face{font-family:'Poppins';font-weight:600;src:url('../fonts/Poppins-600.ttf');}
+@font-face{font-family:'DispBase';src:url('../fonts/Gloock-Regular.ttf');}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;}
+html,body{width:1200px;height:2040px;background:#0A0A0A;overflow:hidden;}
+.grid{display:grid;grid-template-columns:600px 600px;}
+.cell{position:relative;width:600px;height:680px;background:#0A0A0A;border:1px solid rgba(231,199,101,0.10);}
+.lbl{position:absolute;top:22px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:600;font-size:18px;letter-spacing:4px;color:#E7C765;text-transform:uppercase;}
+.note{position:absolute;bottom:18px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:600;font-size:14px;letter-spacing:0.5px;color:#6f6a60;}
+canvas{position:absolute;left:100px;top:110px;width:400px;height:420px;}
+#extWrap{position:absolute;left:0;top:150px;width:100%;height:340px;perspective:1200px;display:flex;align-items:center;justify-content:center;}
+#ext{position:relative;transform-style:preserve-3d;transform:rotateX(14deg) rotateY(-20deg);}
+#ext span{position:absolute;left:0;top:0;font-family:'DispBase';font-size:140px;line-height:1;letter-spacing:-5px;white-space:nowrap;}
+#ext span:first-child{position:relative;}
+</style></head><body>
+<div class="grid">
+  <div class="cell"><div class="lbl">1 · Globe (fixed)</div><canvas id="c1" width="800" height="840"></canvas><div class="note">lat/long only · back faces hidden · unlit</div></div>
+  <div class="cell"><div class="lbl">2 · Node graph</div><canvas id="c2" width="800" height="840"></canvas><div class="note">automation · connecting tools</div></div>
+  <div class="cell"><div class="lbl">3 · Bars (fixed)</div><canvas id="c3" width="800" height="840"></canvas><div class="note">both solid · same treatment</div></div>
+  <div class="cell"><div class="lbl">4 · Extruded type</div><div id="extWrap"><div id="ext"></div></div><div class="note">CSS 3D · native Gloock · crisp</div></div>
+  <div class="cell"><div class="lbl">5 · Metallic gold</div><canvas id="c5" width="800" height="840"></canvas><div class="note">env-mapped metal · BREAKS flat-gold law</div></div>
+  <div class="cell"><div class="lbl">6 · Particle figure</div><canvas id="c6" width="800" height="840"></canvas><div class="note">points sampled from real type</div></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+function mk(id,fov=34){
+  const canvas=document.getElementById(id);
+  const r=new THREE.WebGLRenderer({canvas,alpha:true,antialias:true});
+  r.setSize(800,840,false);
+  const s=new THREE.Scene();
+  const c=new THREE.PerspectiveCamera(fov,800/840,0.1,100); c.position.z=6;
+  return {r,s,c};
+}
+function eOut(p){p=Math.min(1,Math.max(0,p));return 1-Math.pow(1-p,3);}
+
+/* ---------- 1 · GLOBE, rebuilt -----------------------------------------
+   Previous version used WireframeGeometry, which draws EVERY triangle edge —
+   that is mesh noise, not a globe. A globe reads from latitude and longitude
+   rings only. Back faces are hidden by an opaque black sphere sitting just
+   inside the line radius, so you see a solid-feeling sphere, not a cage.     */
+const G=mk('c1'); const globe=new THREE.Group();
+const R=1.85;
+globe.add(new THREE.Mesh(new THREE.SphereGeometry(R*0.985,48,32),
+  new THREE.MeshBasicMaterial({color:0x0A0A0A})));
+const lineMat=new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.55});
+for(let i=1;i<8;i++){                                   // latitudes
+  const phi=(i/8)*Math.PI, r=R*Math.sin(phi), y=R*Math.cos(phi);
+  const pts=[]; for(let a=0;a<=64;a++){const t=(a/64)*Math.PI*2; pts.push(new THREE.Vector3(Math.cos(t)*r,y,Math.sin(t)*r));}
+  globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
+}
+for(let j=0;j<12;j++){                                  // longitudes
+  const rot=(j/12)*Math.PI*2, pts=[];
+  for(let a=0;a<=48;a++){const t=-Math.PI/2+(a/48)*Math.PI;
+    pts.push(new THREE.Vector3(Math.cos(t)*Math.cos(rot)*R,Math.sin(t)*R,Math.cos(t)*Math.sin(rot)*R));}
+  globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),lineMat));
+}
+{ const pts=[]; for(let a=0;a<=128;a++){const t=(a/128)*Math.PI*2; pts.push(new THREE.Vector3(Math.cos(t)*R*1.005,Math.sin(t)*R*1.005,0));}
+  globe.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(pts),
+    new THREE.LineBasicMaterial({color:GOLD})));  }      // crisp limb
+G.s.add(globe);
+
+/* ---------- 2 · NODE GRAPH ---------- */
+const N=mk('c2'); N.c.position.z=7.6; const ng=new THREE.Group();
+const nodes=[[0,0,0],[1.6,.95,.3],[-1.6,.75,-.4],[1.25,-1.15,-.3],[-1.4,-1.25,.4],[0,1.8,-.2],[0,-1.9,.2]];
+nodes.forEach((p,i)=>{const m=new THREE.Mesh(new THREE.SphereGeometry(i===0?0.21:0.12,20,16),
+  new THREE.MeshBasicMaterial({color:GOLD})); m.position.set(...p); ng.add(m);});
+const epts=[]; for(let i=1;i<nodes.length;i++){epts.push(new THREE.Vector3(0,0,0),new THREE.Vector3(...nodes[i]));}
+ng.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(epts),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.45})));
+N.s.add(ng);
+
+/* ---------- 3 · BARS, rebuilt ------------------------------------------
+   Previous version made the small bar a hollow wireframe and the big one solid,
+   so they read as two different KINDS of object instead of two values of the same
+   measure. Both are now solid flat gold with the same edge treatment; only height
+   differs. That is what makes it a comparison.                              */
+const B=mk('c3'); const bars=new THREE.Group();
+function bar(x,h){
+  const g=new THREE.BoxGeometry(0.9,h,0.9), grp=new THREE.Group();
+  grp.add(new THREE.Mesh(g,new THREE.MeshBasicMaterial({color:GOLD})));
+  grp.add(new THREE.LineSegments(new THREE.EdgesGeometry(g),
+    new THREE.LineBasicMaterial({color:0x0A0A0A,transparent:true,opacity:0.45})));
+  grp.position.set(x,h/2-1.5,0); bars.add(grp);
+}
+bar(-0.8,2.9); bar(0.8,0.55);
+bars.rotation.set(0.18,-0.42,0); B.s.add(bars);
+
+/* ---------- 5 · METALLIC GOLD (procedural env, no HDR available offline) --- */
+const M=mk('c5');
+const envCan=document.createElement('canvas'); envCan.width=512; envCan.height=256;
+{ const x=envCan.getContext('2d'); const g=x.createLinearGradient(0,0,0,256);
+  g.addColorStop(0,'#ffffff'); g.addColorStop(0.35,'#8a7a4a'); g.addColorStop(0.55,'#1a1712');
+  g.addColorStop(1,'#000000'); x.fillStyle=g; x.fillRect(0,0,512,256);
+  x.fillStyle='rgba(255,255,255,0.9)'; x.fillRect(120,20,160,26); x.fillRect(340,60,90,14); }
+const envTex=new THREE.CanvasTexture(envCan); envTex.mapping=THREE.EquirectangularReflectionMapping;
+M.s.environment=envTex;
+const metal=new THREE.Mesh(new THREE.TorusKnotGeometry(1.15,0.38,150,24),
+  new THREE.MeshStandardMaterial({color:0xE7C765,metalness:1.0,roughness:0.22,envMap:envTex}));
+M.s.add(metal);
+M.s.add(new THREE.DirectionalLight(0xffffff,1.4).translateZ(3));
+
+/* ---------- 6 · PARTICLE FIGURE ----------------------------------------
+   Points are SAMPLED from the real Gloock glyphs: the type is drawn to an
+   offscreen canvas, ink pixels are read back, and a point is placed at each.
+   So the swarm resolves into the actual figure, not an approximation of it.  */
+const P=mk('c6');
+const tc=document.createElement('canvas'); tc.width=900; tc.height=300;
+{ const x=tc.getContext('2d'); x.fillStyle='#000'; x.fillRect(0,0,900,300);
+  x.fillStyle='#fff'; x.font='700 190px DispBase, Georgia'; x.textAlign='center'; x.textBaseline='middle';
+  // measure and shrink to fit so the glyphs are never clipped by the sample canvas
+  let fs=190; while(x.measureText('Aug 2').width>820 && fs>60){ fs-=6; x.font='700 '+fs+'px DispBase, Georgia'; }
+  x.fillText('Aug 2',450,158); }
+const img=tc.getContext('2d').getImageData(0,0,900,300).data;
+const tgt=[]; for(let y=0;y<300;y+=3){for(let x2=0;x2<900;x2+=3){ if(img[(y*900+x2)*4]>128) tgt.push([(x2-450)/300,-(y-150)/300,0]); }}
+const pg=new THREE.BufferGeometry(); const pos=new Float32Array(tgt.length*3);
+const startPos=tgt.map(()=>[(Math.random()-0.5)*7,(Math.random()-0.5)*7,(Math.random()-0.5)*4]);
+pg.setAttribute('position',new THREE.BufferAttribute(pos,3));
+const pts=new THREE.Points(pg,new THREE.PointsMaterial({color:GOLD,size:0.035}));
+P.s.add(pts); P.c.position.z=5;
+
+window.seek=function(t){
+  const e=eOut(t/1.2);
+  globe.rotation.y=-0.5+t*0.30; globe.rotation.x=0.24;
+  ng.rotation.y=-0.35+t*0.20; ng.rotation.x=0.18; ng.scale.setScalar(0.85+0.15*e);
+  metal.rotation.y=t*0.5; metal.rotation.x=0.3+t*0.2;
+  const a=pg.attributes.position.array;
+  for(let i=0;i<tgt.length;i++){
+    const s=startPos[i], g2=tgt[i];
+    a[i*3]  =s[0]+(g2[0]-s[0])*e;
+    a[i*3+1]=s[1]+(g2[1]-s[1])*e;
+    a[i*3+2]=s[2]+(g2[2]-s[2])*e;
+  }
+  pg.attributes.position.needsUpdate=true;
+  G.r.render(G.s,G.c); N.r.render(N.s,N.c); B.r.render(B.s,B.c);
+  M.r.render(M.s,M.c); P.r.render(P.s,P.c);
+};
+
+/* 4 · extruded type */
+const ext=document.getElementById('ext'), LAYERS=26;
+for(let i=LAYERS;i>=0;i--){
+  const s=document.createElement('span'); s.textContent='Aug 2';
+  s.style.transform='translateZ('+(-i*1.6)+'px)';
+  if(i===0){s.style.background='linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%)';
+    s.style.webkitBackgroundClip='text';s.style.backgroundClip='text';s.style.color='transparent';}
+  else{const k=1-(i/LAYERS)*0.72; s.style.color='rgb('+Math.round(201*k)+','+Math.round(162*k)+','+Math.round(63*k)+')';}
+  ext.appendChild(s);
+}
+document.fonts.ready.then(()=>{ window.seek(1.2); document.title='ready'; });
+</script></body></html>

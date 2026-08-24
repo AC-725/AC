@@ -1,0 +1,131 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+body{background:#0A0A0A;font-family:'Poppins',sans-serif;width:1720px;padding:40px}
+h1{color:#E7C765;font-size:28px;font-weight:600}
+.sub{color:#8f8574;font-size:16px;margin:6px 0 24px}
+#grid{display:grid;grid-template-columns:repeat(5,1fr);gap:20px}
+.tile{background:#0D0C0A;border:1px solid #2a2620;padding:10px}
+.tile canvas{display:block;width:300px;height:330px}
+.nm{color:#F2EDE4;font-size:18px;font-weight:600;margin:10px 0 2px}
+.uc{color:#8f8574;font-size:13px}
+</style></head><body>
+<h1>PRIME LOGO · 3D DRAFTS — reconstructed interlock, flat-gold law</h1>
+<div class="sub">geometry redrawn from your render (photo never reached disk) · tile 1 is the reconstruction to judge against your original · jewelry lighting stays out by law, the MARK comes in</div>
+<div id="grid"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+
+// ---- source of truth: the mark drawn once on a 2D canvas ----
+const MW=600,MH=660;
+const mc=document.createElement('canvas'); mc.width=MW; mc.height=MH;
+const m=mc.getContext('2d');
+m.lineCap='butt'; m.strokeStyle='#fff'; m.fillStyle='#fff';
+const LW=26;
+function Carc(from,to,lw){m.lineWidth=lw??LW; m.beginPath();
+  m.arc(412,315,140,from,to); m.stroke();}
+// 1 · C first (back layer)
+Carc(0.8,2*Math.PI-0.5);
+// 2 · A over it
+m.lineWidth=LW;
+m.lineJoin='miter'; m.miterLimit=8;
+m.beginPath(); m.moveTo(150,505); m.lineTo(285,132); m.lineTo(408,505); m.stroke();   // both legs, sharp apex
+m.beginPath(); m.moveTo(206,388); m.lineTo(378,388); m.stroke();          // crossbar
+m.lineWidth=9;
+m.beginPath(); m.moveTo(263,140); m.lineTo(122,505); m.stroke();          // double stroke, left
+// 3 · C front segment weaves over A's lower right leg
+Carc(1.4,2.3);
+// 4 · bail: diamond + loop
+m.lineWidth=9;
+m.beginPath(); m.moveTo(285,62); m.lineTo(316,93); m.lineTo(285,124); m.lineTo(254,93); m.closePath(); m.stroke();
+m.beginPath(); m.moveTo(285,77); m.lineTo(301,93); m.lineTo(285,109); m.lineTo(269,93); m.closePath(); m.stroke();
+m.lineWidth=16;
+m.beginPath(); m.arc(285,34,22,0.35,Math.PI-0.35,true); m.stroke();
+m.beginPath(); m.moveTo(266,42); m.lineTo(272,62); m.stroke();
+m.beginPath(); m.moveTo(304,42); m.lineTo(298,62); m.stroke();
+
+const img=m.getImageData(0,0,MW,MH).data;
+const ink=(x,y)=>x>=0&&y>=0&&x<MW&&y<MH&&img[(y*MW+x)*4+3]>128;
+function samples(step){const out=[];
+  for(let y=0;y<MH;y+=step)for(let x=0;x<MW;x+=step)
+    if(ink(x,y)) out.push([(x-292)/150,(330-y)/150]);
+  return out;}
+function edgeSamples(step){const out=[];
+  for(let y=0;y<MH;y+=step)for(let x=0;x<MW;x+=step)
+    if(ink(x,y)&&(!ink(x-step,y)||!ink(x+step,y)||!ink(x,y-step)||!ink(x,y+step)))
+      out.push([(x-292)/150,(330-y)/150]);
+  return out;}
+
+const defs=[];
+function tile(name,use,build){defs.push({name,use,build});}
+
+// 1 · the reconstruction itself, for judging
+tile('L-0 · MASK','judge this against your original',(g,r,s,c,cv)=>{
+  const tex=new THREE.CanvasTexture(mc);
+  const pm=new THREE.MeshBasicMaterial({map:tex,transparent:true,color:GOLD});
+  const plane=new THREE.Mesh(new THREE.PlaneGeometry(MW/150,MH/150),pm);
+  g.add(plane);});
+
+// 2 · solid extrusion (dense voxel, unlit flat gold)
+tile('L-A · SOLID','the mark extruded, flat gold',g=>{
+  const pts=samples(4);
+  const geo=new THREE.BoxGeometry(0.055,0.055,0.30), mat=new THREE.MeshBasicMaterial({color:GOLD});
+  pts.forEach(([x,y])=>{const b=new THREE.Mesh(geo,mat); b.position.set(x,y,0); g.add(b);});
+  g.rotation.set(0.08,0.38,0); g.scale.setScalar(0.9);});
+
+// 3 · particle
+tile('L-B · PARTICLE','the mark as a settled point cloud',g=>{
+  const pts=samples(3), flat=[];
+  pts.forEach(([x,y])=>flat.push(x,y,(Math.random()-0.5)*0.1));
+  g.add(new THREE.Points(new THREE.BufferGeometry().setAttribute('position',
+    new THREE.Float32BufferAttribute(flat,3)),
+    new THREE.PointsMaterial({color:GOLD,size:0.04,transparent:true,opacity:0.95})));
+  g.rotation.y=0.2; g.scale.setScalar(0.92);});
+
+// 4 · engraved outline
+tile('L-C · OUTLINE','edge trace, engraved weight',g=>{
+  const pts=edgeSamples(2), flat=[];
+  pts.forEach(([x,y])=>flat.push(x,y,0));
+  g.add(new THREE.Points(new THREE.BufferGeometry().setAttribute('position',
+    new THREE.Float32BufferAttribute(flat,3)),
+    new THREE.PointsMaterial({color:GOLD,size:0.028,transparent:true,opacity:0.9})));
+  g.rotation.y=0.12; g.scale.setScalar(0.92);});
+
+// 5 · brand sting: mark over the vault floor
+tile('L-D · STING','sign-off frame, mark on the vault floor',g=>{
+  const near=[],far=[];
+  for(let i=-6;i<=6;i++){near.push(new THREE.Vector3(i*0.9,-1.5,2),new THREE.Vector3(i*0.9,-1.5,-6));
+    far.push(new THREE.Vector3(i*0.9,-1.5,-6),new THREE.Vector3(i*0.9,-1.5,-26));}
+  for(let z=2;z>=-26;z-=0.9)(z>-6?near:far).push(new THREE.Vector3(-6,-1.5,z),new THREE.Vector3(6,-1.5,z));
+  g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(near),
+    new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.4})));
+  g.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(far),
+    new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.15})));
+  const pts=samples(4);
+  const geo=new THREE.BoxGeometry(0.05,0.05,0.22), mat=new THREE.MeshBasicMaterial({color:GOLD});
+  const mk=new THREE.Group();
+  pts.forEach(([x,y])=>{const b=new THREE.Mesh(geo,mat); b.position.set(x*0.6,y*0.6-0.48,0); mk.add(b);});
+  mk.rotation.y=0.22; g.add(mk);});
+
+const grid=document.getElementById('grid');
+defs.forEach(({name,use,build})=>{
+  const t=document.createElement('div'); t.className='tile';
+  const cv=document.createElement('canvas'); cv.width=600; cv.height=660; t.appendChild(cv);
+  const nm=document.createElement('div'); nm.className='nm'; nm.textContent=name; t.appendChild(nm);
+  const uc=document.createElement('div'); uc.className='uc'; uc.textContent=use; t.appendChild(uc);
+  grid.appendChild(t);
+  try{
+    const r=new THREE.WebGLRenderer({canvas:cv,antialias:true});
+    r.setSize(600,660,false); r.setClearColor(0x0A0A0A,1);
+    const s=new THREE.Scene(), c=new THREE.PerspectiveCamera(36,600/660,0.1,60);
+    c.position.set(0,0,6.2);
+    const g=new THREE.Group(); build(g,r,s,c,cv); s.add(g);
+    r.render(s,c);
+  }catch(e){nm.textContent+=' ERR'; uc.textContent=String(e).slice(0,90);}
+});
+document.title='ready';
+</script></body></html>

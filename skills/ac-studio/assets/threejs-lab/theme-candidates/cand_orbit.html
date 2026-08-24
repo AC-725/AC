@@ -1,0 +1,71 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'CormorantG';src:url('fonts/CormorantGaramond.woff2') format('woff2');font-weight:500}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-500.ttf');font-weight:500}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;background:#0A0A0A;overflow:hidden;position:relative}
+#gl{position:absolute;inset:0;z-index:0}
+.txt{position:absolute;z-index:2;font-family:'Poppins',sans-serif}
+#tag{top:36px;right:100px;font-weight:600;font-size:20px;letter-spacing:.18em;color:#5d5546}
+#kick{top:118px;left:88px;font-weight:600;font-size:26px;letter-spacing:.38em;color:#E7C765}
+#hero{top:460px;left:88px;width:760px;font-family:'CormorantG',serif;font-weight:500;font-size:98px;line-height:1.18;color:#F2EDE4}
+#hero i{font-style:normal;color:#E7C765}
+#sub{top:952px;left:88px;width:700px;font-weight:400;font-size:29px;line-height:1.55;color:#B7AE9C}
+#sub b{color:#F2EDE4;font-weight:500}
+#wm{bottom:56px;left:88px;font-weight:500;font-size:24px;letter-spacing:.12em;color:#6b6155}
+.tick{position:absolute;z-index:2;width:34px;height:34px;border-color:#E7C765;border-style:solid}
+#tt{top:40px;right:40px;border-width:3px 3px 0 0}
+#tb{bottom:40px;right:40px;border-width:0 3px 3px 0}
+</style></head><body>
+<canvas id="gl" width="1080" height="1350"></canvas>
+<div class="txt" id="tag">C · ORBIT</div>
+<div class="txt" id="kick">AI NEWS</div>
+<div class="txt" id="hero">The quiet number<br>behind your inbox:<br><i>11.7 hours.</i></div>
+<div class="txt" id="sub">Every week, on email alone. Measured across <b>66 companies</b>.</div>
+<div class="txt" id="wm">@itsac.ai</div>
+<div class="tick" id="tt"></div><div class="tick" id="tb"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+r.setSize(1080,1350,false); r.setClearColor(0x0A0A0A,1);
+const s=new THREE.Scene();
+const c=new THREE.PerspectiveCamera(42,1080/1350,0.1,100); c.position.set(0,0,9);
+// orbital ring through the right edge — margin's rule, bent into an orbit
+const g=new THREE.Group();
+const curve=new THREE.EllipseCurve(0,0,4.6,3.0,0,Math.PI*2);
+const p2=curve.getPoints(240).map(p=>new THREE.Vector3(p.x,p.y,0));
+const ring=new THREE.Line(new THREE.BufferGeometry().setFromPoints(p2),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.6}));
+g.add(ring);
+const c2=new THREE.EllipseCurve(0,0,2.85,1.86,0,Math.PI*2);
+g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints(
+  c2.getPoints(200).map(p=>new THREE.Vector3(p.x,p.y,0))),
+  new THREE.LineBasicMaterial({color:GOLD,transparent:true,opacity:0.26})));
+// beads — 5 stations on the orbit, 2 lit
+const lit=new THREE.MeshBasicMaterial({color:GOLD}),
+      dim=new THREE.MeshBasicMaterial({color:0x655838});
+// the focus — a wireframe core the orbit belongs to
+const core=new THREE.Mesh(new THREE.IcosahedronGeometry(0.72,1),
+  new THREE.MeshBasicMaterial({color:GOLD,wireframe:true,transparent:true,opacity:0.5}));
+core.position.set(-1.72,0.15,0); g.add(core);
+g.position.set(4.15,0.7,0); g.rotation.set(1.12,-0.38,0.12);
+s.add(g); s.updateMatrixWorld(true);
+c.updateMatrixWorld(true); c.matrixWorldInverse.copy(c.matrixWorld).invert();
+const picks=[];
+for(let t=0;t<1;t+=0.004){
+  const p=curve.getPoint(t), w=new THREE.Vector3(p.x,p.y,0).applyMatrix4(g.matrixWorld);
+  const pr=w.clone().project(c), sx=(pr.x+1)/2*1080, sy=(1-pr.y)/2*1350;
+  const okZone=(sx>120&&sx<1000&&sy>90&&sy<430)||(sx>860&&sx<1020&&sy>700&&sy<840);
+  if(!okZone) continue;
+  if(picks.every(q=>Math.hypot(q.sx-sx,q.sy-sy)>130)){picks.push({p,sx,sy}); }
+}
+picks.slice(0,5).forEach((q,i)=>{
+  const m=new THREE.Mesh(new THREE.SphereGeometry(0.11,16,12),i<2?lit:dim);
+  m.position.set(q.p.x,q.p.y,0); g.add(m);});
+
+r.render(s,c); document.title='ready';
+</script></body></html>

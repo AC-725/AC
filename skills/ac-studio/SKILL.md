@@ -114,6 +114,7 @@ Read only what the task needs.
 | Hashtags | `content.md` (hashtag banks) |
 | Finding a story, verifying a number | `research.md` |
 | Palette, type, the laws | `brand.md` |
+| ac-wins.com — the website, its intro, its motion | `site.md` (ADDITIVE patches only; gate `scripts/qa_intro.js`) |
 | Anything is overlapping or looks off | `qa-audit.md` |
 | A render looks janky, unpolished, or "not smooth" | `qa-audit.md` + gate 7 (`scripts/qa_filmstrip.sh`) |
 
@@ -458,5 +459,10 @@ branding.
   stays through the scenes; the final beat cuts to the mark sting (flat-gold mark, bail
   in, over the VAULT floor). Neither replaces the other. The lit-metal pendant PHOTO is
   legal only OFF-feed (avatar, profile surfaces) — in-content the mark is flat gold.
+- **The hand-off law (AC, 2026-08-24).** Particles carry the MOVE; a drawn stroke carries
+  the HOLD. A mark made of grains IS grain at any density — anything that has to be READ
+  gets drawn, never sampled. Governs reel opens and mark sign-offs. **On ac-wins.com AC
+  went further:** the mark INKS ITSELF ON by stroke-dashoffset, the same technique his
+  ring uses, and hands off to the header lockup on the way out (`site.md`).
 - **Don't skip the checkpoint or the scorecard gate.**
 - **Show up daily.** The algorithm and the audience both reward reliability over intensity.

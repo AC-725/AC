@@ -1,0 +1,62 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'DMSerif';src:url('fonts/DMSerifDisplay.woff2') format('woff2')}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-500.ttf');font-weight:500}
+@font-face{font-family:'Poppins';src:url('../../fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1350px;background:#0A0A0A;overflow:hidden;position:relative}
+#gl{position:absolute;inset:0;z-index:0}
+.txt{position:absolute;z-index:2;font-family:'Poppins',sans-serif}
+#tag{top:36px;right:44px;font-weight:600;font-size:20px;letter-spacing:.18em;color:#5d5546}
+#kick{top:150px;left:0;width:1080px;text-align:center;font-weight:600;font-size:26px;letter-spacing:.38em;color:#E7C765}
+#hero{top:250px;left:0;width:1080px;text-align:center;font-family:'DMSerif',serif;font-size:104px;line-height:1.16;color:#F2EDE4;letter-spacing:-0.01em}
+#hero i{font-style:normal;color:#E7C765}
+#sub{top:640px;left:0;width:1080px;text-align:center;font-weight:400;font-size:29px;line-height:1.55;color:#B7AE9C}
+#sub b{color:#F2EDE4;font-weight:500}
+#wm{bottom:56px;left:0;width:1080px;text-align:center;font-weight:500;font-size:24px;letter-spacing:.12em;color:#6b6155}
+.tick{position:absolute;z-index:2;width:34px;height:34px;border-color:#E7C765;border-style:solid}
+#ml{top:740px;left:40px;border-width:3px 0 0 3px}
+#mr{top:740px;right:40px;border-width:3px 3px 0 0}
+</style></head><body>
+<canvas id="gl" width="1080" height="1350"></canvas>
+<div class="txt" id="tag">D · STRATA</div>
+<div class="txt" id="kick">AI NEWS</div>
+<div class="txt" id="hero">AI answers email.<br>You get <i>11.7 hours</i><br>back.</div>
+<div class="txt" id="sub">The randomized result from <b>7,137 workers</b>. Not a demo. A trial.</div>
+<div class="txt" id="wm">@itsac.ai</div>
+<div class="tick" id="ml"></div><div class="tick" id="mr"></div>
+<script type="module">
+import * as THREE from 'three';
+const GOLD=0xE7C765;
+const r=new THREE.WebGLRenderer({canvas:document.getElementById('gl'),antialias:true});
+r.setSize(1080,1350,false); r.setClearColor(0x0A0A0A,1);
+const s=new THREE.Scene(); s.fog=new THREE.FogExp2(0x0A0A0A,0.05);
+const c=new THREE.PerspectiveCamera(46,1080/1350,0.1,100);
+c.position.set(0,0.9,9.5); c.lookAt(0,-3.4,0);
+// strata — stacked wireframe planes filling the lower half, progress = lit layers
+function grid(w,d,nx,nz){const p=[];
+  for(let i=0;i<=nx;i++){const x=-w/2+i*w/nx;p.push(new THREE.Vector3(x,0,-d/2),new THREE.Vector3(x,0,d/2));}
+  for(let j=0;j<=nz;j++){const z=-d/2+j*d/nz;p.push(new THREE.Vector3(-w/2,0,z),new THREE.Vector3(w/2,0,z));}
+  return new THREE.BufferGeometry().setFromPoints(p);}
+const G=grid(11,3.2,14,4);
+const ys=[-2.1,-3.2,-4.3,-5.4];
+ys.forEach((y,i)=>{
+  const lit=i>=2; // bottom two layers carry the charge
+  const l=new THREE.LineSegments(G,new THREE.LineBasicMaterial({color:lit?GOLD:0x8a7a52,
+    transparent:true,opacity:lit?0.6:0.16}));
+  l.position.y=y; s.add(l);});
+// rail — 5 nodes climbing the stack's front edge, 2 lit
+const lm=new THREE.MeshBasicMaterial({color:GOLD}),
+      dm=new THREE.MeshBasicMaterial({color:0x655838});
+c.updateMatrixWorld(true); c.matrixWorldInverse.copy(c.matrixWorld).invert();
+let railY=-2.08;
+for(let y=-1.5;y>-6;y-=0.02){
+  const pr=new THREE.Vector3(0,y,1.6).project(c), sy=(1-pr.y)/2*1350;
+  if(sy>=728){railY=y;break;}
+}
+for(let i=0;i<5;i++){const m=new THREE.Mesh(new THREE.SphereGeometry(0.10,18,14),i<2?lm:dm);
+  m.position.set(-2.0+i*1.0,railY,1.6); s.add(m);}
+r.render(s,c); document.title='ready';
+</script></body></html>
