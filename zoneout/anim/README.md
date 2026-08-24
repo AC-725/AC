@@ -49,12 +49,29 @@ Ship only the first and the module fails with `ERR_FILE_NOT_FOUND`, `window.__RE
 never flips, and the page renders pure black — the exact failure signature as seq 41's
 three dead scenes, from a completely different cause.
 
-**2. WebGL needs the ANGLE/SwiftShader flags.** Bare headless Chromium gives no GL
-context. `render.js` sets them; the itsac.ai `render_frames.js` does not, so it cannot
-render these scenes as-is.
+**2. ~~WebGL needs the ANGLE/SwiftShader flags.~~ FALSE - corrected 24 Aug 2026.**
+This claim was wrong and is kept visible rather than deleted, because the reasoning error
+is the useful part.
 
-Both are already handled here. They are written down because the failure mode in each
-case is a silent black frame that passes every gate.
+Measured: this Chromium build **already defaults to ANGLE/SwiftShader**. A probe with
+`render_frames.js`'s exact args and none of the GL flags reports
+`hasGL: true`, renderer `ANGLE (Google, Vulkan 1.3.0 (SwiftShader Device (Subzero)),
+SwiftShader driver)`, and renders the ac-studio lab's torus at ~1,971 gold pixels against
+~2,001 with the flags - a 30px antialiasing difference between runs, not a flag effect.
+
+`render.js` still passes `--use-gl=angle --use-angle=swiftshader
+--enable-unsafe-swiftshader`. They are harmless and pin the behaviour explicitly, so they
+stay - but they are **not** what fixed anything, and ac-studio's `render_frames.js` renders
+these scenes fine without them.
+
+WHY THE MISTAKE HAPPENED, because it will happen again: the missing-core-file failure and
+a genuine no-GL failure produce the **identical** symptom, a silent black frame. Both were
+"fixed" in one step - vendoring `three.core.min.js` AND adding the flags - and the credit
+went to the wrong change. Item 1 was the real cause, every time.
+**Change one thing per test when two candidate causes share a symptom.**
+
+The standing lesson survives intact: a silent black frame passes every gate, so a render
+that looks structurally fine proves nothing about whether a picture is in it.
 
 ## Fonts
 

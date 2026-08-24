@@ -29,6 +29,13 @@ function findChrome() {
   return undefined;
 }
 
+/* The three --use-gl/--use-angle/--enable-unsafe flags are NOT required for WebGL.
+ * Measured 24 Aug 2026: this Chromium already defaults to ANGLE/SwiftShader, and the
+ * same scene renders identically with and without them (~1,971 vs ~2,001 gold pixels,
+ * i.e. antialiasing jitter). They are kept only to pin the backend explicitly so a
+ * future Chromium that changes its default cannot alter output silently.
+ * The black frames these were once credited with fixing came from a missing
+ * three.core.min.js - see README item 1. */
 const ARGS = [
   '--allow-file-access-from-files',
   '--use-gl=angle',
