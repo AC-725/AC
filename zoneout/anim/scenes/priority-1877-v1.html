@@ -4,8 +4,7 @@
 </head><body>
 <script type="module">
 import * as THREE from '../lib/three.module.min.js';
-import { PALETTE, FONT_STACK, lightRig, stage, lerp, sauropod } from '../lib/zoneout.js';
-import { E, cue, breathe, push, motionAudit, resetAudit } from '../lib/motion.js';
+import { PALETTE, FONT_STACK, lightRig, stage, ease, span, lerp, sauropod } from '../lib/zoneout.js';
 
 /* SEQ 45 hero beat — the priority rule.
  *
@@ -99,79 +98,55 @@ scene.add(dino);
 
 window.__TOTAL = 4.2;
 
-/* SEQUENCED, not overlapped. Rewritten 24 Aug 2026 under lib/motion.js.
- *
- * The v1 of this scene (kept at priority-1877-v1.html) had six overlapping spans and six
- * sine drivers that never stopped — at t=1.0 four things moved at once and the camera
- * drifted for the whole beat. That is the signature people read as "AI", and it is what
- * this rewrite removes. The facts, the layout and the colours are untouched; only the
- * TIMING changed.
- *
- * The two holds are the point. 0.75-1.05 lets 1877 land before 1879 exists, and
- * 1.80-2.30 is dead still right before the turn — which is what makes the turn land.
- * A frame where nothing moves is the setup, not a dead frame.
- *
- * The animal no longer walks on. It is simply there from frame 0, breathing once and
- * settling, because the argument is the plates and a second moving object competes with
- * it for no gain. */
-resetAudit();
-
 window.seek = (t) => {
-  // the animal: present from frame 0, one decaying breath, then still. Never a loop.
-  dino.position.x = 0.10;
-  dino.position.y = 1.52 + breathe(t, { freq: 0.55, amp: 0.055, until: 2.0 });
-  dino.rotation.z = breathe(t, { freq: 0.55, amp: 0.012, until: 2.0 });
-  dino.userData.neck.rotation.z = -0.05 + breathe(t, { freq: 0.42, amp: 0.06, until: 2.4 });
+  // the animal walks in first — it is the subject, the plates are the argument
+  const g = span(t, 0.00, 1.10, ease.out);
+  dino.position.x = lerp(-2.2, 0.10, g) + Math.sin(t * 0.30) * 0.10;
+  dino.position.y = 1.52 + Math.sin(t * 1.85) * 0.040;
+  dino.rotation.z = Math.sin(t * 1.85) * 0.012;
+  dino.userData.neck.rotation.z = -0.05 + Math.sin(t * 0.85 + 0.6) * 0.075;
 
-  // 1: the older name arrives, alone. No overshoot — outQuint settles, back bounces.
-  const a = cue(t, 0.00, 0.75, E.outQuint, '1877 in');
+  // 1877 enters from the left
+  const a = span(t, 0.35, 1.20, ease.back);
   apato.position.x = lerp(-4.6, 0, a);
-  apato.rotation.y = lerp(0.42, 0, a);
+  apato.rotation.y = lerp(0.55, 0, a);
 
-  //    HOLD 0.75-1.05 — nothing moves
-
-  // 2: the junior name arrives
-  const b = cue(t, 1.05, 0.75, E.outQuint, '1879 in');
+  // 1879 enters from the right, slightly behind
+  const b = span(t, 0.85, 1.75, ease.back);
   bronto.position.x = lerp(4.6, 0, b);
-  bronto.rotation.y = lerp(-0.42, 0, b);
+  bronto.rotation.y = lerp(-0.55, 0, b);
 
-  //    HOLD 1.80-2.30 — dead still. This is the setup for the turn.
-
-  // 3: the turn — 1879 greys, tilts back, recedes
-  const d = cue(t, 2.30, 0.65, E.inOutQuart, 'turn');
+  // the turn: 1879 greys out, tilts back, recedes
+  const d = span(t, 2.35, 3.10, ease.inOut);
   bronto.userData.mat.map = d > 0.5 ? bronto.userData.dead : bronto.userData.live;
   bronto.userData.mat.emissiveMap = bronto.userData.mat.map;
-  bronto.userData.mat.emissiveIntensity = lerp(0.5, 0.14, d);
+  bronto.userData.mat.emissiveIntensity = lerp(0.5, 0.12, d);
   bronto.userData.mat.needsUpdate = true;
   bronto.rotation.x = lerp(0, -0.30, d);
   bronto.position.z = lerp(0, -1.15, d);
   bronto.position.y = lerp(Y_BOT, Y_BOT - 0.17, d);
 
-  // 4: the strike sweeps
-  const k = cue(t, 2.95, 0.40, E.outExpo, 'strike');
-  strike.scale.x = k * (PLATE_W + 0.05);
+  // the strike rule sweeps across it
+  strike.scale.x = span(t, 2.55, 3.20) * (PLATE_W + 0.05);
   strike.position.z = lerp(0.09, -1.02, d);
   strike.position.y = bronto.position.y;
 
-  // 5: the winner comes forward, and the ONE camera move rides with it
-  const w = cue(t, 3.35, 0.85, E.outQuint, 'winner');
+  // 1877 pushes forward — the winner
+  const w = span(t, 3.05, 4.20, ease.inOut);
   apato.position.z = lerp(0, 0.80, w);
-  apato.userData.mat.emissiveIntensity = lerp(0.5, 0.84, w);
-  dino.userData.mat.emissiveIntensity = lerp(0.34, 0.62, w);
+  apato.userData.mat.emissiveIntensity = lerp(0.5, 0.82, w);
 
-  /* The camera is STILL for the first 3.35s and then makes exactly one move. v1 drove it
-   * with Math.sin on two axes for the entire beat, which never arrives anywhere and is
-   * the single strongest "screensaver" tell in the old scene. */
-  const cam = push(t, 3.35, 0.85);
-  camera.position.x = 0;
-  camera.position.y = lerp(0, -0.06, cam);
-  camera.position.z = lerp(9, 8.55, cam);
+  // the animal brightens as the nameplate dies — it outlives the label
+  dino.userData.mat.emissiveIntensity = lerp(0.34, 0.62, span(t, 2.55, 3.80));
+
+  // slow parallax so the frame is never static
+  camera.position.x = Math.sin(t * 0.42) * 0.18;
+  camera.position.y = Math.cos(t * 0.31) * 0.10;
   camera.lookAt(0, -0.10, 0);
 
   renderer.render(scene, camera);
 };
 
 window.seek(0);
-window.__AUDIT = motionAudit(window.__TOTAL, 2);
 window.__READY = true;
 </script></body></html>

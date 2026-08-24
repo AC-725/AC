@@ -117,3 +117,89 @@ reading a word.
 The `duration 22-28s` gate is on the **whole video**, not the beat. An animated beat
 is one scene inside it and does not change the word budget — run the duration model
 as normal.
+
+---
+
+## Motion law — why the old renders read as "AI", and the fix
+
+`lib/motion.js`, added 24 Aug 2026 after AC asked for animation that reads **less AI, more
+premium**. The useful part was that the problem turned out to be measurable rather than a
+matter of taste.
+
+### The diagnosis, measured on `scenes/priority-1877-v1.html`
+
+| symptom | measurement |
+|---|---|
+| everything moves at once | **six overlapping spans**; at t=1.0 four things were moving |
+| nothing is ever still | **six `Math.sin(t · k)` drivers** that never stop, including the camera on two axes |
+| bouncy easing | `ease.back` (overshoot) on both nameplate entrances |
+
+Those three together **are** the signature people read as machine-made. Not the render
+quality, not the resolution. A stock clip with a Ken Burns pan has exactly the same
+signature — perpetual drift, simultaneous motion, no holds — which is why the format reads
+mass-produced even when the research behind it is genuinely original. That matters beyond
+aesthetics: "stitched stock footage with narration" is the phrase in Meta's
+unoriginal-content policy, and the channel's whole defence is looking like something only
+this account could make.
+
+### The law
+
+1. **One thing moves at a time.** A second simultaneous move needs a reason.
+2. **Stillness is a cue.** A hold before the turn is what makes the turn land. A frame where
+   nothing moves is the setup, not a dead frame.
+3. **No overshoot on type.** Back, elastic and bounce read as toy. `lib/motion.js` does not
+   export them, deliberately — the house curve is `outQuint`.
+4. **Entrances outlast exits, ~1.6:1.** Viewers care what arrives, not what leaves.
+5. **Micro-life decays.** `breathe()` settles to zero. A sine that runs forever is a
+   screensaver.
+6. **One camera move per beat, or none.** Still, move once with intent, still again.
+
+### The gate — `motionAudit()`
+
+A rule nobody can check is a rule nobody keeps, so the law is enforced the same way the
+render gates are:
+
+    window.__AUDIT = motionAudit(window.__TOTAL, 2);   // budget: 2 simultaneous cues
+
+Returns `peakSimultaneous`, `framesOverBudget`, `stillnessRatio` and `pass`. It fails a
+scene that exceeds its motion budget **or** that is never still (`stillnessRatio < 0.12`).
+
+This is a motion **ceiling**, and it is the mirror image of the motion *floor* gate on the
+@itsac.ai side. Both are real faults; a format needs whichever one it actually fails. ZoneOut
+fails the ceiling.
+
+Measured before and after on the same scene, same facts, same layout, only timing changed:
+
+| | v1 | v2 |
+|---|---|---|
+| peak simultaneous cues | 4 | **1** |
+| never-stopping sine drivers | 6 | **0** |
+| stillness ratio | ~0 | **0.209** |
+| overshoot easing | 2 plates | **none** |
+
+`priority-1877-v1.html` is kept beside the rewrite so the difference stays visible.
+
+## Scene types
+
+Scenes are parameterised where the argument shape recurs, so each is a TYPE rather than a
+one-off build.
+
+**`origin-line.html` — the origin beat.** Somebody wrote it down, everybody copied it,
+somebody corrected it, and the copying carried on anyway. Set `ORIGIN`, `CORRECTION`,
+`N_COPIES`, `N_AFTER` and it serves any video in the correction lane.
+
+This is the highest-value scene in the library, because SKILL.md is explicit that the origin
+beat *is* the product — "the only thing a stock clip and a synthetic voice cannot produce" —
+that it is the follow signal and the originality defence, and that it currently sits at beat
+6 where roughly two-thirds of viewers never arrive. It is also literally unshowable with
+stock: there is no clip of "a claim propagating uncorrected for 260 years".
+
+⚠ **Solve on-screen positions, do not nudge them.** The frame is ~3.49 units wide at z=9
+(fov 38, 9:16), so x runs −1.74..1.74. A "STILL REPEATED" label was placed by eye twice and
+clipped the frame edge both times. The second failure is what made the real answer obvious:
+**the label was never needed** — grey ticks continuing past the gold correction marker
+already say it in the colour law, and the voice says it out loud in the same beat, which
+`evidence-format.md` forbids as doubled on screen. It was deleted rather than repositioned.
+
+**`priority-1877.html` — the priority rule.** Two names for one animal, older wins on a
+filing rule. Built for seq 44.
