@@ -1367,3 +1367,77 @@ entry-level jobs in some roles and not others: the Stanford study, read properly
 
 **Metrics:** — (carousel reach is the open question: Prompt Drop 03 reached 14 against 91 for a
 reel. If this lands near 14 too, the format is the problem, not the story or the hook.)
+
+---
+
+## 2026-08-24 · Engine maintenance · no post · all four video engines
+
+Not a content day. AC sent three render screenshots — type overlapping through a
+transition, a figure with its last glyph sliced, and motion he called "very unsmooth" —
+and all three turned out to be engine or pipeline faults rather than anything in the
+timelines or the copy.
+
+### Every cut was painting two scenes on top of each other
+
+The scene windows in `SCENES` genuinely overlap: a scene's `start+dur` runs past the next
+scene's `start` by 0.1s on the News reel and Spine, 0.15s on TOD. The cross-fade rendered
+BOTH scenes through that window, each at 0.2-0.36 opacity, which stacked two full-bleed
+layouts AND dipped the luminance at every cut. Probing every scene boundary in all four
+engines found **145 frames** rendering more than one scene. The trailer contributed 13 of
+those on its own: it already hard-cut, but its window was inclusive at both ends while its
+shots are contiguous, so any frame landing exactly on a boundary drew two shots at full
+strength.
+
+Every scene now owns the half-open window `[start, next.start)`. Re-probed: **0 overlapping
+frames across 511 boundary samples.** TOD and Spine also picked up the loop seam the News
+engine got on Day 30 — a hard cut requires it, or the last scene vanishes at its end and
+the render tail encodes black. `SCENES` timings are untouched everywhere, so every audio
+cue map still matches and no variant needs retiming.
+
+### The odometer mask has been shearing glyph ink, and it took TWO fixes
+
+`.odc` carried bottom bleed only, so ink overhanging a character's ADVANCE box was cut off
+at the sides. On the stress string `$725B`: **margin lost 63.7px of ink, base 51.2px,
+vault 10.2px, column 2.0px**, crest clean. Widening the mask alone did not fix margin or
+column, because there are two independent clippers and only one of them is the mask:
+
+1. `.odc{overflow:hidden}` shears the ink outright;
+2. `.odc>i` paints with `background-clip:text` over a transparent fill, so ink outside the
+   gradient box is painted with **nothing at all** and vanishes even with the mask open.
+
+Both now carry 0.16em of horizontal bleed, cancelled by an equal negative margin so layout
+and the cascade are unchanged. Re-measured: 0.0px lost on all five themes. The TOP edge
+stays clipped deliberately — that is the masked reveal the digits descend through, and
+bleeding it would leak the incoming glyph early.
+
+Worth remembering: this is the same blind spot gate 2 was built for. Comparing the mask box
+against the glyph BOX said clean every time, because the box is exactly the advance width.
+Only measuring true ink extents against it found the shear.
+
+### "Unsmooth" was the pipeline, not the animation
+
+Three causes, none in the timelines. Frames rendered at **30fps**, below what the type moves
+and the continuous push-in need. Frames written as **JPEG q95** — a lossy intermediate that
+libx264 then encoded again, two generations of loss on gradients that are almost all
+gold-on-black. And the shutter fired immediately after `seek()` with no forced compositor
+commit, so a capture could read the previous frame's layer state for anything declaring
+`will-change` (`.el` and `.odc>i` both do) — a duplicated or half-updated frame at random,
+invisible to QA because QA shoots one frame at a time.
+
+Now 60fps, lossless PNG frames, and a double `requestAnimationFrame` before every capture;
+the encode gained explicit bt709 tags and CRF 16. QA-mode filenames were deliberately left
+alone — gate 7 parses them as tenths of a second and renaming them corrupts the contact
+sheet.
+
+**Gates:** 1, 2 and 6 CLEAN on the News reel; 6 CLEAN on TOD and Spine. Gate 2 reports one
+17px-vs-18px gap on TOD scene E — it reproduces identically on the unpatched files, so it is
+pre-existing and was left alone rather than folded into this change.
+
+**Open:** with the ghosting gone, scenes are visibly composing over ~1.25s (element delays
+0.05→0.95 on a 2.5s scene) — the cross-fade had been covering that hole. AC is watching a
+draft before deciding whether to tighten the entrance cascades.
+
+**Files:** engine templates + `render_frames.js` + `build_video.sh`. Pushed to
+`claude/ac-studio-animation-workflow-rc2yxp`.
+
+**Metrics:** — (engine change, nothing posted)

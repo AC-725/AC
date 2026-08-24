@@ -78,4 +78,14 @@ fi
 
 rm -rf "$FRAMES"; rm -f "$WORK/master_$TAG.wav"
 echo "==> Done: $OUT"
-ffprobe -v error -show_entries format=duration:stream=codec_type,width,height -of default=noprint_wrappers=1 "$OUT" || true
+# VERIFY (fixed 2026-08-24). This called ffprobe unconditionally, and imageio-ffmpeg -
+# the wheel the block at the top of this file resolves ffmpeg from - ships ffmpeg ONLY.
+# So on any container without a system ffprobe the verify step printed
+# "ffprobe: command not found", swallowed it via `|| true`, and the build reported
+# success having checked nothing. Fall back to parsing ffmpeg's own stream banner,
+# which is always available because the encode just used it.
+if command -v ffprobe >/dev/null 2>&1; then
+  ffprobe -v error -show_entries format=duration:stream=codec_type,width,height -of default=noprint_wrappers=1 "$OUT" || true
+else
+  ffmpeg -hide_banner -i "$OUT" 2>&1 | grep -E "^ +(Duration|Stream)" || true
+fi
