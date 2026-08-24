@@ -1,0 +1,73 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"./three.module.min.js"}}</script>
+<style>
+@font-face{font-family:'Poppins';src:url('theme-candidates/fonts/Poppins-600.ttf');font-weight:600}
+*{margin:0;box-sizing:border-box}
+html,body{width:1080px;height:1920px;background:#0A0A0A;overflow:hidden;position:relative;
+  font-family:'Poppins',sans-serif}
+/* The canvas sits UNDER the copy, exactly where a baked frame slot would sit. Same
+   z-order contract, so swapping baked <-> live changes one line, not the layout. */
+#gl{position:absolute;left:0;top:560px;width:1080px;height:620px;z-index:1}
+.copy{position:absolute;z-index:3;width:1080px;text-align:center}
+#kicker{top:150px;color:#E7C765;font-size:30px;letter-spacing:.34em;font-weight:600}
+#odo{top:1240px;color:#E7C765;font-size:210px;font-weight:600;letter-spacing:-2px}
+#label{top:1500px;color:#B7AE9C;font-size:34px;letter-spacing:.06em}
+#tag{position:absolute;bottom:44px;width:1080px;text-align:center;color:#4a4640;
+  font-size:22px;letter-spacing:.2em;z-index:3}
+</style></head><body>
+<div class="copy" id="kicker">AI NEWS</div>
+<canvas id="gl" width="1080" height="620"></canvas>
+<div class="copy" id="odo">0%</div>
+<div class="copy" id="label">of the cost, same benchmark</div>
+<div id="tag">LIVE seek(t) CANVAS — ROUTE 2 PROOF</div>
+<script type="module">
+/* ROUTE 2 PROOF — a live three.js canvas inside a reel scene, driven by seek(t).
+ *
+ * THE ARGUMENT FOR THIS ROUTE, in one line: the bars below are built from CONTENT, not
+ * from whatever was baked. Change the numbers and the animation changes with them. A
+ * baked sequence cannot do that - it rises the same way whether the figure is 3% or 300%.
+ *
+ * THE ARGUMENT AGAINST, stated just as plainly:
+ *   - three.js now ships inside a production reel (~750KB across both files)
+ *   - every gate re-runs against a live canvas: 1/2/6 geometry, 3 architecture, 4 motion
+ *     floor, 5 cut budget, 7 filmstrip, plus the 140px crop
+ *   - gate 4 is the subtle one. A live canvas trivially clears the motion floor, which
+ *     means it can also MASK a scene going static behind it. That exact fault has bitten
+ *     before: gate 4 was passing on scene FADES until the loop-seam fix removed them and
+ *     four dead windows appeared at once.
+ *   - a black canvas passes every geometry gate. Non-black has to be checked explicitly.
+ *
+ * Ship behind GL='off' and prove it against a baked twin, so the battery has a control. */
+import * as THREE from 'three';
+import { PALETTE, stage, clamp, ease } from './lib/vault.js';
+import { bars } from './lib/moves.js';
+
+/* This is the part a baked frame cannot have: real numbers from the story. */
+const CONTENT = {
+  proof: { value: 83, suffix: '%' },
+  series: [0.22, 0.31, 0.45, 0.58, 0.83],   // <- drives BOTH the bars and the odometer
+  hot: 4,
+};
+
+const W = 1080, H = 620;
+const { renderer, scene, camera } = stage(THREE, document.getElementById('gl'),
+  { w: W, h: H, fov: 50, alpha: true });
+camera.position.set(0, 1.15, 6.0);
+camera.lookAt(0, 1.0, 0);
+
+const move = bars(THREE, { values: CONTENT.series, hot: CONTENT.hot, gap: 0.62, maxH: 2.5 });
+scene.add(move.group);
+
+const odo = document.getElementById('odo');
+
+window.__TOTAL = 2.6;                       // scene C's real duration
+window.seek = (t) => {
+  const p = clamp(t / window.__TOTAL);
+  move.at(p);                               // the SAME builder the baked route uses
+  const shown = Math.round(CONTENT.proof.value * ease(clamp(p / 0.72)));
+  odo.textContent = shown + CONTENT.proof.suffix;
+  renderer.render(scene, camera);
+};
+window.seek(0);
+window.__READY = true; document.title = 'ready';
+</script></body></html>

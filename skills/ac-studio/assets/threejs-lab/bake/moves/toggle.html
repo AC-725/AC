@@ -1,0 +1,35 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8">
+<script type="importmap">{"imports":{"three":"../../three.module.min.js"}}</script>
+<style>html,body{margin:0;background:transparent;overflow:hidden}canvas{display:block}</style>
+</head><body><canvas id="gl" width="620" height="520"></canvas>
+<script type="module">
+/* MOVE · toggle — the shift beat. The wrong card greys and recedes, the right one comes forward.
+ *
+ * Baked to assets/baked-moves/toggle_NN.png at 620x520 RGBA (transparent), which is the
+ * CSS box the slot actually uses - NOT the full 1080x1920 frame. The mark open already
+ * proves the pattern: 720x792 frames in a 224x246 box. Baking at slot size is what keeps
+ * a registry of moves from becoming hundreds of megabytes of PNG.
+ *
+ * Contract: window.__TOTAL / window.seek(t) / window.__READY, same as render_frames.js,
+ * so this file also drops straight into the reel engine if the live route is taken. */
+import * as THREE from 'three';
+import { PALETTE, stage } from '../../lib/vault.js';
+import { toggle } from '../../lib/moves.js';
+
+const W = 620, H = 520;
+const { renderer, scene, camera } = stage(THREE, document.getElementById('gl'),
+  { w: W, h: H, fov: 50, alpha: true });
+camera.position.set(0, 0, 6.6);
+camera.lookAt(0, 0, 0);
+
+const move = toggle(THREE);
+scene.add(move.group);
+
+window.__TOTAL = 1;
+window.seek = (t) => {
+  move.at(Math.min(1, Math.max(0, t)));
+  renderer.render(scene, camera);
+};
+window.seek(0);
+window.__READY = true; document.title = 'ready';
+</script></body></html>

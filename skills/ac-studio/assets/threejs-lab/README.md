@@ -290,3 +290,84 @@ A three.js skill pack is installed. Reach for the reference rather than re-deriv
 `markInstanced()` in `lib/vault.js` came out of that pack: `signoff_draft.html` built a
 Group of ~4,000 individual `Mesh`es for a shape that never changes, which is ~96,000 draw
 calls across a 24-frame bake. One `InstancedMesh` makes it 24.
+
+---
+
+## 3D MOVES — three routes drafted (2026-08-24)
+
+AC asked for all three routes drafted rather than one picked. They are rungs of one ladder,
+and building them surfaced a division that wasn't obvious up front — see COST below.
+
+### Route 3 · beat moves — `lib/moves.js` + `bake/moves/*.html`
+
+Three moves replacing flat DOM motion on the beats that carry the argument:
+
+| move | scene | replaces |
+|---|---|---|
+| `toggle` | B · the shift | `strikeB.style.transform='scaleX(...)'` — a 2D line growing sideways |
+| `bars` | C · the proof | nothing; the odometer currently counts against an empty frame |
+| `dolly` | D · the rule | a static callback |
+
+Every builder returns `{ group, at(p) }`. That one shape is what lets the SAME builder serve
+both the baked and the live route — `bake/moves/*.html` steps `p` and screenshots;
+`reel.template.html` would call `at(p)` inside `seek(t)`. No move is written twice.
+
+### Route 1 · the registry — `bake_vault.js --moves`
+
+`MOVES[]` in `bake_vault.js` carries name, slot size, frame budget and target scene. Bakes to
+`assets/baked-moves/<name>_NN.png`. Adding a move is one registry row plus one HTML file.
+
+**Bake at the slot's CSS box size, never the full frame.** The mark open already proved it:
+720×792 frames in a 224×246 box. `bars` and `toggle` are 72K each for 18 frames because of it.
+
+### Route 2 · live canvas — `live-proof.html`
+
+A real three.js canvas inside a reel scene, driven by `seek(t)`, rendering correctly through
+`render_frames.js`'s exact launch args. Bars are built from `CONTENT.series` and the odometer
+counts to the same figure that sets the hot bar's height — **the animation knows the story.**
+A baked sequence rises identically whether the number is 3% or 300%.
+
+Costs, stated rather than buried: three.js ships in a production reel (~750KB); every gate
+re-runs against a live canvas; and gate 4 is the subtle one — a live canvas trivially clears
+the motion floor, so it can MASK a scene going static behind it. That fault has bitten before,
+when gate 4 was passing on scene fades until the loop-seam fix removed them and four dead
+windows appeared at once. Ship behind `GL='off'` with a baked twin as the control.
+
+### COST — the division that decides which route a move belongs to
+
+Measured on the first three:
+
+| move | frames | size | total |
+|---|---|---|---|
+| `bars` | 18 @ 560×420 | 2.5K | 72K |
+| `toggle` | 18 @ 620×520 | ~4K | 72K |
+| **`dolly`** | 20 @ **1080×1920** | 37K | **736K** |
+
+`dolly` is **83% of the whole library on its own**, and not because it is more complex — it is
+a *camera* move, so it changes every pixel and cannot be baked at slot size. That generalises:
+
+> **Object moves bake cheaply. Camera moves do not, and belong on the live route.**
+
+So routes 1 and 2 are not competing options. `bars`, `toggle`, the icon library and anything
+else that occupies a slot want the baked registry. `dolly`, orbit reveal, camera flight (19)
+and motion trails want the live canvas, where a camera move costs nothing extra.
+
+### Two defects the contact sheet caught that the metrics did not
+
+Both were found by looking at the render, which is the standing rule and it earned its keep:
+
+1. **The demoted card was invisible.** `toggle`'s greyed card faded to 0.28 opacity and read
+   as *deleted* rather than *superseded* — the beat's whole point is that the wrong version is
+   still there. Floored at 0.5. Same lesson the theme candidates learned when dim nodes at
+   `0x4a4030` turned out invisible on a phone.
+2. **The dolly zoom did not exist.** The first bake drove the camera over a bare floor and
+   frames 0 and 19 were indistinguishable. A dolly zoom is a RELATIONSHIP — a subject holding
+   its size while the background stretches — so with no subject there is no effect. It now
+   carries a card at the subject plane.
+
+### NOT integrated into `reel.template.html` yet
+
+Deliberate. The moves are baked and readable but no shipping reel references them, so nothing
+changed for Day 38 or anything already queued. Integration is a `MOVES3D` constant, three CSS
+slots and a `moveTick(t)` beside the existing `vaultTick(t)` — the same shape that wired the
+mark open. It waits on AC reading the sheets.

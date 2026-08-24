@@ -25,6 +25,20 @@ const HERE = __dirname;
 const SHIPPED = path.resolve(HERE, '..', 'baked-vault');
 
 const check = process.argv.includes('--check');
+const movesOnly = process.argv.includes('--moves');
+
+/* THE MOVE REGISTRY (route 1). Each entry bakes to assets/baked-moves/<name>_NN.png at
+ * the CSS box size its slot actually uses, not the full frame - the mark open already
+ * proves the pattern (720x792 frames in a 224x246 box). Baking at slot size is the
+ * difference between a usable library and hundreds of megabytes of PNG.
+ *
+ * `scene` is the reel scene the move is designed for. `frames` is its own frame budget:
+ * a move that only has to read once wants fewer frames than one carrying a whole beat. */
+const MOVES = [
+  { name: 'bars',   w: 560,  h: 420,  frames: 18, scene: 'C', note: 'proof - bars rise with the odometer' },
+  { name: 'toggle', w: 620,  h: 520,  frames: 18, scene: 'B', note: 'shift - wrong card greys and recedes' },
+  { name: 'dolly',  w: 1080, h: 1920, frames: 20, scene: 'D', note: 'rule - dolly zoom on the ground' },
+];
 const OUT = check
   ? fs.mkdtempSync(path.join(require('os').tmpdir(), 'vaultbake-'))
   : path.resolve(process.argv[2] || SHIPPED);
@@ -44,9 +58,33 @@ async function openPage(browser, file, w, h) {
   return page;
 }
 
+async function bakeMoves(browser) {
+  const dir = check ? path.join(OUT, 'moves') : path.resolve(HERE, '..', 'baked-moves');
+  fs.mkdirSync(dir, { recursive: true });
+  for (const m of MOVES) {
+    const page = await openPage(browser, path.join('moves', `${m.name}.html`), m.w, m.h);
+    const cv = await page.$('canvas');
+    for (let k = 0; k < m.frames; k++) {
+      await page.evaluate(t => window.seek(t), k / (m.frames - 1));
+      await cv.screenshot({ path: path.join(dir, `${m.name}_${String(k).padStart(2, '0')}.png`),
+        omitBackground: true });
+    }
+    await page.close();
+    console.log(`move ${m.name.padEnd(7)}: ${m.frames} frames ${m.w}x${m.h}  -> scene ${m.scene}  (${m.note})`);
+  }
+  return dir;
+}
+
 (async () => {
   fs.mkdirSync(OUT, { recursive: true });
   const browser = await chromium.launch({ args: ARGS });
+
+  if (movesOnly) {
+    const dir = await bakeMoves(browser);
+    await browser.close();
+    console.log(`\nwrote ${fs.readdirSync(dir).length} move frames to ${dir}`);
+    return;
+  }
 
   // ---- open: 20 transparent frames, assemble 0 -> 1 ----
   const op = await openPage(browser, 'open.html', 720, 792);
