@@ -1,6 +1,12 @@
 # Firecrawl CLI scratch output (scrape/crawl results)
 .firecrawl/
 
+# Command-deck deliverables (rendered posts, briefs, client files). These reach
+# AC via SendUserFile; client files especially must never land in the repo.
+outbox/
+
+__pycache__/
+
 # Never commit credentials. EXA_API_KEY / FIRECRAWL_API_KEY belong in the
 # environment's variable settings, not in the repo.
 .env
