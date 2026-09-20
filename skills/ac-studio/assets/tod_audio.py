@@ -10,7 +10,7 @@ Usage: python synth_audio.py [out.wav]
 """
 import numpy as np, wave, sys
 
-SR=48000; DUR=31.6; N=int(SR*DUR)
+SR=48000; DUR=23.5; N=int(SR*DUR)
 master=np.zeros((N,2))
 OUT=sys.argv[1] if len(sys.argv)>1 else 'master.wav'
 
@@ -64,33 +64,46 @@ def place(snd,t,gain=1.0,pan=0.0,haas=0.0):
         j=i+int(haas*SR); s2=snd[:max(0,N-j)]; master[j:j+len(s2),1]+=s2*r
     else: master[i:i+len(seg),1]+=seg*r
 
-# ---- CUES (absolute seconds; scene starts A0 B4.85 C8.85 D12.65 E17.35 F23.85 G27.15) ----
-# A hook + build
+# ---- CUES (absolute seconds) ----
+# RETIMED 2026-08-11 (Day 27) with the SCENES map in tod.template.html.
+# Scene starts: A0 B3.25 C6.55 D9.70 E12.75 F17.10 G19.75  (was A0 B4.85 C8.85
+# D12.65 E17.35 F23.85 G27.15). Deltas are PER SCENE, not one constant:
+#   A 0.00 - B -1.60 - C -2.30 - D -2.95 - E -4.60 - F -6.75 - G -7.40
+# Scene C's pops and scene E's step cues were additionally respread to match the
+# new visual stagger (C cards 0.55s apart, E steps 1.35s apart).
+
+# A hook + build (unchanged - scene A keeps its timing, only its OUT point moved)
 place(WH,0.05,0.5,haas=0.012); place(PO,0.20,0.35)
 for k,tt in enumerate(np.arange(0.40,1.52,0.11)): place(TY,tt,0.22,pan=(-0.15 if k%2 else 0.15))
 place(WH,1.72,0.30)
-for tt,g in [(1.95,0.4),(2.15,0.4),(2.40,0.4),(2.55,0.4),(2.75,0.55)]: place(PO,tt,g)
-place(DI,2.80,0.35); place(IM,3.05,0.5); place(IM,3.32,0.32)
-# B number + stamp
-place(WH,4.90,0.5,haas=0.012); place(PO,5.15,0.35)
-tt=5.15; dt=0.16
-while tt<6.5: place(TK,tt,0.30); dt=max(0.028,dt*0.82); tt+=dt
-place(IM,6.55,0.62); place(ST,7.45,0.7)
-# C icon grid
-place(WH,8.90,0.5,haas=0.012)
-for tt in [9.20,9.55,9.90,10.25]: place(PO,tt,0.5)
-# D chart
-place(WH,12.70,0.5,haas=0.012); place(RI,12.90,0.42)
-tt=12.95
-while tt<14.02: place(TK,tt,0.26); tt+=0.11
-place(IM,14.08,0.6); place(DI,14.18,0.45)
-# E steps
-place(WH,17.40,0.5,haas=0.012)
-for ct,dtk in [(17.75,17.92),(19.45,19.62),(21.15,21.32)]: place(CL,ct,0.42); place(TK,dtk,0.3)
-# F rule
-place(WH,23.90,0.5,haas=0.012); place(s_whoosh(0.3),24.28,0.4); place(PO,24.75,0.5); place(IM,25.05,0.5)
-# G cta
-place(WH,27.20,0.32); place(DI,27.45,0.5); place(PO,28.05,0.45); place(DI,28.15,0.3)
+for tt,g in [(1.35,0.4),(1.55,0.4),(1.80,0.4),(1.95,0.4),(2.15,0.55)]: place(PO,tt,g)
+place(DI,2.20,0.35); place(IM,2.45,0.5); place(IM,3.28,0.32)
+
+# B oversized number + stamp
+place(WH,3.30,0.5,haas=0.012); place(PO,3.55,0.35)
+tt=3.55; dt=0.16
+while tt<4.90: place(TK,tt,0.30); dt=max(0.028,dt*0.82); tt+=dt
+place(IM,4.95,0.62); place(ST,5.40,0.7)
+
+# C four build cards - respread to 0.55s spacing
+place(WH,6.60,0.5,haas=0.012)
+for tt in [6.90,7.45,8.00,8.55]: place(PO,tt,0.5)
+
+# D old-vs-now chart; the caption pop now lands late, with the visual
+place(WH,9.75,0.5,haas=0.012); place(RI,9.95,0.42)
+tt=10.00
+while tt<11.07: place(TK,tt,0.26); tt+=0.11
+place(IM,11.13,0.6); place(DI,11.23,0.45); place(PO,11.65,0.45)
+
+# E three steps - 1.35s apart
+place(WH,12.80,0.5,haas=0.012)
+for ct,dtk in [(13.15,13.32),(14.25,14.42),(15.35,15.52)]: place(CL,ct,0.42); place(TK,dtk,0.3)
+
+# F the rule
+place(WH,17.15,0.5,haas=0.012); place(s_whoosh(0.3),17.53,0.4); place(PO,18.00,0.5); place(IM,18.30,0.5)
+
+# G CTA + loop
+place(WH,19.80,0.32); place(DI,20.05,0.5); place(PO,20.65,0.45); place(DI,20.75,0.3)
 
 # ambient air bed (very low)
 t=np.arange(N)/SR

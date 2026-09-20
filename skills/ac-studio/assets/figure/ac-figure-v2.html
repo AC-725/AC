@@ -1,0 +1,99 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-Regular.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-SemiBold.ttf');font-weight:600}
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:1080px;background:#0A0A0A;font-family:'Poppins';color:#EFEAE0}
+:root{--gold:#E7C765;--gl:#F4DF95;--stone:#8A8580}
+.row{padding:36px 60px 30px;border-bottom:1px solid rgba(231,199,101,.13)}
+.lbl{font-size:20px;letter-spacing:5px;color:var(--gold);font-weight:600;text-transform:uppercase}
+.nm{font-size:29px;font-weight:600;margin:7px 0 3px}
+.ds{font-size:19px;color:var(--stone);line-height:1.45;max-width:800px}
+.stage{display:flex;align-items:flex-end;gap:56px;margin-top:22px}
+.tiny{border-left:1px solid rgba(231,199,101,.2);padding-left:42px}
+.cap{font-size:15px;letter-spacing:3px;color:var(--stone);text-transform:uppercase;margin-top:10px}
+svg{overflow:visible}
+.st{fill:none;stroke:#E7C765;stroke-width:5.5;stroke-linecap:round;stroke-linejoin:round}
+.thin{fill:none;stroke:#E7C765;stroke-width:3.5;stroke-linecap:round}
+.sun{fill:#E7C765}.car{fill:#F4DF95}
+.wface{fill:#12100A;stroke:#F4DF95;stroke-width:3.5}
+.whand{stroke:#F4DF95;stroke-width:2.5;stroke-linecap:round}
+.bub{border:2px solid rgba(231,199,101,.5);border-radius:14px;padding:15px 22px;font-size:25px;background:#12100A;align-self:center}
+.carline{display:inline-block;width:3px;height:25px;background:#E7C765;vertical-align:-4px;margin-left:3px}
+</style>
+<!-- THE FIGURE, v2. Head r40 @ (100,52). Eye level y≈46. -->
+<defs id="figdefs"></defs>
+</head><body>
+
+<div class="row"><div class="lbl">V2 · pose 1</div><div class="nm">The presenter</div>
+<div class="ds">Right arm up toward the content, left arm relaxed carrying the watch. Sunglasses now sit at eye level, span 60% of the head, and have temple arms out to the rim — that is what makes them read as glasses instead of a visor. Watch has a face, a crown and a band.</div>
+<div class="stage">
+<svg width="210" height="280" viewBox="0 0 210 280">
+  <!-- head + caret mouth -->
+  <circle cx="100" cy="52" r="40" class="st"/>
+  <g id="shades">
+    <rect x="72" y="40" width="24" height="13" rx="6" class="sun"/>
+    <rect x="104" y="40" width="24" height="13" rx="6" class="sun"/>
+    <path class="thin" d="M96 45.5 h8"/>
+    <path class="thin" d="M72 45 L62 42"/><path class="thin" d="M128 45 L138 42"/>
+  </g>
+  <rect x="97" y="62" width="6" height="17" class="car"/>
+  <!-- body -->
+  <path class="st" d="M100 92 v92"/>
+  <!-- right arm raised, presenting -->
+  <path class="st" d="M100 112 L146 92 L168 64"/>
+  <!-- left arm relaxed, slight bend, watch on wrist -->
+  <path class="st" d="M100 116 L64 146 L60 170"/>
+  <g id="watch" transform="translate(61,157) rotate(10)">
+    <path class="thin" d="M-1 -12 l1 -5"/><path class="thin" d="M-1 12 l1 5"/>
+    <circle cx="0" cy="0" r="8.5" class="wface"/>
+    <path class="whand" d="M0 0 L0 -4.5"/><path class="whand" d="M0 0 L3 1.5"/>
+    <circle cx="10.5" cy="0" r="1.8" class="sun"/>
+  </g>
+  <!-- legs, easy stance -->
+  <path class="st" d="M100 184 L64 246"/><path class="st" d="M100 184 L138 246"/>
+</svg>
+<div class="bub">One real AI trend a day<span class="carline"></span></div>
+<div class="tiny"><svg width="105" height="140" viewBox="0 0 210 280"><use href="#p1"/>
+  <circle cx="100" cy="52" r="40" class="st"/>
+  <rect x="72" y="40" width="24" height="13" rx="6" class="sun"/><rect x="104" y="40" width="24" height="13" rx="6" class="sun"/>
+  <path class="thin" d="M96 45.5 h8"/><path class="thin" d="M72 45 L62 42"/><path class="thin" d="M128 45 L138 42"/>
+  <rect x="97" y="62" width="6" height="17" class="car"/>
+  <path class="st" d="M100 92 v92"/><path class="st" d="M100 112 L146 92 L168 64"/><path class="st" d="M100 116 L64 146 L60 170"/>
+  <g transform="translate(61,157) rotate(10)"><path class="thin" d="M-1 -12 l1 -5"/><path class="thin" d="M-1 12 l1 5"/><circle cx="0" cy="0" r="8.5" class="wface"/><path class="whand" d="M0 0 L0 -4.5"/><path class="whand" d="M0 0 L3 1.5"/><circle cx="10.5" cy="0" r="1.8" class="sun"/></g>
+  <path class="st" d="M100 184 L64 246"/><path class="st" d="M100 184 L138 246"/>
+</svg><div class="cap">at 140px</div></div></div></div>
+
+<div class="row" style="border-bottom:none"><div class="lbl">V2 · pose 2</div><div class="nm">Hands down, collar up</div>
+<div class="ds">Both arms easy, watch at the hip line, and a two-stroke collar hint at the neck. Calmer, closer to quiet luxury. Same glasses, same caret.</div>
+<div class="stage">
+<svg width="210" height="280" viewBox="0 0 210 280">
+  <circle cx="100" cy="52" r="40" class="st"/>
+  <rect x="72" y="40" width="24" height="13" rx="6" class="sun"/><rect x="104" y="40" width="24" height="13" rx="6" class="sun"/>
+  <path class="thin" d="M96 45.5 h8"/><path class="thin" d="M72 45 L62 42"/><path class="thin" d="M128 45 L138 42"/>
+  <rect x="97" y="62" width="6" height="17" class="car"/>
+  <path class="thin" d="M88 96 L100 104 L112 96"/>
+  <path class="st" d="M100 92 v92"/>
+  <path class="st" d="M100 114 L62 138 L56 168"/>
+  <path class="st" d="M100 114 L138 138 L144 168"/>
+  <g transform="translate(143,157) rotate(-10)">
+    <path class="thin" d="M-1 -12 l1 -5"/><path class="thin" d="M-1 12 l1 5"/>
+    <circle cx="0" cy="0" r="8.5" class="wface"/>
+    <path class="whand" d="M0 0 L0 -4.5"/><path class="whand" d="M0 0 L3 1.5"/>
+    <circle cx="-10.5" cy="0" r="1.8" class="sun"/>
+  </g>
+  <path class="st" d="M100 184 L64 246"/><path class="st" d="M100 184 L138 246"/>
+</svg>
+<div class="bub">One real AI trend a day<span class="carline"></span></div>
+<div class="tiny"><svg width="105" height="140" viewBox="0 0 210 280">
+  <circle cx="100" cy="52" r="40" class="st"/>
+  <rect x="72" y="40" width="24" height="13" rx="6" class="sun"/><rect x="104" y="40" width="24" height="13" rx="6" class="sun"/>
+  <path class="thin" d="M96 45.5 h8"/><path class="thin" d="M72 45 L62 42"/><path class="thin" d="M128 45 L138 42"/>
+  <rect x="97" y="62" width="6" height="17" class="car"/>
+  <path class="thin" d="M88 96 L100 104 L112 96"/>
+  <path class="st" d="M100 92 v92"/>
+  <path class="st" d="M100 114 L62 138 L56 168"/><path class="st" d="M100 114 L138 138 L144 168"/>
+  <g transform="translate(143,157) rotate(-10)"><path class="thin" d="M-1 -12 l1 -5"/><path class="thin" d="M-1 12 l1 5"/><circle cx="0" cy="0" r="8.5" class="wface"/><path class="whand" d="M0 0 L0 -4.5"/><path class="whand" d="M0 0 L3 1.5"/><circle cx="-10.5" cy="0" r="1.8" class="sun"/></g>
+  <path class="st" d="M100 184 L64 246"/><path class="st" d="M100 184 L138 246"/>
+</svg><div class="cap">at 140px</div></div></div></div>
+
+</body></html>

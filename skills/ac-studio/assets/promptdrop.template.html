@@ -1,0 +1,440 @@
+<!doctype html><html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:'Gloock';src:url('fonts/Gloock-Regular.ttf');font-weight:400}
+@font-face{font-family:'ISI';src:url('fonts/InstrumentSerif-Italic.ttf');font-weight:400;font-style:italic}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-400.ttf');font-weight:400}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-500.ttf');font-weight:500}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-600.ttf');font-weight:600}
+@font-face{font-family:'Poppins';src:url('fonts/Poppins-700.ttf');font-weight:700}
+:root{
+  --ground:#0A0A0A; --gold:#C9A23F; --goldlit:#E7C765; --fig:#E4C468;
+  --cream:#F2EDE1; --body:#E4DDCE; --dim:#8A8371; --card:#12100A;
+  --hair:rgba(231,199,101,.14);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:#1a1a1a}
+#frame{position:relative;width:1080px;height:1350px;background:var(--ground);
+  overflow:hidden;font-family:'Poppins';color:var(--body);
+  -webkit-font-smoothing:antialiased}
+
+/* ---------- CHROME band 0-120 ---------- */
+#chrome{position:absolute;left:0;top:0;width:1080px;height:120px;overflow:hidden}
+.ck{position:absolute;top:50px;font-family:'Poppins';font-weight:600;font-size:17px;
+  letter-spacing:4.6px;text-transform:uppercase}
+#ckL{left:64px;color:var(--gold)}
+#ckR{right:64px;color:var(--dim)}
+#ckL .dia{display:inline-block;width:9px;height:9px;border:1.4px solid var(--gold);
+  transform:rotate(45deg);margin-right:12px;vertical-align:1px}
+#hair{position:absolute;left:64px;top:110px;width:952px;height:1px;background:var(--hair)}
+
+/* ---------- META row ---------- */
+#meta{position:absolute;left:64px;top:224px;width:660px;height:26px;overflow:hidden;
+  font-weight:600;font-size:15px;letter-spacing:4.2px;text-transform:uppercase;color:var(--dim)}
+
+/* ---------- HEADLINE ---------- */
+#head{position:absolute;left:64px;top:264px;width:604px;max-height:200px;overflow:hidden;
+  font-family:'Gloock';font-weight:400;font-size:84px;line-height:1.045;
+  color:var(--cream);letter-spacing:-.4px}
+#head em{font-family:'ISI';font-style:italic;color:var(--goldlit);letter-spacing:0}
+
+/* ---------- 3D ANCHOR ---------- */
+#anchor{position:absolute;right:64px;top:252px;width:208px;height:208px;overflow:hidden;
+  display:flex;align-items:center;justify-content:center}
+#anchor img{max-width:100%;max-height:100%;display:block}
+#keyart{width:100%;height:100%;display:none}
+
+/* ---------- slide 8 credit footnote ---------- */
+#foot8{position:absolute;left:84px;top:1196px;width:760px;font-weight:600;font-size:14px;
+  letter-spacing:3.4px;text-transform:uppercase;color:#6E695C;display:none}
+
+/* ---------- THE FOUR LINES (rule slide hero) ---------- */
+#four{position:absolute;left:84px;top:520px;width:900px;font-family:'Gloock';
+  font-size:52px;line-height:1.34;color:var(--cream);letter-spacing:-.3px}
+#four.five{font-size:44px;line-height:1.30}
+#four div{position:relative;padding-left:44px}
+#four div:before{content:'';position:absolute;left:0;top:34px;width:22px;height:1px;
+  background:rgba(231,199,101,.42)}
+#four div.last{color:var(--goldlit)}
+#four div.last:before{background:var(--goldlit);height:2px}
+
+/* ---------- PROMPT CARD ---------- */
+#cardlab{position:absolute;left:84px;top:492px;width:820px;font-weight:600;font-size:14px;
+  letter-spacing:4.2px;text-transform:uppercase;color:var(--gold)}
+#card{position:absolute;left:84px;top:492px;width:912px;
+  background:var(--card);border:1px solid rgba(201,162,63,.5);border-radius:3px;
+  padding:44px 48px 46px}
+#card.plain{background:none;border:none;border-radius:0;padding:0;width:876px}
+#quote{font-family:'Gloock';font-size:56px;line-height:.5;color:var(--gold);
+  height:30px;margin-bottom:22px}
+#cardtx{font-family:'Poppins';font-weight:400;font-size:33px;line-height:1.52;
+  color:var(--body)}
+#cardtx b{font-weight:400;color:var(--goldlit)}
+
+/* ---------- YOU GET BACK ---------- */
+#gb{position:absolute;left:84px;top:1016px;width:748px;max-height:132px;overflow:hidden}
+#gbl{font-weight:600;font-size:14px;letter-spacing:4.2px;text-transform:uppercase;
+  color:var(--gold);margin-bottom:14px}
+#gbt{font-family:'Poppins';font-weight:400;font-size:27px;line-height:1.46;color:var(--dim)}
+
+/* ---------- FLOOR BAR ---------- */
+#floor{position:absolute;left:0;top:1286px;width:1080px;height:64px;background:#111009;
+  overflow:hidden}
+#seg{position:absolute;left:0;top:0;height:64px;background:var(--gold)}
+#count{position:absolute;right:84px;bottom:19px;font-weight:600;font-size:15px;
+  letter-spacing:2.4px;color:var(--dim)}
+
+/* ---------- FIGURE ---------- */
+#fig{position:absolute;width:112px;height:160px}
+#fig svg{width:100%;height:100%;overflow:visible}
+.s7{fill:none;stroke:var(--fig);stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round}
+.t7{fill:none;stroke:var(--fig);stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round}
+.t6{fill:none;stroke:var(--fig);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.hr{fill:none;stroke:var(--fig);stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.sun{fill:var(--fig)}.car{fill:#F4DF95}
+
+/* ---------- COVER ---------- */
+#cov{position:absolute;left:0;top:0;width:1080px;height:1350px;display:none}
+#stat{position:absolute;left:64px;top:206px;width:730px;
+  font-weight:600;font-size:21px;line-height:1.62;letter-spacing:2.1px;
+  text-transform:uppercase;color:var(--dim)}
+#stat b{color:var(--goldlit);font-weight:700}
+#title{position:absolute;left:60px;width:960px;font-family:'Gloock';font-weight:400;
+  color:var(--cream);line-height:.98;letter-spacing:-2px}
+#tsub{position:absolute;left:64px;width:812px;font-family:'Poppins';font-weight:400;
+  font-size:30px;line-height:1.44;color:var(--dim)}
+#covart{position:absolute;display:flex;align-items:center;justify-content:center}
+#covart img{max-width:100%;max-height:100%;display:block}
+#swipe{position:absolute;left:64px;top:1186px;font-weight:600;font-size:15px;
+  letter-spacing:4.2px;text-transform:uppercase;color:var(--dim)}
+#covmark{position:absolute;right:64px;top:1178px;width:34px;height:34px}
+
+/* ---------- CLOSE ---------- */
+#clo{position:absolute;left:0;top:0;width:1080px;height:1350px;display:none;text-align:center}
+#cmark{position:absolute;left:50%;top:196px;transform:translateX(-50%);width:104px;height:104px}
+#rule{position:absolute;left:130px;top:372px;width:820px;font-family:'Gloock';
+  font-size:70px;line-height:1.14;color:var(--cream);letter-spacing:-.5px}
+#rule em{font-family:'ISI';font-style:italic;color:var(--goldlit)}
+#kwrap{position:absolute;left:290px;top:680px;width:500px;background:var(--card);
+  border:1px solid rgba(201,162,63,.5);border-radius:3px;padding:30px 20px 34px}
+#klab{font-weight:600;font-size:14px;letter-spacing:5px;text-transform:uppercase;
+  color:var(--dim);margin-bottom:10px}
+#kword{font-family:'Gloock';font-size:90px;line-height:1;color:var(--goldlit);letter-spacing:2px}
+#cbody{position:absolute;left:190px;top:936px;width:700px;font-size:27px;line-height:1.5;
+  color:var(--dim)}
+#cfoot{position:absolute;left:64px;top:1186px;font-weight:600;font-size:15px;
+  letter-spacing:4.2px;text-transform:uppercase;color:var(--dim)}
+#chand{position:absolute;right:64px;top:1186px;font-weight:600;font-size:15px;
+  letter-spacing:4.2px;text-transform:uppercase;color:var(--dim)}
+</style></head><body>
+
+<div id="frame">
+  <div id="chrome">
+    <div class="ck" id="ckL"><span class="dia"></span><span id="packname">THE FINISH LINE</span></div>
+    <div class="ck" id="ckR">@ITSAC.AI</div>
+    <div id="hair"></div>
+  </div>
+
+  <div id="stage">
+    <div id="meta"></div>
+    <div id="head"></div>
+    <div id="anchor"><img id="anchorimg">
+      <svg id="keyart" viewBox="0 0 300 300">
+        <g fill="none" stroke="#E7C765" stroke-width="5"
+           stroke-linecap="round" stroke-linejoin="round">
+          <path d="M95 51 L139 95 L95 139 L51 95 Z"/>
+          <path d="M95 79 L111 95 L95 111 L79 95 Z"/>
+          <path d="M126 126 L232 232"/>
+          <path d="M188 188 L166 210"/>
+          <path d="M212 212 L190 234"/>
+        </g>
+      </svg>
+    </div>
+    <div id="foot8"></div>
+    <div id="cardlab"></div>
+    <div id="four"></div>
+    <div id="card"><div id="quote">&ldquo;</div><div id="cardtx"></div></div>
+    <div id="gb"><div id="gbl"></div><div id="gbt"></div></div>
+  </div>
+
+  <div id="cov">
+    <div id="stat"></div>
+    <div id="title"></div>
+    <div id="tsub"></div>
+    <div id="covart"><img id="covimg"></div>
+    <div id="swipe">Save this &middot; Swipe</div>
+    <svg id="covmark" viewBox="0 0 40 40"><path d="M20 2 L38 20 L20 38 L2 20 Z" fill="none" stroke="#C9A23F" stroke-width="2"/><circle cx="20" cy="20" r="3.2" fill="#C9A23F"/></svg>
+  </div>
+
+  <div id="clo">
+    <svg id="cmark" viewBox="0 0 40 40"><path d="M20 1.6 L38.4 20 L20 38.4 L1.6 20 Z" fill="none" stroke="#E7C765" stroke-width="1.6"/><circle cx="20" cy="20" r="3.4" fill="#E7C765"/></svg>
+    <div id="rule"></div>
+    <div id="kwrap"><div id="klab">Comment</div><div id="kword">KEY</div></div>
+    <div id="cbody"></div>
+    <div id="cfoot">No hype &middot; No jargon</div>
+    <div id="chand">One reply each</div>
+  </div>
+
+  <div id="fig"><svg viewBox="0 -10 210 300">
+    <g transform="rotate(-5 105 104)">
+      <circle cx="105" cy="58" r="46" class="s7"/>
+      <path class="hr" d="M64 40 Q70 9 105 8 Q141 9 146 40"/>
+      <path class="t6" d="M76 20 l4 -11"/><path class="t6" d="M92 11 l-2 -11"/>
+      <path class="t6" d="M110 8 l6 -10"/><path class="t6" d="M128 14 l9 -6"/>
+      <path class="t7" d="M113 38 Q123 33 133 37"/>
+      <rect x="74" y="45" width="26" height="14" rx="6" class="sun"/>
+      <rect x="110" y="45" width="26" height="14" rx="6" class="sun"/>
+      <path class="t7" d="M100 51 h10"/><path class="t7" d="M74 50 L61 46"/><path class="t7" d="M136 50 L149 46"/>
+      <rect x="102" y="70" width="6" height="18" class="car"/>
+    </g>
+    <path class="t7" d="M89 108 L96 122 L105 118"/><path class="t7" d="M121 108 L114 122 L105 118"/>
+    <circle cx="105" cy="127" r="2.5" class="sun"/>
+    <path class="s7" d="M105 104 v92"/>
+    <path class="s7" d="M105 128 L62 150 L88 172"/>
+    <path class="s7" d="M105 130 L142 160 L148 188"/>
+    <path class="s7" d="M105 196 L86 258"/><path class="s7" d="M105 196 L132 256"/>
+  </svg></div>
+
+  <div id="floor"><div id="seg"></div><div id="count"></div></div>
+</div>
+
+<script>
+/* ============================ CONFIG ============================ */
+/* Prompt Drop engine · v3 (2026-08-30, "The Finish Line").
+   Spec: references/prompt-drop.md. Fonts must sit beside this file.
+   Icons: python3 scripts/prep_icons.py assets/icons3d ./icons   (never mount raw)
+   Gate:  node scripts/qa_promptdrop.js deck.html                (hard, no exemptions)
+   Render: node assets/render_slides.js deck.html slides <PREFIX>
+   Edit CONFIG / COVERS / SLIDE8 / CONTENT only. Everything below is the engine. */
+var CONFIG = { cover:'D1', slide8:'A', pack:'THE FINISH LINE', handle:'@ITSAC.AI' };
+
+/* ============================ COVERS ============================ */
+/* A = stat-first (Prompt Drop v2 law) · B = title-only · C = problem-first */
+var COVERS = {
+  A: {
+    stat:'Same job, fed in pieces instead of all at once.<br>The answer came back <b>39% worse</b>.',
+    title:'The Finish<br>Line.',
+    tsize:154, ttop:368,
+    sub:'Five prompts that tell it when to stop.<br>And the tool that writes the ending for you.',
+    subtop:740,
+    art:'hourglass', artbox:[688,838,300,300]
+  },
+  B: {
+    stat:'',
+    title:'The Finish<br>Line.',
+    tsize:152, ttop:352,
+    sub:'Every prompt needs an ending.<br>Five that have one, plus the tool that writes it for you.',
+    subtop:718,
+    art:'hourglass', artbox:[664,846,332,332]
+  },
+  D1: {
+    stat:'Fed in pieces instead of all at once,<br>the same job came back <b>39% worse</b>',
+    title:'Why is AI<br>still giving you<br>generic answers?',
+    tsize:112, ttop:300,
+    sub:'Because you keep rewriting it instead of finishing it.<br>Five prompts that land in one.',
+    subtop:690,
+    art:'hourglass', artbox:[706,830,258,258]
+  },
+  D2: {
+    stat:'Fed in pieces instead of all at once,<br>the same job came back <b>39% worse</b>',
+    title:'Still getting<br>generic<br>answers?',
+    tsize:136, ttop:300,
+    sub:'Because you keep rewriting it instead of finishing it.<br>Five prompts that land in one.',
+    subtop:740,
+    art:'hourglass', artbox:[706,880,258,258]
+  },
+  D3: {
+    stat:'Fed in pieces instead of all at once,<br>the same job came back <b>39% worse</b>',
+    title:'Why does every<br>AI answer<br>sound the same?',
+    tsize:110, ttop:300,
+    sub:'Because you keep rewriting it instead of finishing it.<br>Five prompts that land in one.',
+    subtop:690,
+    art:'hourglass', artbox:[706,830,258,258]
+  },
+  C: {
+    stat:'Fed in pieces instead of all at once,<br>the same job came back <b>39% worse</b>',
+    title:'You keep<br>rewriting<br>the same<br>prompt.',
+    tsize:118, ttop:300,
+    sub:'It never knew when to stop, so you sent another piece.<br>Five prompts that land it in one.',
+    subtop:808,
+    art:'hourglass', artbox:[706,930,258,258]
+  }
+};
+
+/* ============================ SLIDE 8 ============================ */
+/* A = the key (offer led) · B = pick one (engagement led) */
+var SLIDE8 = {
+  A: { type:'prompt', meta:'The key', icon:'key',
+    head:'All five run on the same <em>key</em>.',
+    text:'You describe the job in plain English. The key writes the four lines for you. The count, the length, the ban list and the stop condition, already filled in. That is the part everybody skips, and it is the part that decides the answer.',
+    label:'What you get',
+    back:'Where to get it, how to set it up, and me walking you through your first one.',
+    foot:'The tool is a developer’s. The way I run it is mine.' },
+
+  B: { type:'beat', meta:'Before you go', icon:'key',
+    head:'Which one is costing you <em>most</em>?',
+    label:'Pick the number',
+    lines:['01  The short post.','02  The email you avoid.','03  The decision.','04  The explainer.','05  The no.'],
+    text:'Comment the number and I will send you the key set up for that one job, not a generic walkthrough.',
+    foot:'The tool is a developer’s. The way I run it is mine.' }
+};
+
+/* ============================ CONTENT ============================ */
+var CONTENT = [
+  { type:'cover' },
+
+  { type:'beat', meta:'The rule', icon:null,
+    head:'Every prompt needs an <em>ending</em>.',
+    label:'Four lines. Every time.',
+    lines:['How many.','How long.','What to leave out.','When to stop.'],
+    text:'Nobody writes the last one. That is why answers come back wrong, and long.' },
+
+  { type:'prompt', meta:'Prompt 01', icon:'chatbubbles',
+    head:'The short post.',
+    text:'Write 3 captions for this: <b>[paste it]</b>. Max 40 words each. One concrete detail in every one. No words you cannot prove. End on a question a beginner would type. Give me the three, numbered, nothing else.',
+    label:'You get back',
+    back:'Three you can choose between, instead of one you have to rewrite.' },
+
+  { type:'prompt', meta:'Prompt 02', icon:'envelope',
+    head:'The email you keep avoiding.',
+    text:'Write the email I have been putting off. Situation: <b>[what it is]</b>. I have not sent it because <b>[the reason]</b>. Under 120 words. Say the hard part in the first two sentences. No apologising for the delay. Then tell me in one line what I am actually afraid of.',
+    label:'You get back',
+    back:'The message, plus the reason you did not send it a week ago.' },
+
+  { type:'prompt', meta:'Prompt 03', icon:'datachart',
+    head:'The decision you are stuck on.',
+    text:'I am deciding between <b>[A]</b> and <b>[B]</b>. What matters to me: <b>[the one thing]</b>. Give me the strongest case for each in under 60 words, then name the single question that decides it. Do not recommend one. Do not list pros and cons.',
+    label:'You get back',
+    back:'Not an answer. The question you were avoiding asking yourself.' },
+
+  { type:'prompt', meta:'Prompt 04', icon:'documentstack',
+    head:'The thing you need explained.',
+    text:'Explain <b>[topic]</b> as if I am smart but have never heard of it. Under 150 words. One everyday comparison. No jargon, and if a technical word is unavoidable, define it in the same sentence. End with the one thing people usually get wrong.',
+    label:'You get back',
+    back:'An explanation you can repeat out loud without checking your notes.' },
+
+  { type:'prompt', meta:'Prompt 05', icon:'shield',
+    head:'The message that has to say no.',
+    text:'Write my reply saying no to this: <b>[paste it]</b>. I want to keep the relationship. Under 80 words. Decide in the first line, do not bury it. Offer one thing I can actually give. Never use the word unfortunately. Then tell me if the no sounds like a maybe.',
+    label:'You get back',
+    back:'A no that lands once, so you are not doing this again next week.' },
+
+  SLIDE8[CONFIG.slide8],
+
+  { type:'close',
+    rule:'If you cannot say what <em>done</em> looks like, the model cannot either.',
+    body:'Tell me which of the five you need. I will send the key and help you fit it to your actual work.' }
+];
+
+/* ============================ ENGINE ============================ */
+var N = CONTENT.length;
+window.__SLIDES = N;
+
+function el(id){ return document.getElementById(id); }
+function show(id,on){ el(id).style.display = on ? 'block' : 'none'; }
+
+/* Figure: viewBox 0 -10 210 300; drawn foot cap sits at y=258 => 89.3% of height */
+var FOOT_RATIO = (258 - (-10)) / 300;
+
+function fitHead(){
+  var h = el('head'), size = 84;
+  h.style.fontSize = size + 'px';
+  while (h.scrollHeight > 200 && size > 54){ size -= 2; h.style.fontSize = size + 'px'; }
+}
+
+function renderSlide(i){
+  var c = CONTENT[i], n = i + 1;
+  el('packname').textContent = CONFIG.pack;
+  el('ckR').textContent = CONFIG.handle;
+
+  show('stage', c.type === 'beat' || c.type === 'prompt');
+  show('cov',   c.type === 'cover');
+  show('clo',   c.type === 'close');
+
+  /* ---- floor bar + counter ---- */
+  var full = (n === N);
+  var w = Math.round(1080 * n / N);
+  if (!full && w > 930) w = 930;                 /* never run under the counter */
+  el('seg').style.width = w + 'px';
+  el('count').textContent = n + ' / ' + N;
+  el('count').style.color = full ? '#12100A' : '#8A8371';
+
+  /* ---- walker: on beat + prompt slides only, feet welded to the bar ---- */
+  var walks = (c.type === 'beat' || c.type === 'prompt');
+  var f = el('fig');
+  f.style.display = walks ? 'block' : 'none';
+  if (walks){
+    var H = 160;
+    var lead = w - 74;                            /* leading edge of the gold segment */
+    if (lead < 64) lead = 64;
+    if (lead > 820) lead = 820;   /* never reach the counter */
+    f.style.left = lead + 'px';
+    f.style.top  = (1286 - H * FOOT_RATIO) + 'px';
+  }
+
+  if (c.type === 'cover'){
+    var cv = COVERS[CONFIG.cover];
+    el('stat').innerHTML = cv.stat;
+    el('stat').style.display = cv.stat ? 'block' : 'none';
+    var t = el('title');
+    t.innerHTML = cv.title;
+    var ts = cv.tsize;
+    t.style.fontSize = ts + 'px';
+    t.style.top = cv.ttop + 'px';
+    var budget = cv.subtop - cv.ttop - 30;
+    while (t.scrollHeight > budget && ts > 76){ ts -= 2; t.style.fontSize = ts + 'px'; }
+    el('tsub').innerHTML = cv.sub;
+    el('tsub').style.top = cv.subtop + 'px';
+    var a = el('covart'), b = cv.artbox;
+    a.style.left = b[0] + 'px'; a.style.top = b[1] + 'px';
+    a.style.width = b[2] + 'px'; a.style.height = b[3] + 'px';
+    el('covimg').src = 'icons/' + cv.art + '.png';
+    return;
+  }
+
+  if (c.type === 'close'){
+    el('rule').innerHTML = c.rule;
+    el('cbody').innerHTML = c.body;
+    return;
+  }
+
+  /* ---- beat + prompt ---- */
+  el('meta').textContent = c.meta;
+  el('head').innerHTML = c.head;
+  fitHead();
+  var isKey = (c.icon === 'key');
+  el('anchor').style.display = c.icon ? 'flex' : 'none';
+  el('keyart').style.display = isKey ? 'block' : 'none';
+  el('anchorimg').style.display = (c.icon && !isKey) ? 'block' : 'none';
+  if (c.icon && !isKey) el('anchorimg').src = 'icons/' + c.icon + '.png';
+  el('cardtx').innerHTML = c.text;
+
+  /* the RULE slide runs its four lines as the hero: no border box, no quote mark */
+  var isRule = (c.type === 'beat');
+  el('quote').style.display = isRule ? 'none' : 'block';
+  el('card').className = isRule ? 'plain' : '';
+  el('card').style.top = isRule ? '882px' : '492px';
+  el('cardtx').style.fontSize = isRule ? '29px' : '33px';
+  el('cardtx').style.color = isRule ? '#8A8371' : '';
+  el('cardlab').style.display = isRule ? 'block' : 'none';
+  el('cardlab').textContent = isRule ? c.label : '';
+
+  var fo = el('four');
+  fo.style.display = c.lines ? 'block' : 'none';
+  if (c.lines){
+    fo.className = (c.lines.length > 4) ? 'five' : '';
+    fo.innerHTML = c.lines.map(function(L,k){
+      return '<div class="' + (k === c.lines.length - 1 ? 'last' : '') + '">' + L + '</div>';
+    }).join('');
+  }
+
+  el('gb').style.display = c.back ? 'block' : 'none';
+  el('gbl').textContent = c.label;
+  el('gbt').textContent = c.back || '';
+
+  el('foot8').style.display = c.foot ? 'block' : 'none';
+  el('foot8').textContent = c.foot || '';
+}
+window.renderSlide = renderSlide;
+renderSlide(0);
+</script>
+</body></html>

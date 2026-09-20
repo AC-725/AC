@@ -1,0 +1,753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--
+  AC - STUDIO · DECK ENGINE (carousel / static post)  1080x1350 x5
+  ============================================================================
+  Rebuilt 2026-07-30 from references/carousel.md after the original ac-design
+  templates were confirmed lost. Rebuilt ON THE FOUR-THEME SYSTEM per AC's
+  2026-07-29 decision, so a deck and a reel read as one system.
+
+  EDIT ONLY: the CONFIG block and the CONTENT array near the bottom.
+
+  Laws inherited from references/brand.md and references/themes.md:
+    - flat #0A0A0A ground, no gradient/glow/grain behind the type
+    - one gold accent per slide; ON GOLD GROUND THE ACCENT INVERTS TO BLACK
+    - Poppins for all small type; one display face per theme
+    - no em-dashes on screen; lowercase transform banned (it eats figures)
+    - the progress block IS the theme; ticks mark the edge it runs along
+    - slide 1 must survive the square centre crop (middle 1080x1080)
+    - the character zone stays EMPTY until AC's character exists
+  ============================================================================
+-->
+<style>
+@font-face{font-family:'DispBase';src:url('fonts/Gloock-Regular.ttf');}
+@font-face{font-family:'DispCrest';src:url('fonts/BricolageGrotesque-Bold.ttf');}
+@font-face{font-family:'DispColumn';src:url('fonts/Italiana-Regular.ttf');}
+@font-face{font-family:'DispMargin';src:url('fonts/InstrumentSerif-Italic.ttf');}
+:root{
+  --black:#0A0A0A; --gold:#E7C765; --gold-deep:#C9A23F; --gold-light:#F4DF95;
+  --white:#F4F0E7; --stone:#B9B1A1; --ink:#12100A;
+}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
+html,body{width:1080px;height:1350px;overflow:hidden;background:#0A0A0A;}
+
+#stage{position:relative;width:1080px;height:1350px;overflow:hidden;background:#0A0A0A;--disp:'Lora';}
+#frame{position:absolute;inset:44px;border:1.5px solid rgba(231,199,101,0.30);pointer-events:none;}
+.tick{position:absolute;width:40px;height:40px;opacity:0;}
+.tick.tl{top:32px;left:32px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.tr{top:32px;right:32px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+.tick.bl{bottom:32px;left:32px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
+.tick.br{bottom:32px;right:32px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
+
+/* ---- content stack ---- */
+#body{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:150px 108px 190px;text-align:center;}
+.kicker{font-family:'Poppins';font-weight:600;font-size:26px;letter-spacing:6px;color:var(--gold);
+  text-transform:uppercase;display:flex;align-items:center;justify-content:center;}
+.livedot{display:inline-block;width:13px;height:13px;border-radius:50%;background:var(--gold);
+  margin-right:14px;box-shadow:0 0 12px var(--gold);}
+.ic{stroke:var(--gold);stroke-width:5;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+#iconwrap{margin:46px 0 40px;}
+.word{font-family:var(--disp),'Lora';font-weight:600;font-size:104px;line-height:1.18;color:var(--white);
+  letter-spacing:-0.5px;max-width:860px;}
+.g{background:linear-gradient(118deg,#F4DF95 0%,#E7C765 46%,#C9A23F 100%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  filter:drop-shadow(0 3px 14px rgba(231,199,101,0.16));}
+.sub{font-family:'Poppins';font-weight:400;font-size:33px;line-height:1.5;color:var(--stone);
+  max-width:790px;margin-top:38px;}
+.sub b{color:var(--white);font-weight:600;}
+#wm{position:absolute;bottom:64px;left:0;width:100%;text-align:center;
+  font-family:'Poppins';font-weight:500;letter-spacing:5px;font-size:21px;color:rgba(231,199,101,0.5);}
+#step{position:absolute;top:64px;right:78px;font-family:'Poppins';font-weight:600;font-size:23px;
+  letter-spacing:3px;color:rgba(231,199,101,0.55);}
+
+/* CHARACTER ZONE — FILLED 2026-08-15. carousel.md reserved this "for AC's
+   character when it exists" and said to leave it empty until then. The character
+   exists (born Day 29, canonical mark 2026-08-13), so the condition is met.
+   He stands ON the zone's line, left-aligned, clear of the centred watermark.
+   He appears on BEAT slides only. On a prompt slide the gold idea IS the prompt
+   (prompt-drop.md), and a second gold figure competing with it breaks that law,
+   so the figure bookends the pack instead of narrating every slide. */
+#charzone{position:absolute;left:0;bottom:150px;width:100%;height:0;}
+#charzone .acfig{position:absolute;left:96px;bottom:0;width:132px;display:none;}
+#stage.has-fig #charzone .acfig{display:block;}
+.acfig .fst{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:7.2;stroke-linecap:round;stroke-linejoin:round;}
+.acfig .fth{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:4.6;stroke-linecap:round;stroke-linejoin:round;}
+.acfig .fhr{fill:none;stroke:var(--figstroke,var(--gold));stroke-width:6;stroke-linecap:round;stroke-linejoin:round;}
+.acfig .fsun{fill:var(--figstroke,var(--gold));}
+.acfig .fcar{fill:var(--gold-light,#F4DF95);}
+#stage.light{--figstroke:#12100A;}
+
+/* ---- the block: full bleed, and it IS the theme ---- */
+#block{position:absolute;z-index:3;pointer-events:none;overflow:hidden;background:rgba(231,199,101,0.09);}
+#block i{display:block;width:0;height:0;background:linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F);}
+
+/* ===================== THE FOUR THEMES ===================== */
+#stage.t-base  {--disp:'DispBase';}
+#stage.t-crest {--disp:'DispCrest';}
+#stage.t-column{--disp:'DispColumn';}
+#stage.t-margin{--disp:'DispMargin';}
+
+/* I · BASE — heavy bar sealing the floor; the accent word is the hero */
+#stage.t-base #block{left:0;right:0;bottom:0;height:26px;}
+#stage.t-base #block i{height:100%;}
+#stage.t-base .tick.bl,#stage.t-base .tick.br{opacity:1;}
+#stage.t-base .word{font-size:112px;}
+
+/* II · CREST — gold band across the ceiling; headline is hero, set in caps.
+   No gold in the word at all: the band is the accent, contrast carries the signal. */
+#stage.t-crest #block{left:0;right:0;top:0;height:78px;}
+#stage.t-crest #block i{height:100%;}
+#stage.t-crest .tick.tl,#stage.t-crest .tick.tr{opacity:1;top:110px;}
+#stage.t-crest #frame{top:118px;}
+#stage.t-crest #body{padding-top:210px;}
+#stage.t-crest .word{font-size:92px;text-transform:uppercase;letter-spacing:0.5px;line-height:1.2;color:var(--stone);}
+#stage.t-crest .g{background:none;-webkit-background-clip:border-box;background-clip:border-box;
+  color:var(--white);filter:none;}
+#stage.t-crest #step{top:110px;}
+
+/* III · COLUMN — the upper half is gold; content gathers at the fold.
+   Above the fold the ink is black and the accent inverts to black. */
+#stage.t-column{background:linear-gradient(180deg,#EFD68A 0%,#E3C061 34%,#D3AC49 50%,#0F0F0F 50%,#0A0A0A 100%);}
+#stage.t-column #block{left:0;top:0;bottom:0;width:14px;background:transparent;}
+#stage.t-column #block i{width:100%;}
+#stage.t-column .tick.tl,#stage.t-column .tick.bl{opacity:1;}
+#stage.t-column .tick.tl{border-color:rgba(10,10,10,0.55);}
+#stage.t-column #frame{border-color:rgba(10,10,10,0.20);}
+#stage.t-column #framelow{display:block;}
+/* above the fold */
+#stage.t-column .kicker{color:var(--ink);}
+#stage.t-column .livedot{background:var(--ink);box-shadow:none;}
+#stage.t-column .ic{stroke:var(--ink);}
+#stage.t-column #step{color:rgba(10,10,10,0.55);}
+/* NOTHING MAY CROSS THE FOLD. The two zones are placed deterministically against
+   the 675px boundary, so no measuring pass is needed and no glyph can straddle it. */
+#zoneA,#zoneB{display:contents;}
+#stage.t-column #body{display:block;padding:0;}
+#stage.t-column #zoneA{display:flex;flex-direction:column;align-items:center;justify-content:center;
+  position:absolute;left:0;right:0;top:0;height:675px;padding:0 108px 40px;}
+#stage.t-column #zoneB{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;
+  position:absolute;left:0;right:0;top:675px;bottom:0;padding:88px 108px 190px;}
+#stage.t-column #iconwrap{margin:44px 0 0;}
+#stage.t-column .word{font-size:88px;letter-spacing:1.5px;color:var(--white);}
+#stage.t-column .sub{margin-top:34px;}
+
+/* IV · MARGIN — heavy rule on the right edge; even weight, flush left, italic */
+#stage.t-margin #block{top:0;bottom:0;right:0;width:22px;}
+#stage.t-margin #block i{width:100%;}
+#stage.t-margin .tick.tr,#stage.t-margin .tick.br{opacity:1;}
+#stage.t-margin #body{align-items:flex-start;text-align:left;padding:150px 150px 190px 108px;}
+/* the figure owns the bottom-left band on beat slides, so the copy column has to
+   end above him. Measured 2026-08-15: without this the cover's sub ran 88px INTO
+   him and qa_deck passed it, because that gate measures text blocks against each
+   other and the character is not one of them. Same blind spot that produced gate 7
+   on the reel engine: a gate only sees what it was told to look at. */
+#stage.has-fig #body{padding-bottom:396px;}
+#stage.t-margin .kicker{justify-content:flex-start;}
+#stage.t-margin .word{font-size:96px;color:var(--stone);}
+#stage.t-margin .sub{color:var(--stone);}
+#stage.t-margin #wm{text-align:left;padding-left:108px;}
+
+/* ===================================================================
+   PROMPT ARCHETYPE — added 2026-07-31 for the Saturday "Prompt Drop".
+   A prompt slide carries FOUR things, not three: a number, what the
+   prompt does, the verbatim prompt, and what it hands back. The normal
+   kicker/icon/word/sub stack cannot hold a copy-pasteable block, so
+   prompt slides swap to their own body. All theme chrome (block, ticks,
+   progress, handle, frame) is untouched, so the deck still reads as one
+   system with the reels.
+   THE GOLD IDEA ON A PROMPT SLIDE IS THE PROMPT ITSELF. The quote glyph,
+   rail or numeral marks it; nothing else on the slide competes.
+   =================================================================== */
+#stage{--ground:#0A0A0A;}
+#pbody{position:absolute;inset:0;display:none;flex-direction:column;
+  align-items:flex-start;justify-content:center;padding:168px 112px 196px;text-align:left;z-index:2;}
+#stage.type-prompt #pbody{display:flex;}
+#stage.type-prompt #body{display:none;}
+/* ===== type `quote` — reported speech, not ours ===== */
+#stage.type-quote #body{display:none;}
+/* absolute inset like #pbody, so the card centres in the frame rather than stacking
+   under the kicker row and leaving the lower half of the slide empty. */
+#qbody{position:absolute;inset:0;display:none;flex-direction:column;
+  justify-content:center;align-items:center;padding:210px 92px 190px;}
+#stage.type-quote #qbody{display:flex;}
+#stage.t-crest #qbody{padding-top:250px;}
+#stage.t-margin #qbody{padding-right:150px;}
+.qcard{width:100%;background:#F4F0E7;border-radius:18px;padding:58px 54px 44px;
+  box-shadow:0 26px 70px rgba(0,0,0,0.5);}
+.qsrc{display:flex;align-items:center;gap:14px;margin-bottom:30px;}
+.qdot{width:46px;height:46px;border-radius:50%;background:#D8D2C4;flex:none;}
+.qmeta{font-family:'Poppins';font-weight:600;font-size:23px;color:#6f6a60;line-height:1.3;}
+.qmeta i{display:block;font-style:normal;font-weight:400;font-size:20px;color:#9a9488;}
+.qtext{font-family:'Poppins';font-weight:700;font-size:62px;line-height:1.2;
+  color:#12100A;letter-spacing:-1.2px;}
+.qfoot{margin-top:34px;padding-top:24px;border-top:1.5px solid rgba(18,16,10,0.14);
+  font-family:'Poppins';font-weight:400;font-size:22px;color:#6f6a60;}
+.qlabel{font-family:'Poppins';font-weight:600;font-size:26px;letter-spacing:5px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:28px;text-align:center;}
+/* ===== type `shout` — the accusation slide =====
+   Borrowed shape: a flat command at display size, then the artefact it is accusing you
+   about. The reference gets its punch from a human face; this page has no face by
+   standing rule, so the phone mock does that job instead — it is the thing the viewer
+   actually scrolled past, which is more incriminating than a stranger's photo.
+   The mock names NOBODY: avatar and name are wireframe bars, so it reads as "a post"
+   without putting words in a real account's mouth. */
+#stage.type-shout #body{display:none;}
+#sbody{position:absolute;inset:0;display:none;flex-direction:column;
+  justify-content:center;align-items:center;padding:200px 86px 180px;}
+#stage.type-shout #sbody{display:flex;}
+#stage.t-crest #sbody{padding-top:242px;}
+#shout{font-family:'Poppins';font-weight:700;font-size:150px;line-height:0.94;
+  letter-spacing:-6px;color:#FFFFFF;text-align:center;margin-bottom:40px;}
+#shout .g{color:var(--gold);-webkit-text-fill-color:var(--gold);background:none;}
+.phone{width:100%;background:#F4F0E7;border-radius:20px;padding:34px 34px 26px;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55);}
+.phead{display:flex;align-items:center;gap:14px;margin-bottom:24px;}
+.pav{width:52px;height:52px;border-radius:50%;background:#D8D2C4;flex:none;}
+.pbars{display:flex;flex-direction:column;gap:8px;}
+.pbar{height:11px;border-radius:6px;background:#D8D2C4;}
+.pclaim{font-family:'Poppins';font-weight:700;font-size:50px;line-height:1.2;
+  color:#12100A;letter-spacing:-0.8px;}
+.pacts{display:flex;gap:26px;margin-top:26px;padding-top:20px;
+  border-top:1.5px solid rgba(18,16,10,0.13);}
+.pacts svg{width:34px;height:34px;fill:none;stroke:#6f6a60;stroke-width:6.5;
+  stroke-linecap:round;stroke-linejoin:round;}
+#ssub{font-family:'Poppins';font-weight:400;font-size:36px;line-height:1.4;
+  color:var(--stone);text-align:center;margin-top:36px;max-width:840px;}
+#ssub b{color:#FFFFFF;font-weight:600;}
+
+.phead,.pmain{display:contents;}
+.pkick{font-family:'Poppins';font-weight:600;font-size:25px;letter-spacing:6px;color:var(--gold);
+  text-transform:uppercase;display:flex;align-items:center;}
+.pkick .livedot{margin-right:14px;}
+.ptitle{font-family:var(--disp),'Lora';font-weight:600;font-size:78px;line-height:1.12;
+  color:var(--white);letter-spacing:-0.5px;margin:26px 0 34px;}
+.pcard{position:relative;width:100%;}
+/* the three markers are all in the DOM; each card style shows exactly one */
+.pquote,.pnum,.pchip{display:none;}
+#stage.card .pquote{display:block;}
+#stage.ledger .pnum{display:block;}
+.ptext{font-family:'Poppins';font-weight:400;font-size:30px;line-height:1.62;color:var(--white);}
+.pback{margin-top:34px;font-family:'Poppins';font-weight:400;font-size:27px;line-height:1.45;
+  color:var(--stone);width:100%;}
+.pbacklab{display:block;font-weight:600;font-size:20px;letter-spacing:5px;text-transform:uppercase;
+  color:var(--stone);opacity:0.62;margin-bottom:11px;}
+.pback b{color:var(--white);font-weight:600;}
+
+/* --- A · CARD: the prompt sits in a hairline box, notched by a gold quote --- */
+/* The quote sits INSIDE the card's top-left, never notched through the border.
+   A notch needs an opaque pad, and that pad ate the first word of the prompt
+   on the first render. Padding-top reserves its lane instead. */
+#stage.card .pcard{border:1.5px solid rgba(231,199,101,0.34);border-radius:8px;
+  background:rgba(231,199,101,0.048);padding:104px 50px 50px;}
+#stage.card .pquote{position:absolute;top:16px;left:46px;font-family:var(--disp),'Lora';
+  font-size:104px;line-height:0.98;color:var(--gold);}
+
+/* --- B · TERMINAL: no box. A gold rail and a caret. Reads as something typed --- */
+#stage.terminal .pcard{border-left:5px solid var(--gold);padding:4px 0 4px 42px;}
+#stage.terminal .ptext{letter-spacing:0.35px;}
+#stage.terminal .caret{display:inline-block;width:15px;height:29px;background:var(--gold);
+  margin-left:9px;transform:translateY(4px);}
+#stage.terminal .pchip{display:inline-block!important;border:1.5px solid rgba(231,199,101,0.42);border-radius:5px;
+  padding:9px 19px;font-family:'Poppins';font-weight:600;font-size:20px;letter-spacing:4px;
+  color:var(--gold);text-transform:uppercase;}
+#stage.terminal .pkick{display:none;}
+#stage.terminal .ptitle{margin-top:24px;}
+
+/* --- C · LEDGER: giant ghosted numeral, no box, rules above and below --- */
+/* The numeral is a WATERMARK, a sibling of the card, and it lives in the empty
+   top-right band. Behind the title it collided with any title longer than two
+   words ("CLEAR THE INBOX." ran into the 0); hung off the canvas edge when
+   anchored bottom-right. This band is empty on every prompt slide.
+   Absolute children offset from #pbody's PADDING BOX, which is the full 1080
+   wide, so these values are frame coordinates, not gutter-relative. */
+#stage.ledger .pnum{position:absolute;right:78px;top:152px;font-family:var(--disp),'Lora';
+  font-size:188px;line-height:1;color:rgba(231,199,101,0.10);z-index:-1;letter-spacing:-6px;}
+#stage.t-crest.ledger .pnum{top:170px;}
+#stage.ledger .pcard{border-top:2.5px solid var(--gold);padding:40px 0 0;}
+#stage.ledger .pback{margin-top:52px;padding-top:34px;border-top:1.5px solid rgba(231,199,101,0.26);}
+#stage.ledger .ptitle{margin-bottom:40px;}
+
+/* --- COLUMN's fold applies to prompt slides too: NOTHING MAY CROSS 675px.
+       The head sits in the gold half with black ink; the prompt sits below. --- */
+#stage.t-column.type-prompt #pbody{display:block;padding:0;}
+/* column's identity is that content GATHERS AT THE FOLD, so the head sits at
+   the bottom of the gold half rather than floating in the middle of it */
+#stage.t-column.type-prompt .phead{display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:flex-end;position:absolute;left:0;right:0;top:0;height:675px;padding:0 112px 62px;}
+#stage.t-column.type-prompt .pmain{display:flex;flex-direction:column;align-items:flex-start;
+  justify-content:flex-start;position:absolute;left:0;right:0;top:675px;bottom:0;padding:74px 112px 190px;}
+#stage.t-column .pkick{color:var(--ink);}
+#stage.t-column .pkick .livedot{background:var(--ink);box-shadow:none;}
+#stage.t-column .pchip{border-color:rgba(10,10,10,0.45);color:var(--ink);}
+#stage.t-column .ptitle{color:var(--ink);font-size:68px;margin:26px 0 0;}
+#stage.t-column .ptext{font-size:26px;line-height:1.55;}
+#stage.t-column .pback{font-size:24px;margin-top:24px;}
+#stage.t-column.card .pcard{padding:86px 42px 38px;}
+#stage.t-column.card .pquote{font-size:86px;top:10px;left:38px;}
+#stage.t-column.ledger .pnum{top:-96px;font-size:200px;}
+#stage.t-column.ledger .pback{margin-top:34px;padding-top:26px;}
+
+/* crest sets its display face in caps; the prompt title follows the theme */
+#stage.t-crest .ptitle{text-transform:uppercase;letter-spacing:0.5px;font-size:68px;line-height:1.16;}
+#stage.t-crest #pbody{padding-top:224px;}
+/* margin is already flush left; only the right gutter needs clearing of the rule */
+#stage.t-margin #pbody{padding-right:150px;}
+
+/* ---- LIGHT (gold ground) override. On gold the accent is BLACK. ---- */
+#stage.light{background:linear-gradient(160deg,#F4DF95 0%,#E7C765 52%,#C9A23F 100%);}
+#stage.light.t-column{background:linear-gradient(180deg,#0A0A0A 0%,#0F0F0F 50%,#E3C061 50%,#EFD68A 100%);}
+#stage.light .word{color:var(--ink);}
+#stage.light .g{background:none;-webkit-background-clip:border-box;background-clip:border-box;
+  color:var(--ink);filter:none;font-weight:700;}
+#stage.light .sub{color:rgba(18,16,10,0.72);}
+#stage.light .sub b{color:var(--ink);}
+#stage.light .kicker{color:var(--ink);}
+#stage.light .livedot{background:var(--ink);box-shadow:none;}
+#stage.light .ic{stroke:var(--ink);}
+#stage.light #frame{border-color:rgba(18,16,10,0.28);}
+#stage.light .tick{border-color:var(--ink)!important;}
+#stage.light #wm{color:rgba(18,16,10,0.55);}
+#stage.light #step{color:rgba(18,16,10,0.55);}
+#stage.light #block{background:rgba(18,16,10,0.12);}
+#stage.light #block i{background:var(--ink);}
+
+/* ---- COLUMN RAIL FIX · 2026-08-07 (Prompt Drop 02) -------------------------
+   COLUMN is the only theme whose ground changes colour halfway down the frame,
+   and the progress rail runs the full height of it. A gold rail on the gold
+   half is gold-on-gold: invisible. So on COLUMN the rail was unreadable for its
+   first 675px on EVERY slide, which means the theme's own signature signal --
+   "the progress indicator IS the theme's block" (brand.md) -- did not appear at
+   all until a deck was more than half over. On a 7-slide Prompt Drop the reader
+   got no rail on slides 1 to 4.
+
+   qa_deck.js passed it every time: it measures ink position and overlap, never
+   contrast. Same blind-spot class as the Day 22c playback defect.
+
+   Fix applies the inversion law COLUMN already uses for its kicker, icon, ticks
+   and step counter: on gold ground the accent goes black. The gradient is keyed
+   to the FRAME (background-size 14px x 1350px, anchored top) and NOT to the bar,
+   because the bar's height changes with progress -- a percentage stop would slide
+   the colour break around from slide to slide.
+
+   Both looks are handled: dark COLUMN is gold-over-black, light COLUMN inverts
+   the fold (see .light.t-column above), so its rail inverts too. Without the
+   second rule the light look has the same bug mirrored, because the generic
+   `.light #block i` rule paints the whole rail ink and light's top half is black. */
+#stage.t-column #block i{
+  background:linear-gradient(180deg,#12100A 0px,#12100A 675px,
+                             #F4DF95 675px,#E7C765 950px,#C9A23F 1350px);
+  background-size:14px 1350px;background-repeat:no-repeat;background-position:top left;
+}
+#stage.light.t-column #block i{
+  background:linear-gradient(180deg,#F4DF95 0px,#E7C765 400px,#C9A23F 675px,
+                             #12100A 675px,#12100A 1350px);
+  background-size:14px 1350px;background-repeat:no-repeat;background-position:top left;
+}
+/* --------------------------------------------------------------------------- */
+
+/* prompt archetype on gold ground: the accent inverts to black, same law */
+#stage.light{--ground:#E7C765;}
+#stage.light .pkick{color:var(--ink);}
+#stage.light .pkick .livedot{background:var(--ink);box-shadow:none;}
+#stage.light .ptitle{color:var(--ink);}
+#stage.light .ptext{color:var(--ink);}
+#stage.light .pback{color:rgba(18,16,10,0.72);}
+#stage.light .pback b{color:var(--ink);}
+#stage.light .pbacklab{color:rgba(18,16,10,0.62);}
+#stage.light.card .pcard{border-color:rgba(18,16,10,0.30);background:rgba(18,16,10,0.05);}
+#stage.light.card .pquote{color:var(--ink);}
+#stage.light.terminal .pcard{border-left-color:var(--ink);}
+#stage.light.terminal .caret{background:var(--ink);}
+#stage.light.terminal .pchip{border-color:rgba(18,16,10,0.42);color:var(--ink);}
+#stage.light.ledger .pnum{color:rgba(18,16,10,0.10);}
+#stage.light.ledger .pcard{border-top-color:var(--ink);}
+#stage.light.ledger .pback{border-top-color:rgba(18,16,10,0.26);}
+/* ===================================================================
+   ART BLOCKS — added 2026-08-02 (Day 19 rebuild; AC asked for more
+   imagery than one icon per slide).
+
+   Everything here renders INSIDE #iconwrap on purpose: qa_deck.js
+   measures '#iconwrap', so the art is covered by the existing glyph-ink
+   gate for free. Do not move it to a new element without adding that
+   element to qa_deck.js TARGETS, or the art ships unaudited.
+
+   Content width in MARGIN is 1080 - 108 left pad - 150 right pad = 822.
+   =================================================================== */
+#iconwrap{width:100%;}
+/* READING ORDER. zoneA/zoneB are display:contents outside COLUMN, so kicker,
+   iconwrap, word and sub are all direct flex children of #body and `order`
+   works on them. Default stack is icon -> headline -> sub, which on an art
+   slide means the reader meets the chart BEFORE the claim it proves. Art
+   slides therefore run kicker -> headline -> art -> sub. */
+#stage.has-art .kicker{order:1;}
+/* the 46px top margin on #iconwrap used to hold the kicker off the headline.
+   Reordering removed it and the two overlapped by 4px, which qa_deck.js caught
+   and no eyeball would have. The gap has to be restated here. */
+#stage.has-art .word  {order:2;margin-top:46px;}
+#stage.has-art #iconwrap{order:3;margin:38px 0 0;}
+#stage.has-art .sub   {order:4;margin-top:34px;}
+
+/* the small mark that rides in the kicker row */
+.kicon{width:29px;height:29px;margin-left:16px;flex:none;}
+.kicon path,.kicon circle,.kicon line,.kicon rect{stroke:var(--gold);stroke-width:6;fill:none;
+  stroke-linecap:round;stroke-linejoin:round;}
+
+/* SOURCE CHIP — factual attribution. The Gemini mark is drawn as a plain
+   four-point spark and "Google" is set in type, both in gold: a four-colour
+   corporate logo would put a second and a third accent on a slide whose
+   whole law is ONE gold idea on flat black. Attribution, not brand artwork. */
+.srcchip{display:inline-flex;align-items:center;gap:14px;border:1.5px solid rgba(231,199,101,0.34);
+  border-radius:999px;padding:12px 26px 12px 20px;}
+.srcchip .spark{width:29px;height:29px;flex:none;}
+.srcchip .spark path{fill:var(--gold);stroke:none;}
+.srcchip .lbl{font-family:'Poppins';font-weight:600;font-size:24px;letter-spacing:1.4px;color:var(--gold);}
+.srcchip .sep{width:1.5px;height:25px;background:rgba(231,199,101,0.34);}
+.srcchip .qty{font-family:'Poppins';font-weight:400;font-size:22px;letter-spacing:0.6px;color:var(--stone);}
+
+/* BUBBLE FIELD — one bubble per share of conversation; gold ones are work. */
+.bubrow{display:flex;flex-wrap:wrap;gap:12px;width:100%;margin-top:30px;}
+.bub{width:38px;height:29px;border-radius:9px 9px 9px 3px;background:rgba(185,177,161,0.20);}
+.bub.on{background:linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F);}
+.artlab{font-family:'Poppins';font-weight:400;font-size:21px;letter-spacing:0.6px;
+  color:rgba(185,177,161,0.78);margin-top:20px;}
+
+/* BAR PAIR — direct-labelled, no legend and no axis: two numbers only ever
+   need the bar and its own name. */
+.bars{width:100%;display:flex;flex-direction:column;gap:24px;}
+.barrow{display:flex;flex-direction:column;gap:10px;}
+.barhead{display:flex;justify-content:space-between;align-items:baseline;}
+.barname{font-family:'Poppins';font-weight:500;font-size:24px;letter-spacing:2.4px;
+  text-transform:uppercase;color:var(--stone);}
+.barval{font-family:'Poppins';font-weight:600;font-size:30px;color:var(--stone);}
+.bartrack{height:32px;background:rgba(185,177,161,0.13);border-radius:3px;overflow:hidden;}
+.barfill{height:100%;background:rgba(185,177,161,0.42);border-radius:3px;}
+.barrow.win .barval{color:var(--gold);font-size:36px;}
+.barrow.win .barfill{background:linear-gradient(96deg,#F4DF95,#E7C765 46%,#C9A23F);}
+
+/* DOT GRID — 100 dots, one per task. 20 x 5 keeps it inside the stack. */
+.dots{display:grid;grid-template-columns:repeat(20,1fr);gap:12px;width:100%;}
+.dot{aspect-ratio:1;border-radius:50%;background:rgba(185,177,161,0.19);}
+.dot.on{background:linear-gradient(118deg,#F4DF95,#E7C765 46%,#C9A23F);}
+
+/* DEPTH COMB — everyone scratches the surface; one column goes all the way. */
+.comb{display:flex;align-items:flex-start;gap:14px;width:100%;height:180px;}
+.tooth{flex:1;background:rgba(185,177,161,0.19);border-radius:0 0 4px 4px;height:32px;}
+.tooth.deep{background:linear-gradient(180deg,#F4DF95,#E7C765 40%,#C9A23F);height:100%;}
+
+/* CHOICE PAIR — the two-option comment device, made to look tappable. */
+.choices2{display:flex;gap:20px;width:100%;}
+.opt{flex:1;border:1.5px solid rgba(185,177,161,0.30);border-radius:8px;padding:24px 22px;
+  display:flex;flex-direction:column;gap:12px;}
+.opt .tag{font-family:'Poppins';font-weight:600;font-size:29px;color:var(--gold);letter-spacing:2px;}
+.opt .txt{font-family:'Poppins';font-weight:400;font-size:25px;line-height:1.35;color:var(--stone);}
+.opt svg{width:36px;height:36px;}
+.opt svg path,.opt svg circle,.opt svg line,.opt svg rect{stroke:rgba(185,177,161,0.85);
+  stroke-width:6;fill:none;stroke-linecap:round;stroke-linejoin:round;}
+
+/* COLUMN puts zoneA (kicker + the art block) ON THE GOLD HALF, so every gold
+   thing in the art becomes gold-on-gold and disappears. qa_deck.js passes it
+   because nothing overlaps and nothing leaves frame; only the eye catches it.
+   This is the same inversion brand.md already requires: on gold ground the
+   accent becomes black. Without it, switching an art deck to column silently
+   ships an unreadable slide. */
+#stage.t-column .kicon path,#stage.t-column .kicon circle,
+#stage.t-column .kicon line,#stage.t-column .kicon rect{stroke:var(--ink);}
+#stage.t-column .srcchip{border-color:rgba(18,16,10,0.42);}
+#stage.t-column .srcchip .spark path{fill:var(--ink);}
+#stage.t-column .srcchip .lbl{color:var(--ink);}
+#stage.t-column .srcchip .sep{background:rgba(18,16,10,0.42);}
+#stage.t-column .srcchip .qty{color:rgba(18,16,10,0.72);}
+#stage.t-column .artlab{color:rgba(18,16,10,0.70);}
+#stage.t-column .barname{color:rgba(18,16,10,0.72);}
+#stage.t-column .barval{color:rgba(18,16,10,0.72);}
+#stage.t-column .bartrack{background:rgba(18,16,10,0.14);}
+#stage.t-column .barfill{background:rgba(18,16,10,0.34);}
+#stage.t-column .barrow.win .barval{color:var(--ink);}
+#stage.t-column .barrow.win .barfill{background:var(--ink);}
+#stage.t-column .dot{background:rgba(18,16,10,0.17);}
+#stage.t-column .dot.on{background:var(--ink);}
+#stage.t-column .tooth{background:rgba(18,16,10,0.17);}
+#stage.t-column .tooth.deep{background:var(--ink);}
+#stage.t-column .bub{background:rgba(18,16,10,0.17);}
+#stage.t-column .bub.on{background:var(--ink);}
+#stage.t-column .opt{border-color:rgba(18,16,10,0.34);}
+#stage.t-column .opt .tag{color:var(--ink);}
+#stage.t-column .opt .txt{color:rgba(18,16,10,0.78);}
+#stage.t-column .opt svg path,#stage.t-column .opt svg circle,
+#stage.t-column .opt svg line,#stage.t-column .opt svg rect{stroke:rgba(18,16,10,0.80);}
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="frame"></div>
+  <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <div id="block"><i></i></div>
+  <div id="step"></div>
+  <div id="body">
+    <!-- zones exist for COLUMN, whose gold fold splits the frame. Everywhere else
+         they are display:contents and the stack flows normally. -->
+    <div id="zoneA">
+      <div class="kicker"><span class="livedot"></span><span id="kick"></span></div>
+      <div id="iconwrap"></div>
+    </div>
+    <div id="zoneB">
+      <div class="word" id="word"></div>
+      <div class="sub" id="sub"></div>
+    </div>
+  </div>
+  <!-- PROMPT ARCHETYPE body. Shown only when the beat is type:'prompt'.
+       .phead / .pmain are display:contents everywhere except COLUMN, where the
+       gold fold splits them deterministically at 675px. -->
+<div id="sbody">
+  <div id="shout"></div>
+  <div class="phone">
+    <div class="phead"><div class="pav"></div>
+      <div class="pbars"><div class="pbar" style="width:210px"></div>
+        <div class="pbar" style="width:132px;opacity:.62"></div></div></div>
+    <div class="pclaim" id="pclaim"></div>
+    <div class="pacts">
+      <svg viewBox="0 0 100 100"><path d="M50 82C22 62 12 46 12 34a20 20 0 0 1 38-9 20 20 0 0 1 38 9c0 12-10 28-38 48Z"/></svg>
+      <svg viewBox="0 0 100 100"><path d="M14 22h72v46H46L26 84V68H14Z"/></svg>
+      <svg viewBox="0 0 100 100"><path d="M18 50h58M56 28l24 22-24 22"/></svg>
+    </div>
+  </div>
+  <div id="ssub"></div>
+</div>
+<div id="qbody">
+  <div class="qlabel" id="qlabel"></div>
+  <div class="qcard">
+    <div class="qsrc"><div class="qdot"></div>
+      <div class="qmeta" id="qmeta"></div></div>
+    <div class="qtext" id="qtext"></div>
+    <div class="qfoot" id="qfoot"></div>
+  </div>
+</div>
+  <div id="pbody">
+    <div class="phead">
+      <div class="pkick"><span class="livedot"></span><span id="pkicktxt"></span></div>
+      <div class="pchip" id="pchip"></div>
+      <div class="ptitle" id="ptitle"></div>
+    </div>
+    <div class="pmain">
+      <div class="pnum" id="pnum"></div>
+      <div class="pcard">
+        <div class="pquote" id="pquote">&ldquo;</div>
+        <div class="ptext" id="ptext"></div>
+      </div>
+      <div class="pback"><span class="pbacklab" id="pbacklab">You get back</span><span id="pbacktxt"></span></div>
+    </div>
+  </div>
+  <div id="charzone"><svg class="acfig" viewBox="0 -10 210 270" preserveAspectRatio="xMidYMax meet"><g transform="rotate(-5 105 104)"><circle cx="105" cy="58" r="46" class="fst"/><path class="fhr" d="M64 40 Q70 9 105 8 Q141 9 146 40"/><path class="fth" d="M76 20 l4 -11"/><path class="fth" d="M92 11 l-2 -11"/><path class="fth" d="M110 8 l6 -10"/><path class="fth" d="M128 14 l9 -6"/><path class="fth" d="M113 38 Q123 33 133 37"/><rect x="74" y="45" width="26" height="14" rx="6" class="fsun"/><rect x="110" y="45" width="26" height="14" rx="6" class="fsun"/><path class="fth" d="M100 51 h10"/><path class="fth" d="M74 50 L61 46"/><path class="fth" d="M136 50 L149 46"/><rect x="102" y="70" width="6" height="18" class="fcar"/></g><path class="fth" d="M89 108 L96 122 L105 118"/><path class="fth" d="M121 108 L114 122 L105 118"/><circle cx="105" cy="127" r="2.5" class="fsun"/><path class="fst" d="M105 104 v92"/><path class="fst" d="M105 128 L62 150 L88 172"/><path class="fst" d="M105 130 L142 160 L148 188"/><path class="fst" d="M105 196 L86 258"/><path class="fst" d="M105 196 L132 256"/></svg></div>
+  <div id="wm"></div>
+</div>
+<script>
+/* ===== ONE PLACE FOR THE HANDLE ===== */
+const HANDLE='@itsac.ai';
+
+/* =========================== CONFIG (EDIT) =========================== */
+const CONFIG={
+  theme:'margin',    // 'base' | 'crest' | 'column' | 'margin'
+  look:'dark',      // 'dark' | 'light'
+  card:'card',      // 'card' | 'terminal' | 'ledger'  (prompt slides only)
+  handle:HANDLE
+};
+
+/* =========================== CONTENT (EDIT) ==========================
+   Five beats. Job is TEACHING FOR RECALL, not arguing for shares.
+   word: three words or fewer, <span class="g"> marks the ONE accent word.
+   sub:  the supporting line. Keep the whole slide near 30 words.
+   Every beat carries a verified fact. Do not invent one to fill a slot.
+   ==================================================================== */
+const ICONS={
+  chat:'<path d="M22 28 h56 a8 8 0 0 1 8 8 v22 a8 8 0 0 1 -8 8 h-30 l-16 13 v-13 h-10 a8 8 0 0 1 -8 -8 v-22 a8 8 0 0 1 8 -8 z"/>',
+  bolt:'<path d="M55 12 l-30 44 h20 l-6 32 l32 -46 h-20 z"/>',
+  chart:'<line x1="20" y1="82" x2="82" y2="82"/><rect x="28" y="54" width="12" height="28"/><rect x="48" y="38" width="12" height="44"/><rect x="68" y="24" width="12" height="58"/>',
+  gear:'<circle cx="50" cy="50" r="14"/><path d="M50 20 v-8 M50 88 v-8 M80 50 h8 M12 50 h8 M71 29 l6 -6 M23 77 l6 -6 M71 71 l6 6 M23 23 l6 6"/>',
+  save:'<path d="M30 16 h40 v70 l-20 -16 l-20 16 z"/>',
+  clock:'<circle cx="50" cy="52" r="31"/><path d="M50 32 v21 l14 10"/><path d="M38 14 h24"/>',
+  check:'<circle cx="50" cy="50" r="30"/><path d="M37 51 l9 9 l18 -21"/>',
+  calendar:'<rect x="18" y="24" width="64" height="58" rx="8"/><line x1="18" y1="42" x2="82" y2="42"/><line x1="34" y1="16" x2="34" y2="30"/><line x1="66" y1="16" x2="66" y2="30"/><circle cx="38" cy="58" r="2.6"/><circle cx="50" cy="58" r="2.6"/><circle cx="62" cy="58" r="2.6"/>',
+  /* added 2026-08-02 for the A/B choice art block */
+  book:'<path d="M18 22 h26 a10 10 0 0 1 10 10 v50 a8 8 0 0 0 -8 -6 h-28 z"/><path d="M86 22 h-26 a10 10 0 0 0 -10 10 v50 a8 8 0 0 1 8 -6 h28 z"/>',
+  case:'<rect x="16" y="34" width="68" height="48" rx="7"/><path d="M38 34 v-8 a6 6 0 0 1 6 -6 h12 a6 6 0 0 1 6 6 v8"/><line x1="16" y1="56" x2="84" y2="56"/>'
+};
+
+/* ART MODULES — each returns the innerHTML for #iconwrap.
+   Every one of them draws a fact that is already in the copy. Nothing here
+   is decoration for its own sake: if an art block cannot be traced to a
+   verified figure on the same slide, cut it rather than invent it. */
+const SPARK='<svg class="spark" viewBox="0 0 100 100"><path d="M50 4 C55 30 70 45 96 50 C70 55 55 70 50 96 C45 70 30 55 4 50 C30 45 45 30 50 4 Z"/></svg>';
+
+function srcchip(qty){
+  return '<span class="srcchip">'+SPARK+
+         '<span class="lbl">Google</span><span class="sep"></span>'+
+         '<span class="lbl">Gemini</span>'+
+         (qty?'<span class="sep"></span><span class="qty">'+qty+'</span>':'')+'</span>';
+}
+const ART={
+  /* 3D ICON LIBRARY (2026-08-22) — 12 pre-baked transparent PNGs in assets/icons3d/
+     (envelope · hourglass · brain · chatbubbles · documentstack · shield · coinstack ·
+     rocket · robotarm · globeroutes · hkjunkboat · datachart). Beat usage:
+     art:'icon3d', icon:'envelope', artW:420. COPY the icons3d/ folder into the run dir
+     beside deck.html, same law as fonts/. Catalog + law + re-bake recipe:
+     references/icons3d.md. All wireframe/line/point gold — inside flat-gold law. */
+  icon3d(c){c=c||{};
+    return '<img src="icons3d/'+(c.icon||'envelope')+'.png" style="display:block;width:'+
+      (c.artW||420)+'px;height:auto;margin:0 auto;">'+
+      (c.artlab?'<div class="artlab">'+c.artlab+'</div>':'');
+  },
+  /* 1 — the source only. An earlier version also drew a proportion field of
+     bubbles here; it was cut for two reasons. It could not be made honest at
+     this size (4 gold in 50 reads as 8%, not 13.5%, and no clean rectangle
+     divides to 13.5%), and it duplicated slide 2's bars, which is where the
+     proportion actually belongs. The hook slide's job is the hook. */
+  source(){
+    return srcchip('15,000,000 conversations')+
+      '<div class="artlab">Gemini App, AI Mode and API. April 2026, 150 countries.</div>';
+  },
+  /* 2 — the split. Bars are scaled to each other, not to 100, because the
+     comparison IS the point and a mostly empty track buries it. */
+  /* 2026-08-17: every art builder now reads its numbers from the BEAT. They used to be
+     hardcoded to Day 19's Google ATLAS figures, so any later deck calling split/depth/
+     choice silently shipped 20.7% / 13.5% / 'I use it to learn' on an unrelated story.
+     qa_deck measures geometry, so it passed clean every time. On a page whose whole
+     promise is verified numbers this was the worst latent defect in the engine. */
+  split(c){
+    c=c||{}; const B=c.bars||[{name:'Education',val:20.7},{name:'All work, combined',val:13.5}];
+    const max=Math.max.apply(null,B.map(b=>b.val))*1.16;
+    return '<div class="bars">'+B.map((b,i)=>
+      '<div class="barrow'+(i===0?' win':'')+'"><div class="barhead">'+
+      '<span class="barname">'+b.name+'</span>'+
+      '<span class="barval">'+b.val+(b.unit||'%')+'</span></div>'+
+      '<div class="bartrack"><div class="barfill" style="width:'+(b.val/max*100)+'%"></div></div></div>'
+      ).join('')+'</div><div class="artlab">'+(c.artlab||'')+'</div>';
+  },
+  /* 3 — 100 dots, one per task, 21 lit. The single clearest thing in the deck. */
+  depth(){
+    let d='';
+    const on=new Set([0,3,7,11,14,18,21,25,29,33,36,40,44,48,52,57,63,70,78,86,94]);
+    for(let i=0;i<100;i++) d+='<span class="dot'+(on.has(i)?' on':'')+'"></span>';
+    return '<div class="dots">'+d+'</div>'+
+      '<div class="artlab">21 of every 100 tasks, in the median job that uses AI at all.</div>';
+  },
+  /* 4 — nine shallow scratches and one column that goes all the way down. */
+  comb(){
+    let t='';
+    for(let i=0;i<14;i++) t+='<span class="tooth'+(i===9?' deep':'')+'"></span>';
+    return '<div class="comb">'+t+'</div>'+
+      '<div class="artlab">Everyone is scratching. The one going all the way down is open.</div>';
+  },
+  /* 5 — the comment device, drawn as two things you could tap. */
+  choice(c){
+    c=c||{}; const O=c.opts||[{tag:'A',icon:'book',txt:'I use it to learn.'},
+                                            {tag:'B',icon:'case',txt:'I use it for work.'}];
+    return '<div class="choices2">'+O.map(o=>
+      '<div class="opt"><svg viewBox="0 0 100 100">'+(ICONS[o.icon]||ICONS.book)+'</svg>'+
+      '<span class="tag">'+o.tag+'</span><span class="txt">'+o.txt+'</span></div>'
+      ).join('')+'</div><div class="artlab">'+(c.artlab||'')+'</div>'; },
+  _oldchoice(){
+    return '<div class="choices2">'+
+      '<div class="opt"><svg viewBox="0 0 100 100">'+ICONS.book+'</svg>'+
+        '<span class="tag">A</span><span class="txt">I use it to learn.</span></div>'+
+      '<div class="opt"><svg viewBox="0 0 100 100">'+ICONS.case+'</svg>'+
+        '<span class="tag">B</span><span class="txt">I use it for work.</span></div>'+
+      '</div><div class="artlab">Say A or B in the comments. That is the whole ask.</div>';
+  }
+};
+
+/* SATURDAY PROMPT DROP · sample pack
+   Cover + 3 prompts + close. Cover carries the verified number; the close
+   carries the comment keyword. Prompt slides use type:'prompt'. */
+const CONTENT=[
+  { kicker:'Prompt Drop', icon:'chat',
+    word:'They are not<br>annoyed. They are<br><span class="g">furious</span>.',
+    sub:'64% of customers who hit a problem felt rage about it. CCMC and Arizona State asked 1,000 Americans, December 2025. Here are <b>5 prompts</b> for the messages you keep not writing.' },
+
+  { type:'prompt', kicker:'Prompt 01', num:'01', title:'The bad review.',
+    prompt:'Write a public reply to this review: [paste it]. It is [fair / unfair / partly right]. Write for the next customer reading it, not for the reviewer. Under 90 words. Own the specific thing, say what changes, no discount, no defensiveness. Then tell me what this review says about my business.',
+    back:'A reply the next customer reads and trusts. Plus <b>what the review is actually telling you</b>, which is usually the part worth fixing.' },
+
+  { type:'prompt', kicker:'Prompt 02', num:'02', title:'The refund.',
+    prompt:'A customer wants their money back. Situation: [what happened]. My policy is [policy]. I want to say [yes, no, or part of it]. Write it in under 100 words. Decide in the first line, no burying it. Then tell me what saying yes costs me, and what saying no costs me.',
+    back:'The message, and <b>both bills side by side.</b> Most owners refund out of guilt, or refuse out of pride, without ever pricing either one.' },
+
+  { type:'prompt', kicker:'Prompt 03', num:'03', title:'It was you.',
+    prompt:'I got this wrong: [what happened]. The customer is [how upset]. Write an apology that takes responsibility without grovelling. Under 100 words. One line of ownership, one of what I am doing now, one of what changes. No excuses. Flag any sentence that sounds like a lawyer wrote it.',
+    back:'An apology that sounds like a person. <b>The lawyer sentences flagged</b> before you send it, because those are the ones that make people angrier.' },
+
+  { type:'prompt', kicker:'Prompt 04', num:'04', title:'Hold the line.',
+    prompt:'This customer is wrong and I still want to keep them: [paste the thread]. Write my reply. Be warm, be specific, do not concede the point. Under 100 words. Give them one thing I can actually offer. End with a clear next step. Tell me honestly whether this relationship is worth keeping.',
+    back:'A reply that stays polite and still says no. Plus <b>an honest read on whether to bother</b>, which is the question you were avoiding.' },
+
+  { type:'prompt', kicker:'Prompt 05', num:'05', title:'The one you<br>are avoiding.',
+    prompt:'There is a message I have been putting off sending: [describe it]. I have not sent it because [the reason]. Draft it in under 120 words. Say the hard part in the first two sentences. Then tell me the one thing I am afraid of here, and whether the draft actually handles it.',
+    back:'The message written, and <b>the fear named out loud.</b> Nine times out of ten the sentence you dread is one line long. Run this one first.' },
+
+  { kicker:'The rule', icon:'check',
+    word:'Answer <span class="g">today</span>.',
+    sub:'Nothing about an angry customer improves with time. Comment <b>PROMPTS</b> and I will send all five as a copy-and-paste doc.' }
+];
+
+/* ===== render ===== */
+const stage=document.getElementById('stage');
+function renderSlide(i){
+  const c=CONTENT[i];
+  const isPrompt = c.type==='prompt';
+  const isQuote  = c.type==='quote';
+  const isShout  = c.type==='shout';
+  stage.className='t-'+CONFIG.theme+(CONFIG.look==='light'?' light':'')
+                + (isPrompt?(' type-prompt '+CONFIG.card):'')
+                + (isQuote?' type-quote':'')
+                + (isShout?' type-shout':'');
+  if(isShout){
+    document.getElementById('shout').innerHTML=c.shout||'';
+    document.getElementById('pclaim').innerHTML=c.claim||'';
+    document.getElementById('ssub').innerHTML=c.ssub||'';
+  }else if(isQuote){
+    document.getElementById('qlabel').innerHTML=c.label||'';
+    document.getElementById('qmeta').innerHTML=c.meta||'';
+    document.getElementById('qtext').innerHTML=c.claim||'';
+    document.getElementById('qfoot').innerHTML=c.foot||'';
+  }else if(isPrompt){
+    document.getElementById('pkicktxt').innerHTML=c.kicker;
+    document.getElementById('pchip').innerHTML=c.kicker;
+    document.getElementById('ptitle').innerHTML=c.title;
+    document.getElementById('pnum').textContent=c.num||'';
+    // the caret belongs to TERMINAL only: it is what makes the block read as typed
+    document.getElementById('ptext').innerHTML=
+      c.prompt + (CONFIG.card==='terminal' ? '<span class="caret"></span>' : '');
+    document.getElementById('pbacktxt').innerHTML=c.back;
+  }else{
+    stage.classList.add('has-fig');   // bookend slides carry the AC figure
+    // a beat carrying `art` swaps the single 172px icon for a full art block and
+    // moves its icon up into the kicker row, so the slide reads
+    // kicker+mark -> headline -> art -> sub instead of icon -> headline -> sub.
+    const hasArt = !!(c.art && ART[c.art]);
+    if(hasArt) stage.classList.add('has-art');
+    document.getElementById('kick').innerHTML=
+      c.kicker + (c.kicon&&hasArt ? '<svg class="kicon" viewBox="0 0 100 100">'+(ICONS[c.kicon]||'')+'</svg>' : '');
+    document.getElementById('iconwrap').innerHTML = hasArt
+      ? ART[c.art](c)
+      : '<svg class="ic" width="'+(CONFIG.theme==='column'?150:172)+'" height="'+(CONFIG.theme==='column'?150:172)+'" viewBox="0 0 100 100">'+(ICONS[c.icon]||ICONS.bolt)+'</svg>';
+    document.getElementById('word').innerHTML=c.word;
+    document.getElementById('word').style.fontSize=c.wsize||'';
+    document.getElementById('sub').innerHTML=c.sub;
+  }
+  document.getElementById('wm').textContent=CONFIG.handle;
+  document.getElementById('step').textContent=(i+1)+' / '+CONTENT.length;
+  // the block fills with deck progress — the same law the reels use for time
+  const pct=((i+1)/CONTENT.length*100)+'%';
+  const bar=document.querySelector('#block i');
+  const vertical=(CONFIG.theme==='column'||CONFIG.theme==='margin');
+  bar.style.width = vertical?'100%':pct;
+  bar.style.height= vertical?pct:'100%';
+}
+window.renderSlide=renderSlide;
+window.__SLIDES=CONTENT.length;
+renderSlide(0);
+</script>
+</body>
+</html>

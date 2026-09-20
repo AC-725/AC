@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<!-- AC Reel COVER. Edit only the text inside the <!--EDIT--> markers. 1080x1920;
-     key content sits inside the profile-grid safe zone (center 1080x1350). -->
+<!-- AC Reel COVER. 1080x1920. Edit only the text between the EDIT markers below.
+     Key content sits inside the profile-grid safe zone (centre 1080x1350).
+     NOTE: do not put a literal edit-marker comment in THIS header comment. Its
+     closing bracket ends the comment early and the rest leaks onto the page. -->
 <style>
   :root{--gold:#E7C765;--gold-deep:#C9A23F;--gold-light:#F4DF95;--white:#F4F0E7;--stone:#B9B1A1;}
   *{margin:0;padding:0;box-sizing:border-box;-webkit-font-smoothing:antialiased;text-rendering:geometricPrecision;}
-  html,body{width:1080px;height:1920px;overflow:hidden;background:#000;}
+  html,body{width:1080px;height:1920px;overflow:hidden;background:#0A0A0A;}
   #stage{position:relative;width:1080px;height:1920px;overflow:hidden;
-    background:radial-gradient(circle at 50% 40%,rgba(231,199,101,0.08),rgba(231,199,101,0) 46%),
-      radial-gradient(ellipse at 50% 45%,#16130E 0%,#0B0B0A 58%,#070706 100%);}
+    background:#0A0A0A;}  /* FLAT GROUND — matches both engines */
   #frame{position:absolute;inset:46px;border:1.5px solid rgba(231,199,101,0.38);}
   .tick{position:absolute;width:44px;height:44px;}
   .tick.tl{top:34px;left:34px;border-top:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
   .tick.tr{top:34px;right:34px;border-top:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
   .tick.bl{bottom:34px;left:34px;border-bottom:2.5px solid var(--gold);border-left:2.5px solid var(--gold);}
   .tick.br{bottom:34px;right:34px;border-bottom:2.5px solid var(--gold);border-right:2.5px solid var(--gold);}
-  .kickrow{position:absolute;top:360px;left:96px;right:96px;display:flex;align-items:center;justify-content:space-between;}
+  .kickrow{position:absolute;top:360px;left:96px;right:96px;display:flex;align-items:center;justify-content:center;}
   .pillar{font-family:'Poppins';font-weight:600;font-size:30px;letter-spacing:7px;color:var(--gold);text-transform:uppercase;}
   .newpill{font-family:'Poppins';font-weight:600;font-size:24px;letter-spacing:5px;color:var(--gold);
     text-transform:uppercase;border:1.5px solid rgba(231,199,101,0.6);border-radius:100px;padding:11px 26px 9px;}
@@ -33,7 +34,7 @@
   .sig{position:absolute;top:1372px;left:0;width:100%;display:flex;flex-direction:column;align-items:center;}
   .mono{width:120px;height:120px;border-radius:50%;border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;
     font-family:'Lora';font-weight:600;font-size:60px;color:var(--gold);letter-spacing:1px;
-    background:radial-gradient(circle at 50% 34%,rgba(231,199,101,0.18),rgba(231,199,101,0) 72%);}
+    }
   .handle{font-family:'Lora';font-weight:600;font-size:56px;color:var(--white);margin-top:26px;}
   .tag{font-family:'Poppins';font-weight:500;font-size:25px;letter-spacing:5px;color:rgba(231,199,101,0.62);text-transform:uppercase;margin-top:18px;}
 </style>
@@ -42,9 +43,11 @@
 <div id="stage">
   <div id="frame"></div>
   <div class="tick tl"></div><div class="tick tr"></div><div class="tick bl"></div><div class="tick br"></div>
+  <!-- ONE label only. No day number, no date, no "Day N" pill: the page is not a
+       numbered series (AC, 2026-07-30). The .newpill style is kept for a genuine
+       one-off flag like NEW or FREE, and stays unused by default. -->
   <div class="kickrow">
     <div class="pillar">Tool of the Day</div>
-    <div class="newpill">New</div>
   </div>
   <div class="idea">
     <div class="l"><!--EDIT-->Describe it.</div>
