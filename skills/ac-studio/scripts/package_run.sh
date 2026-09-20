@@ -41,6 +41,13 @@ for d in "$RUN" "$RUN/run" "$RUN/.."; do
   for f in "$d"/COVER*.png "$d"/*.pdf "$d"/caption.txt "$d"/dm_reply.txt \
            "$d"/beatsheet*.md "$d"/structure-analysis.md; do [ -e "$f" ] && add "$f"; done
   [ -e "$d/_filmstrip/FILMSTRIP.jpg" ] && add "$d/_filmstrip/FILMSTRIP.jpg" "qa"
+  # the imagery pack (2026-09-20): brainstorm, manifest, board, prepped icons and the bake
+  # page — never the raw bakes, which bake.html regenerates
+  if [ -d "$d/pack" ]; then
+    for f in "$d/pack/brainstorm.md" "$d/pack/pack.json" "$d/pack/pack-board.png" "$d/pack/icons" "$d/bake.html"; do
+      [ -e "$f" ] && add "$f" "pack"
+    done
+  fi
 done
 
 [ "$copied" -gt 0 ] || { echo "package_run: nothing to package in $RUN" >&2; exit 1; }

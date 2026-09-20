@@ -1,5 +1,11 @@
 # The 3D story-icon library — `assets/icons3d/`
 
+> **2026-09-20 — the catalog is a bench, not a shipping set.** Every post ships its own
+> imagery pack, one family, brainstormed at Stop 0 (`references/imagery-pack.md`). Anything
+> below is legal on a post only RE-BAKED into that pack's look through
+> `assets/pack-bake.template.html` (copy the builder in; the look and family come from the
+> pack's file). The recipes and gotchas on this page still govern how each look is built.
+
 Twelve pre-baked, transparent, law-safe 3D icons for slides and scenes. Approved by AC
 2026-08-22 ("input this inside to the skill"). Everything is wireframe, line, point or
 unlit flat fill in brand gold on transparency — **inside flat-gold law** (AC's

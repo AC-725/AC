@@ -32,6 +32,23 @@ Gold gradient (figures, the `to` chip, blocks): `linear-gradient(118deg,#F4DF95,
 **On gold ground the accent inverts to black.** This is the only exception to "gold means
 look here", and it exists because gold-on-gold carries no signal. See COLUMN.
 
+## The three families (AC, 2026-09-20)
+
+Every post carries at most **three colour families**, and the ground counts:
+
+- **BLACK** — `#0A0A0A` and its inks (`#12100A`, `#141414`, `#111009`).
+- **GOLD** — every gold above, light to dim, the gradient, the tier gradations, the dim
+  footnotes and handles. One family.
+- **CREAM** — `#F4F0E7`, `#E4DDCE`, `#B9B1A1` and the dim greys.
+
+Shades of one family are one family. **RED** (`#E5484D` bright / `#A32328` deep) is the
+single exception — ONE element, for the one thing that must be seen, declared at Stop 0
+with the reason; never chrome, never an icon, never two elements. Nothing else is on the
+post: no vendor colour, no chart palette, no hint of anything. A named person's team colours
+(`comparisons.md`) are a fourth family and wait on AC's call; until then they are declared
+like red or not used. Measured by **Gate 10**, `scripts/gate_colours.py`, on every rendered
+slide and every video. Full law: `references/imagery-pack.md` §5.
+
 ## Type
 
 **Poppins** — kickers, labels, body, chips. Every small element, every theme, always.

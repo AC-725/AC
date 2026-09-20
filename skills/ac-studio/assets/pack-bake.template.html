@@ -1,0 +1,196 @@
+<!DOCTYPE html><html><head><meta charset="utf-8">
+<!--
+  AC — STUDIO · PACK BAKE  (the imagery pack, one family, one file)
+  ============================================================================
+  Bakes every 3D object of ONE post's imagery pack with ONE family setup —
+  same camera, same light, same materials, same contact shadow — so the pack
+  cannot drift into mixed looks. The builders describe SHAPE only; the LOOK
+  constant decides how every shape is rendered (matte · polished · wire).
+
+  EDIT ONLY: LOOK, and the OBJECTS map (one builder per object in pack.json).
+  Everything under "ENGINE" is the family and stays fixed for the pack.
+
+  Run dir needs `vendor/` beside it (cp -r SKILL_DIR/assets/vendor .).
+  Bake:  node SKILL_DIR/scripts/bake_pack.js bake.html pack/raw
+  Prep:  python3 SKILL_DIR/scripts/prep_pack.py pack/raw pack/icons
+  Law:   references/imagery-pack.md (premium, the simplicity gate, sizes)
+  ============================================================================
+-->
+<script type="importmap">{"imports":{"three":"./vendor/three.module.min.js"}}</script>
+<style>
+html,body{margin:0;background:#0A0A0A;color:#B9B1A1;font-family:Poppins,sans-serif}
+h1{font:600 12px/1 Poppins,sans-serif;letter-spacing:.42em;text-transform:uppercase;color:#E7C765;margin:36px 40px 0}
+#grid{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:40px}
+.tile{display:flex;flex-direction:column;gap:10px;align-items:center}
+.tile img{width:100%;aspect-ratio:1;background:#0A0A0A;border:1px solid rgba(201,169,97,.2)}
+.tile div{font-size:12px;letter-spacing:.3em;text-transform:uppercase;color:#796938}
+.tile.err div{color:#E5484D}
+</style></head><body>
+<h1 id="title">Pack bake</h1>
+<div id="grid"></div>
+<script type="module">
+import * as THREE from 'three';
+
+/* ===================== EDIT: the pack ===================== */
+const LOOK = 'matte';            // 'matte' | 'polished' | 'wire'  — ONE per pack, never mixed
+
+/* One builder per object. Receives the material kit K and returns a Group.
+   Describe SHAPE only. Simplicity gate: one silhouette, 3–8 parts.
+   K.base / K.deep / K.lit are the family materials (lit = the one accent —
+   use it ONCE per object). K.mesh(geo,mat) · K.ext(shape,depth,mat,bevel) ·
+   K.core(geo) (invisible depth occluder for stacked/wire objects). */
+const OBJECTS = {
+  // The pack motif: time, a trial result, knowing when to stop.
+  hourglass: K => { const g = new THREE.Group();
+    [0, 2.2].forEach(y => { const d = K.mesh(new THREE.CylinderGeometry(.7, .7, .08, 48), K.deep); d.position.y = y; g.add(d); });
+    const top = K.mesh(new THREE.ConeGeometry(.55, 1, 48, 1, true), K.base); top.rotation.x = Math.PI; top.position.y = 1.62; g.add(top);
+    const bot = K.mesh(new THREE.ConeGeometry(.55, 1, 48, 1, true), K.base); bot.position.y = .58; g.add(bot);
+    const sand = K.mesh(new THREE.ConeGeometry(.32, .25, 32), K.lit); sand.rotation.x = Math.PI; sand.position.y = .2; g.add(sand);
+    for (let k = 0; k < 3; k++) { const p = K.mesh(new THREE.CylinderGeometry(.03, .03, 2.2, 12), K.deep); const a = k * Math.PI * 2 / 3 + .5; p.position.set(Math.cos(a) * .66, 1.1, Math.sin(a) * .66); g.add(p); }
+    return g; },
+
+  // The exchange: the thing that unlocks the pack. Bow echoes the brand diamond.
+  key: K => { const g = new THREE.Group();
+    for (let k = 0; k < 4; k++) { const ak = Math.PI / 4 + k * Math.PI / 2, r = .34; const s = K.mesh(new THREE.BoxGeometry(r * 1.414 + .08, .1, .1), K.base); s.rotation.z = ak + Math.PI / 2; s.position.set(-.9 + Math.cos(ak) * r * .707, Math.sin(ak) * r * .707, 0); g.add(s); }
+    const dot = K.mesh(new THREE.SphereGeometry(.07, 24, 16), K.lit); dot.position.set(-.9, 0, 0); g.add(dot);
+    const collar = K.mesh(new THREE.TorusGeometry(.13, .04, 16, 32), K.deep); collar.rotation.y = Math.PI / 2; collar.position.set(-.45, 0, 0); g.add(collar);
+    const shaft = K.mesh(new THREE.CylinderGeometry(.07, .07, 1.7, 32), K.base); shaft.rotation.z = Math.PI / 2; shaft.position.set(.4, 0, 0); g.add(shaft);
+    const t1 = K.mesh(new THREE.BoxGeometry(.12, .32, .1), K.base); t1.position.set(1.15, -.18, 0); g.add(t1);
+    const t2 = K.mesh(new THREE.BoxGeometry(.12, .24, .1), K.base); t2.position.set(.9, -.14, 0); g.add(t2);
+    g.rotation.z = -.35; return g; },
+
+  // Email — the page's most recurring niche. Slab + open flap; the flap is the accent.
+  envelope: K => { const g = new THREE.Group();
+    const body = K.ext(K.rrect(2.0, 1.3, .06), .14, K.base, .02); body.position.set(0, .65, 0); g.add(body);
+    const flap = new THREE.Shape(); flap.moveTo(-1.0, 0); flap.lineTo(1.0, 0); flap.lineTo(0, -.78); flap.closePath();
+    const f = K.ext(flap, .06, K.lit, .01); f.position.set(0, 1.30, .15); f.rotation.x = -.55; g.add(f);
+    const seam = K.mesh(new THREE.BoxGeometry(1.9, .02, .02), K.deep); seam.position.set(0, 1.02, .16); g.add(seam);
+    return g; },
+};
+/* ===================== END EDIT ===================== */
+
+
+/* ===================== ENGINE — the family. Do not edit per pack. ===================== */
+const FAMILY = {
+  size: 900,                                   // bake resolution (px, square, alpha)
+  camera: { dir: [-.75, .55, 1], fov: 28, pad: 1.05 },   // 3/4 front-left, the brand angle
+  key:  { color: 0xFFE9B8, pos: [-3, 4, 3] },   // soft warm key (intensity per look, LIGHTS below)
+  rim:  { color: 0xE7C765, pos: [3, 2, -3] },   // gold rim
+  hemi: { sky: 0xF4F0E7, ground: 0x2a2008 },
+  shadow: true,                                // soft contact shadow under every object
+  exposure: 1.15,
+};
+const GOLD = 0xC9A961, GOLD_DEEP = 0x8A7331, GOLD_LIT = 0xE7C765, ENGRAVE = 0x6E5626;
+
+function kit(look) {
+  const K = {};
+  K.rrect = (w, h, r) => { const s = new THREE.Shape(); s.moveTo(-w / 2 + r, -h / 2); s.lineTo(w / 2 - r, -h / 2); s.quadraticCurveTo(w / 2, -h / 2, w / 2, -h / 2 + r); s.lineTo(w / 2, h / 2 - r); s.quadraticCurveTo(w / 2, h / 2, w / 2 - r, h / 2); s.lineTo(-w / 2 + r, h / 2); s.quadraticCurveTo(-w / 2, h / 2, -w / 2, h / 2 - r); s.lineTo(-w / 2, -h / 2 + r); s.quadraticCurveTo(-w / 2, -h / 2, -w / 2 + r, -h / 2); return s; };
+  if (look === 'matte') {
+    // 2 Sep matte law: matte gold trio, no cream, no black substrate
+    K.base = new THREE.MeshStandardMaterial({ color: GOLD, roughness: .42, metalness: .6 });
+    K.deep = new THREE.MeshStandardMaterial({ color: GOLD_DEEP, roughness: .5, metalness: .55 });
+    K.lit  = new THREE.MeshStandardMaterial({ color: GOLD_LIT, roughness: .35, metalness: .55, emissive: 0x2a2008 });
+    K.mesh = (geo, mat) => new THREE.Mesh(geo, mat || K.base);
+    K.ext  = (shape, d, mat, bevel = .02) => new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 3 }), mat || K.base);
+    K.core = () => new THREE.Group();
+  } else if (look === 'polished') {
+    // 9 Sep polished law (Prompt Drop): MeshPhysical, clearcoat, bevelled extrudes, engraving in deep gold
+    const phys = (c, extra) => new THREE.MeshPhysicalMaterial(Object.assign({ color: c, roughness: .14, metalness: .95, clearcoat: 1, clearcoatRoughness: .08 }, extra || {}));
+    K.base = phys(GOLD); K.deep = phys(ENGRAVE, { roughness: .3 }); K.lit = phys(GOLD_LIT, { emissive: 0x1a1404 });
+    K.mesh = (geo, mat) => new THREE.Mesh(geo, mat || K.base);
+    K.ext  = (shape, d, mat, bevel = .03) => new THREE.Mesh(new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: true, bevelThickness: bevel, bevelSize: bevel, bevelSegments: 4 }), mat || K.base);
+    K.core = () => new THREE.Group();
+  } else if (look === 'wire') {
+    // 22 Aug / 12 Sep wireframe law: gold edges (18°), faint fill, ONE lit accent per object, bevels OFF
+    const edgeMat = new THREE.LineBasicMaterial({ color: GOLD_LIT, transparent: true, opacity: .92 });
+    const fillMat = new THREE.MeshBasicMaterial({ color: GOLD, transparent: true, opacity: .035, depthWrite: false });
+    const litFill = new THREE.MeshBasicMaterial({ color: GOLD_LIT, transparent: true, opacity: .55 });
+    const deepMat = new THREE.LineBasicMaterial({ color: GOLD_DEEP, transparent: true, opacity: .75 });
+    K.base = { edge: edgeMat, fill: fillMat }; K.deep = { edge: deepMat, fill: fillMat }; K.lit = { edge: edgeMat, fill: litFill };
+    // Smooth solids have no edge over 18° between neighbouring faces, so EdgesGeometry
+    // draws only their rims and a cylinder shaft vanishes (icons3d.md: "draw profile
+    // lines + rim loops, never full edge geometry"). The kit does that here, once.
+    const loop = (pts, m) => new THREE.LineLoop(new THREE.BufferGeometry().setFromPoints(pts), m);
+    const circle = (r, y, n = 64) => Array.from({ length: n }, (_, i) => { const a = i / n * Math.PI * 2; return new THREE.Vector3(Math.cos(a) * r, y, Math.sin(a) * r); });
+    const wireOf = (geo, m) => {
+      const P = geo.parameters || {}, g = new THREE.Group(), t = geo.type;
+      if (t === 'CylinderGeometry' || t === 'ConeGeometry') {
+        const rt = t === 'ConeGeometry' ? 0 : P.radiusTop, rb = t === 'ConeGeometry' ? P.radius : P.radiusBottom, h = P.height;
+        if (rt > 0) g.add(loop(circle(rt, h / 2), m)); if (rb > 0) g.add(loop(circle(rb, -h / 2), m));
+        for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2 + Math.PI / 4;
+          g.add(new THREE.Line(new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(Math.cos(a) * rt, h / 2, Math.sin(a) * rt), new THREE.Vector3(Math.cos(a) * rb, -h / 2, Math.sin(a) * rb)]), m)); }
+        return g; }
+      if (t === 'SphereGeometry') { const r = P.radius;
+        const c1 = loop(circle(r, 0), m); const c2 = loop(circle(r, 0), m); c2.rotation.x = Math.PI / 2; const c3 = loop(circle(r, 0), m); c3.rotation.z = Math.PI / 2;
+        g.add(c1, c2, c3); return g; }
+      if (t === 'TorusGeometry') { const R = P.radius, r = P.tube;
+        [R + r, R - r].forEach(rr => { const c = loop(circle(rr, 0), m); c.rotation.x = Math.PI / 2; g.add(c); });
+        for (let i = 0; i < 4; i++) { const a = i / 4 * Math.PI * 2; const c = loop(circle(r, 0, 32), m); c.rotation.z = Math.PI / 2; c.rotation.y = a; c.position.set(Math.cos(a) * R, Math.sin(a) * R, 0); c.rotation.set(0, 0, a + Math.PI / 2); c.rotateY(Math.PI / 2); g.add(c); }
+        return g; }
+      return new THREE.LineSegments(new THREE.EdgesGeometry(geo, 18), m);
+    };
+    K.mesh = (geo, mat) => { mat = mat || K.base; const g = new THREE.Group();
+      g.add(new THREE.Mesh(geo, mat.fill)); g.add(wireOf(geo, mat.edge)); return g; };
+    K.ext  = (shape, d, mat) => K.mesh(new THREE.ExtrudeGeometry(shape, { depth: d, bevelEnabled: false }), mat);
+    // depth-only occluder: hides back edges of a stack without painting black on the alpha canvas
+    K.core = geo => new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ colorWrite: false }));
+  } else { throw new Error('unknown LOOK ' + look); }
+  return K;
+}
+
+function roomEnv() {   // a warm room for the polished look's reflections (no external asset)
+  // Metal at metalness .95 IS its environment: a room that is mostly black makes every
+  // front-facing slab reflect black (the first polished envelope read as a dark card).
+  // So the room is warm all round, brightest on the key side, with a soft front wall.
+  const s = new THREE.Scene(); s.background = new THREE.Color(0x4a3a16); const geo = new THREE.BoxGeometry();
+  const add = (c, p, sc) => { const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: c })); m.position.set(...p); m.scale.set(...sc); s.add(m); };
+  add(0xFFF1D6, [0, 8, 0], [9, .2, 9]);        // ceiling
+  add(0xFFE9B8, [-8, 3, 3], [.2, 6, 7]);       // key wall, warm bright
+  add(0xE7C765, [8, 2, -3], [.2, 5, 5]);       // rim wall, gold
+  add(0xD9C9A0, [0, 2, 10], [10, 6, .2]);      // front wall, soft cream — what a flat face reflects
+  add(0x2a2008, [0, -3, 0], [16, .2, 16]);     // floor, dark warm
+  return s;
+}
+const LIGHTS = {   // per-look intensities; the geometry of the rig never changes
+  matte:    { key: 2.2, rim: 1.6, hemi: .55, kick: 0 },
+  polished: { key: 3.0, rim: 1.8, hemi: .45, kick: 1.2 },   // 9 Sep recipe: key 3.0 + gold rim 1.8 + kick 1.2
+  wire:     { key: 0,   rim: 0,   hemi: 0,   kick: 0 },     // unlit line materials
+};
+
+const R = new THREE.WebGLRenderer({ antialias: true, alpha: true, preserveDrawingBuffer: true });
+R.setSize(FAMILY.size, FAMILY.size); R.setPixelRatio(1); R.setClearColor(0x000000, 0);
+R.toneMapping = LOOK === 'wire' ? THREE.NoToneMapping : THREE.ACESFilmicToneMapping; R.toneMappingExposure = FAMILY.exposure;
+const K = kit(LOOK);
+const env = LOOK === 'polished' ? new THREE.PMREMGenerator(R).fromScene(roomEnv(), .04).texture : null;
+
+document.getElementById('title').textContent = 'Pack bake · ' + LOOK + ' · ' + Object.keys(OBJECTS).length + ' objects';
+const grid = document.getElementById('grid'); window.__icons = {}; window.__errors = {};
+for (const name of Object.keys(OBJECTS)) {
+  const t = document.createElement('div'); t.className = 'tile'; grid.appendChild(t);
+  try {
+    const scene = new THREE.Scene(); if (env) scene.environment = env;
+    const L = LIGHTS[LOOK];
+    scene.add(new THREE.HemisphereLight(FAMILY.hemi.sky, FAMILY.hemi.ground, L.hemi));
+    const key = new THREE.DirectionalLight(FAMILY.key.color, L.key); key.position.set(...FAMILY.key.pos); scene.add(key);
+    const rim = new THREE.DirectionalLight(FAMILY.rim.color, L.rim); rim.position.set(...FAMILY.rim.pos); scene.add(rim);
+    if (L.kick) { const kick = new THREE.DirectionalLight(0xFFE9B8, L.kick); kick.position.set(1, -2, 4); scene.add(kick); }
+    const obj = OBJECTS[name](K); scene.add(obj);
+    const bb = new THREE.Box3().setFromObject(obj); const oc = bb.getCenter(new THREE.Vector3()); const osph = bb.getBoundingSphere(new THREE.Sphere());
+    if (FAMILY.shadow && LOOK !== 'wire') {
+      const cv = document.createElement('canvas'); cv.width = cv.height = 256; const x = cv.getContext('2d');
+      const gr = x.createRadialGradient(128, 128, 10, 128, 128, 120); gr.addColorStop(0, 'rgba(0,0,0,.55)'); gr.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = gr; x.fillRect(0, 0, 256, 256);
+      const sm = new THREE.Mesh(new THREE.PlaneGeometry(osph.radius * 2.2, osph.radius * 1.1), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(cv), transparent: true, depthWrite: false }));
+      sm.rotation.x = -Math.PI / 2; sm.position.set(oc.x, bb.min.y - .02, oc.z); scene.add(sm);
+      bb.union(new THREE.Box3().setFromObject(sm));   // frame the shadow too, or its tail crops at the frame edge
+    }
+    const c = bb.getCenter(new THREE.Vector3()); const sph = bb.getBoundingSphere(new THREE.Sphere());
+    const cam = new THREE.PerspectiveCamera(FAMILY.camera.fov, 1, .1, 100);
+    const dist = sph.radius / Math.sin(THREE.MathUtils.degToRad(FAMILY.camera.fov / 2)) * FAMILY.camera.pad;
+    const dir = new THREE.Vector3(...FAMILY.camera.dir).normalize(); cam.position.copy(c).add(dir.multiplyScalar(dist)); cam.lookAt(c);
+    R.render(scene, cam);
+    const url = R.domElement.toDataURL('image/png'); window.__icons[name] = url;
+    t.innerHTML = `<img src="${url}"><div>${name}</div>`;
+  } catch (e) { window.__errors[name] = String(e); t.className = 'tile err'; t.innerHTML = `<div>${name} · ${String(e)}</div>`; }
+}
+document.body.dataset.ready = '1';
+</script></body></html>

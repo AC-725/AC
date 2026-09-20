@@ -1,0 +1,24 @@
+{
+  "pack": "The Finish Line",
+  "topic": "LLMs lose 39% when the ask arrives in pieces (Microsoft Research + Salesforce, May 2025). Five prompts for the messages you keep not writing.",
+  "brief": "Direction B of three: objects of TIME and ACCESS — the pack is about knowing when to stop and what unlocks the rest.",
+  "format": "promptdrop",
+  "dimension": "3d",
+  "look": "matte",
+  "handle": "@itsac.ai",
+  "colours": {
+    "families": ["black", "gold", "cream"],
+    "red": { "on": false, "element": "", "reason": "" }
+  },
+  "slots": ["cover", "02", "03", "04", "05", "06", "07", "08", "close"],
+  "no_anchor": ["02", "close"],
+  "objects": [
+    { "key": "hourglass", "slot": "cover", "role": "hero",   "mount": 400, "ground": "black", "concept": "Sand caught mid-fall. The pack is about knowing when to stop.", "source": "bake", "file": "icons/hourglass.png" },
+    { "key": "envelope",  "slot": "03",    "role": "anchor", "mount": 208, "ground": "black", "concept": "The email you avoid. Literal, and the one nobody misreads.", "source": "bake", "file": "icons/envelope.png" },
+    { "key": "envelope",  "slot": "04",    "role": "anchor", "mount": 208, "ground": "black", "concept": "Same object, second prompt in the email pair.", "source": "bake", "file": "icons/envelope.png" },
+    { "key": "key",       "slot": "05",    "role": "anchor", "mount": 208, "ground": "black", "concept": "What unlocks the rest. Bow echoes the brand diamond.", "source": "bake", "file": "icons/key.png" },
+    { "key": "hourglass", "slot": "06",    "role": "anchor", "mount": 208, "ground": "gold",  "concept": "Ink-on-gold slide: the hero at anchor size on the gold ground.", "source": "bake", "file": "icons/hourglass.png" },
+    { "key": "key",       "slot": "07",    "role": "anchor", "mount": 208, "ground": "black", "concept": "Second key prompt.", "source": "bake", "file": "icons/key.png" },
+    { "key": "key",       "slot": "08",    "role": "hero",   "mount": 300, "ground": "black", "concept": "The exchange slide: the thing they get.", "source": "bake", "file": "icons/key.png" }
+  ]
+}

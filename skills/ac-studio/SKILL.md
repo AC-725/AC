@@ -6,9 +6,10 @@ description: >-
   sub-12s reel that opens on the payoff and loops), the carousel and static-post system,
   and the brand protocol (voice, post formula, captions, bio, Story Highlights, posting
   calendar, hashtags, growth). Researches fresh stories, verifies every number, writes
-  algorithm-aware copy, gates on a layout audit and a virality scorecard, checks in with
-  AC before rendering, then ships the MP4, cover, VO script, caption, hashtags and A/B
-  hooks. Use this WHENEVER Austin touches his Instagram — a reel, video, TOD, tool of the
+  algorithm-aware copy, brainstorms the post's own imagery pack with AC before drafting
+  (Stop 0: hero, anchors and rail as one 2D or 3D family, three colour families per post),
+  gates on a layout audit and a virality scorecard, checks in with AC at every stop, then
+  ships the MP4, cover, VO script, caption, hashtags and A/B hooks. Use this WHENEVER Austin touches his Instagram — a reel, video, TOD, tool of the
   day, AI news, "day N" content, a carousel, a slide, a post, caption, bio, highlight,
   hashtag set, weekly plan, growth question, or any AI story, tool or number he drops for
   the page — even when he never names the brand or the format. The single source of truth
@@ -27,6 +28,56 @@ live in separate places that drift apart.
 **Version 2026-07-29 · v3.** Supersedes `ac-instagram` (retired) and `ac-design` (retired —
 its carousel system is absorbed into `references/carousel.md`; see the file gap noted
 there).
+
+**Update 2026-09-20 · THE IMAGERY PACK, THE THREE-COLOUR LAW, STOP 0.** AC's call in a
+written round of four questions, then a brainstorm. Every post now ships with its OWN
+imagery pack — hero object, one anchor per slide or beat, the rail glyphs — conceived for
+the story and built as ONE family, and nothing mounts before it is brainstormed, approved
+at true size and gated. Six laws and one engine. Full spec: `references/imagery-pack.md`.
+
+1. **The pack is per topic, in full.** The catalog is a bench of builders, not a shipping
+   set: an archived object is legal on a post only RE-BAKED into this pack's look. Every
+   pack is filed in `references/pack-archive.md`; no hero repeats inside 14 days.
+2. **Stop 0 · the pack brainstorm** — before the beat sheet or any slide CONTENT (Lane A
+   step 3c, Lane B right after the interview). Three directions that differ in METAPHOR,
+   each with an object per slot and what it means, a 2D/3D + look recommendation WITH the
+   reason, the colour declaration, bakes and risk — pre-filled on the real story, the pick
+   named. `assets/pack-brainstorm.template.md`. AC answers one tick-box form.
+3. **The three-colour law.** BLACK · GOLD · CREAM are the three families on every post,
+   the ground counts, shades of one family are one family. RED is the single exception —
+   ONE element, for the one thing that must be seen, declared at Stop 0 with the reason;
+   never chrome, never an icon, never two. **Gate 10** (`scripts/gate_colours.py`) measures
+   every rendered slide and every sampled video frame; `produce.sh` runs it after the
+   build, reading the declaration from `pack/pack.json`.
+4. **2D or 3D is recommended per topic, with the reason; AC decides.** The rubric is in
+   `imagery-pack.md` §4 (a reference → flat; nameable things → matte; systems and
+   quantities → wire or a flat diagram; Prompt Drop → polished; ≤60px → hairline; reels
+   mount PNGs transform-only). A reference sheet still outranks the recommendation.
+5. **Premium is defined in ten checks** (`imagery-pack.md` §2): restraint executed with
+   craft — one silhouette, one family, true materials, a scale system, negative space,
+   clean edges, one line weight, colour discipline, physical plausibility, one move per
+   beat. An object that fails one check does not go on the board.
+6. **Questions at every stop; silence is a Hold.** Stop 0 (brainstorm) → **Stop 1a (the
+   pack board — mandatory now, every run bakes; retires the optional Day 41 bake board)**
+   → Stop 1 (stills board) → Stop 2 (the finished file). Each closes on one
+   AskUserQuestion form with tick boxes and Go/Hold. The follow-up rule stands.
+
+**The engine.** `assets/pack-bake.template.html` — ONE `LOOK` per pack (matte · polished
+· wire); builders describe shape through the material kit, the family (camera, key, rim,
+hemi, contact shadow, exposure) is fixed under ENGINE, so a pack cannot drift into mixed
+looks; three.js vendored in `assets/vendor/` (unpkg is blocked in remote sessions) →
+`scripts/bake_pack.js` (serves the run dir itself over localhost: no CORS, no wrong-cwd
+404) → `scripts/prep_pack.py` (crop to ink, square ×1.08, wire alpha ×1.45, fails a
+cropped render) → `pack/pack.json` (the manifest; schema by example in
+`assets/pack.example.json`) → `scripts/gate_pack.py` (**Gate 11**: slots covered or
+declared, Gate 9 alpha, edge, ink inside the families, no 3D under 60px, one look) →
+`scripts/render_pack_board.js` (Stop 1a: every object at 600, at TRUE mount on its ACTUAL
+ground, at 140). Verified clean-room this session from skill paths alone: three matte
+objects baked, prepped, gated and boarded; the board is kept as the worked example at
+`assets/icon-boards/pack-board-example.png`. Gate 10 was proven against the deck
+engine's own slides (seven clean, zero false fails at the 8×8 reduce) and against
+synthetic defects (a 30×30px foreign block, undeclared red). The `pack/` folder rides in
+the run zip.
 
 **Update 2026-07-29 · subtitles.** Both video engines carry a baked-in typed-caption
 system. Subtitles are **mandatory on every video** — written with the words (step 4),
@@ -566,7 +617,9 @@ Read only what the task needs.
 | Subtitles / captions on a video | `subtitles.md` (mandatory on every video) |
 | A longer / retimed cut ("24s version") | `variants.md` |
 | A carousel, slide deck, static graphic | `carousel-components.md` FIRST (interview form → 50% board → gate) + `carousel-house-rules.md` (the Claude Design project's CLAUDE.md), then `carousel.md` + `themes.md` |
-| A 3D icon / 3D art on a slide or in a scene | `icons3d.md` (12 baked icons in `assets/icons3d/`); wants more character than the bake carries → `prompt-engineering.md` → Meshy/Tripo/Rodin |
+| **The imagery pack — what objects go on the slides / beats, the icon pack, a bake** | `imagery-pack.md` FIRST (Stop 0 sheet → bake → Gate 11 → pack board), then `pack-archive.md` (no hero repeats in 14 days) |
+| Colours on a post / "can I use red here" / a gate 10 fail | `imagery-pack.md` §5 — three families, the red exception, `scripts/gate_colours.py` |
+| A 3D icon recipe, a look's material numbers, re-baking an archived object | `icons3d.md` (the bench and the recipes — a post's icons come from its pack); wants more character than the bake carries → `prompt-engineering.md` → Meshy/Tripo/Rodin |
 | A cover motif or hero image the bake can't deliver | `prompt-engineering.md` → Midjourney/DALL-E/Stable Diffusion |
 | Drafting is about to start and the topic/direction is already agreed | `prompt-engineering.md` — the internal brief, before the beat sheet or slide CONTENT |
 | A Prompt Drop (the Saturday prompt pack) | `prompt-drop.md` (**v3**) + `assets/promptdrop.template.html`, then `carousel.md` |
@@ -681,6 +734,18 @@ something — vaporware or a fake free tier costs more trust than the reel build
   grade. AC picks one; the runners-up become the beat sheet's A/B variants. Rotate
   banks across days and log the used bank in `run-log.md`.
 - **Bilingual caption:** ask whether this run also ships in 繁體中文.
+
+### 3c. Brainstorm the imagery pack — Stop 0 (before any words)
+```bash
+mkdir -p pack && cp SKILL_DIR/assets/pack-brainstorm.template.md pack/brainstorm.md
+```
+Fill the sheet on the real story — three directions that differ in metaphor, an object per
+beat with what it means, the 2D/3D + look recommendation with its reason, the colour
+declaration (three families; red only if one thing must be seen, named), bakes and risk —
+name the pick, run the concept test, then ask ONE `AskUserQuestion` form: direction · look
+· red · remaps · Go/Hold. Nothing proceeds on silence. Then bake the pack, gate it, and
+ship the **pack board (Stop 1a)** before the stills board; the reel mounts the prepped
+PNGs as stage elements, transform-only. Law: `references/imagery-pack.md`.
 
 ### 4. Write the words — ONE pass, on the beat sheet
 ```bash
@@ -833,8 +898,9 @@ grab last week's caption by mistake:
 bash SKILL_DIR/scripts/package_run.sh runs/dayN-slug AC_DayN_<slug>
 ```
 It takes the deliverables only — the subtitled cut (plus any flagged extras), the cover,
-the VO PDF(s), caption.txt, dm_reply.txt, the beat sheet, and the gate 7 contact sheet
-under `qa/` — and leaves the
+the VO PDF(s), caption.txt, dm_reply.txt, the beat sheet, the gate 7 contact sheet
+under `qa/`, and the `pack/` folder (brainstorm, manifest, board, prepped icons,
+bake.html — never the raw bakes) — and leaves the
 render intermediates (frame dirs, master wavs, the qa scratch, the working HTML, the
 fonts) out, because produce.sh rebuilds those on demand.
 
@@ -859,7 +925,10 @@ fixed script) ride along in the same package — that is how they survive.
 # Lane B — carousels, posts, profile, growth
 
 Same voice, same guardrails. Carousels and static graphics: `references/carousel-components.md`
-(the interview, the component vocabulary, the board gate — 2026-09-12) then `references/carousel.md`.
+(the interview, the component vocabulary, the board gate — 2026-09-12), then **Stop 0 — the
+pack brainstorm** (`references/imagery-pack.md`: the interview's icon question is answered by
+the picked direction, baked as one family, boarded at true size), then `references/carousel.md`.
+Run gate 10 on the slide PNGs before the stills board.
 The **Saturday Prompt Drop** (cover + 3 copy-paste prompts + close, the page's only
 instrument format) has its own spec: `references/prompt-drop.md`.
 
@@ -1220,5 +1289,23 @@ branding.
   clears primary. The phrasing gates travel with the number, which is what stops the drift.
 - **Write every law to the project `CLAUDE.md` in the same turn it is set** (AC, 2026-09-13 —
   "Stop forgetting previous sessions"), and read `CLAUDE.md` before the first question of a run.
+- **Every post ships its own imagery pack, as one family** (AC, 2026-09-20). Hero, anchors,
+  rail — conceived for the story, baked with ONE `LOOK`, boarded at true size on its actual
+  ground before anything mounts. Catalog objects re-bake into the pack's look or stay on the
+  bench. No hero repeats inside 14 days. `references/imagery-pack.md`.
+- **Three colour families per post — BLACK · GOLD · CREAM — and red only as the declared
+  exception** (AC, 2026-09-20). The ground counts; shades of a family are one family; the
+  tier gradations, dim footnotes and the band gradient are all GOLD. Red is ONE element,
+  named at Stop 0 with the reason, never chrome, never an icon. Gate 10 runs on every slide
+  and every video; a foreign colour anywhere fails the post.
+- **Stop 0 before any words on a slide, and a form at every stop** (AC, 2026-09-20).
+  Brainstorm → pack board → stills board → final; each closes on tick boxes and Go/Hold.
+  Silence is a Hold, never a Go. The follow-up rule stands.
+- **2D or 3D is recommended per topic, with the reason, and decided by AC** (AC,
+  2026-09-20). A reference sheet outranks the recommendation; ≤60px is always a 2D
+  hairline; a reel mounts the pack as prepped PNGs, transform-only.
+- **Premium has a checklist** (2026-09-20, `imagery-pack.md` §2). An object that fails one
+  of the ten checks does not go on the board. More detail, more gloss and more motion are
+  not premium; restraint executed with craft is.
 - **Don't skip the checkpoint or the scorecard gate.**
 - **Show up daily.** The algorithm and the audience both reward reliability over intensity.

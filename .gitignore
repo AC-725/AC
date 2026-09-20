@@ -7,3 +7,7 @@
 .env.*
 !.env.example
 ac-studio.skill
+
+# Python bytecode
+__pycache__/
+*.pyc

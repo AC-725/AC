@@ -136,4 +136,15 @@ echo "==> Structural gate (timeline)"
 # shellcheck disable=SC2086
 bash "$HERE/qa_layout.sh" "${BASE}_subs.mp4" ${QA_ARGS:-}
 
+# ---- 6. colour gate (hard stop) ----
+# Gate 10 (2026-09-20): three colour families per post, red only when declared at
+# Stop 0. The declaration lives in pack/pack.json when the run has a pack; a run
+# with no pack is held to the three defaults. Samples the primary cut at 2 fps.
+echo "==> Colour gate (three families)"
+DECL="black,gold,cream"
+if [ -f pack/pack.json ]; then
+  DECL="$(python3 -c 'import json; p=json.load(open("pack/pack.json"))["colours"]; print(",".join(p["families"]+(["red"] if p.get("red",{}).get("on") else [])))')"
+fi
+python3 "$HERE/gate_colours.py" "${BASE}_subs.mp4" --declare "$DECL"
+
 echo "==> Done. Eyeball one typed-caption frame before shipping (subtitles.md)."

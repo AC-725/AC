@@ -22,6 +22,11 @@ Reconciled against the standing brand law before folding, so this file can be re
   diamond mark is the mark, not an icon, and stays drawn.
 - **Chrome on the crest carousel** differs from base: counter top-right "n / N", handle
   bottom-centre, source footnote on every slide, spine 148px above the floor.
+- **Stop 0 answers question 2 (2026-09-20).** The icon-per-slide map now comes from the
+  pack brainstorm (`imagery-pack.md`): three directions, the pick named, every object baked
+  into ONE look for the deck and boarded at true size (Stop 1a) before the stills board.
+  Wireframe / matte is recommended per topic with the reason; AC decides. Three colour
+  families per deck; the red pair stays legal as the declared exception on the hero numbers.
 - Assets named in section 4 live in AC's Claude Design project and are NOT in this
   package: the Stills Board `.dc.html`, `Two Counts - Caption and DM.md`,
   `assets/ac-figure-akimbo.png`, `assets/icons/*.png`, `bake/icons.html`,

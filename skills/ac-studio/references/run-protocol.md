@@ -30,13 +30,21 @@ He replies **in plain chat words**, not line numbers, not doc edits.
 | Band geometry / layout | Hook wording |
 | Which numbers go on screen | Beat count and runtime |
 | Hashtags | Camera plan per beat |
+| Three pack directions, the 2D/3D + look recommendation, the three-family declaration | The direction, the look, red on/off and its element |
 | | Figure action per beat |
 | | Subject artwork and scale |
 | | Subtitle copy · caption · VO length · cover hero |
 
-### The two stops
-1. **The stills board** — one frozen frame per beat, each at its BUSIEST moment.
+### The stops (2026-09-20 — four, each closing on a tick-box form)
+0. **The pack brainstorm** — three directions that differ in metaphor, an object per beat,
+   the 2D/3D + look recommendation with its reason, the colour declaration, the pick named.
+   Before any words. `references/imagery-pack.md` §3.
+1a. **The pack board** — every baked object at 600px, at TRUE mount on its ACTUAL ground,
+   at 140px. Mandatory now that every run bakes; retires the optional Day 41 bake board.
+1. **The stills board** — one frozen frame per beat, each at its BUSIEST moment, pack mounted.
 2. **The finished MP4.**
+
+Silence at any stop is a Hold, never a Go.
 
 **Stop 1b · the bake board** (AC, Day 41, 2026-09-11) — optional, **default ON on any
 day a new 3D anchor was baked.** Sits between the stills board and motion. The board
