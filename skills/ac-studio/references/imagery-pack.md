@@ -15,6 +15,10 @@ Four decisions, his words paraphrased once so they do not drift:
 | Colours | **Three families — BLACK · GOLD · CREAM — counting the ground; shades of one family are one family.** Red is allowed when something very important has to be highlighted. |
 | Where it sits in a run | **A new Stop 0**, then questions at every stop. Nothing proceeds on silence. |
 
+Confirmed in the second round (2026-09-21): red is a **fourth family by exception, one
+element** (gold keeps the brand); **four stops, always**; Stop 0 shows **the pick's hero,
+baked**; a named person's **team colours are declared per run, like red**.
+
 ---
 
 ## 1. What a pack is
@@ -90,8 +94,20 @@ The sheet carries, pre-filled on the real story:
   neighbourhood (a shield-with-tick says *protected*, the opposite of *breached*);
   nameable at 140px; one silhouette; not a hero in the last 14 days
   (`pack-archive.md`); no logo, clip-art or emoji stand-in; the one accent is the meaning.
+- **The hero preview** (AC, 2026-09-21) — the pick's hero object, baked once in the
+  recommended look before he chooses, so the choice is visual, not described:
+  ```bash
+  cp SKILL_DIR/assets/pack-bake.template.html bake.html && cp -r SKILL_DIR/assets/vendor .
+  node SKILL_DIR/scripts/bake_pack.js bake.html pack/stop0 <hero>        # one object only
+  python3 SKILL_DIR/scripts/prep_pack.py pack/stop0 pack/stop0-prepped --look <look>
+  node SKILL_DIR/scripts/render_pack_board.js pack/stop0.json pack/stop0-hero.png
+  ```
+  `pack/stop0.json` is a one-object manifest with `"stop": "0"`, which relabels the
+  board *Hero preview · Stop 0*. Send the PNG with the sheet. Only the pick's hero is
+  baked; the other two directions stay as words until he chooses one of them.
 - **The questions** — one `AskUserQuestion` form, tick boxes: direction A/B/C/other ·
-  look accept/override · red off/on + which element · remaps in words · **Go / Hold.**
+  look accept/override · red off/on + which element · team colours off/on + who · remaps
+  in words · **Go / Hold.**
 
 Silence is a Hold. Blank + "decide for me" = the named pick, and say so.
 
@@ -107,6 +123,7 @@ The recommendation goes on the sheet with its reason; AC decides. The rubric:
 | a Prompt Drop pack | **3D · polished** | the standing precedence — the pack is a product |
 | a prompting move / a neutral UI demo | **2D flat glyphs inside the UI + one 3D hero on the cover** | the demo stays unbranded; the cover still needs a thing |
 | anything mounting ≤60px | **2D hairline** | three baked sets were rejected in the chip slot |
+| a Tool of the Day (the engine's build cards, steps, rule swap) | **2D flat — the engine's own stroke-5 gold line family** (`ICONS` in `tod.template.html`) | it already IS one family at card size; Stop 0 still picks the icon per card and step, and a missing one is added to `ICONS` — the Stop 0 approval is the ask the 12 Sep law requires. A 3D hero on the cover is legal as `"dimension": "mixed"` |
 | a reel | the pack's look, **mounted as prepped PNG, transform-only** | live three.js never runs in a video build; every timeline gate stays intact |
 
 Tie-break: quiet luxury. When unsure, a matte 3D hero and a 2D flat rail, declared as
@@ -133,9 +150,14 @@ very important has to be highlighted** — ONE element: a hero number, a rule li
 word. Declared at Stop 0 with the element and the reason; never chrome, never an icon,
 never two elements. Gold keeps the brand; red is the one thing.
 
-Open under this law, pending AC's call: a named person's **team colours** on a comparison
-stage (`comparisons.md`, 25 Aug) are a fourth family. Until ruled, they are declared at
-Stop 0 like red or not used.
+**The team-colour exception** (AC, 2026-09-21). A named person's team colours on a
+comparison stage (`comparisons.md`, 25 Aug — Bolt's yellow, green and white) are legal
+**only when declared at Stop 0 for that run**: `colours.team` names the subject, the hexes
+and the reason. They live on the `stage` subject only — never on type, chrome or an icon —
+and the default is off: an unnamed subject is cream, the machine is gold, a year ago is dim
+gold. Gate 10 is told the hexes (`--allow`) and classifies a hue within 14° of any of them
+as the `team` family; undeclared, it fails like undeclared red. A red jersey is declared as
+red, with red's one-element meaning.
 
 **Gate 10 measures it.** `scripts/gate_colours.py` classifies every pixel of a rendered
 slide or a sampled video frame into a family (8×8 box-averaged first, so text
@@ -146,6 +168,7 @@ fails) and fails on a foreign family, on undeclared red, or on four families:
 python3 SKILL_DIR/scripts/gate_colours.py slides/                      # a deck
 python3 SKILL_DIR/scripts/gate_colours.py AC_DayN_slug_subs.mp4        # a reel (2 fps)
 python3 SKILL_DIR/scripts/gate_colours.py slides/ --declare black,gold,cream,red   # red declared
+python3 SKILL_DIR/scripts/gate_colours.py reel.mp4 --allow "#FFD700,#2ECC71"      # team colours declared
 ```
 
 `produce.sh` runs it after the build, reading the declaration from `pack/pack.json`.
@@ -201,6 +224,8 @@ One declaration per pack; the gates and the board read it. Schema by example:
 
 `source` is `bake` · `trace` · `asset` (the mark, the IG pack) · `archive` (re-baked —
 name the pack in `concept`). `ground` is `black` or `gold` (the ink-on-gold slide).
+`colours.team` — `{ "on", "subject", "hexes": ["#…"], "reason" }` — declares team colours
+for a `stage` subject; `"stop": "0"` marks a one-object Stop 0 preview manifest.
 
 ## 8. Gate 11 and the pack board — Stop 1a
 
@@ -229,7 +254,7 @@ his fix line until it passes; nothing mounts before the board passes.
 
 | Stop | What AC sees | The form |
 | --- | --- | --- |
-| **0 · pack brainstorm** | the sheet: three directions, the pick named | direction · look · red · remaps · Go/Hold |
+| **0 · pack brainstorm** | the sheet: three directions, the pick named, **the pick's hero baked** | direction · look · red · team colours · remaps · Go/Hold |
 | **1a · pack board** | every object at true size on its ground | strike list · one family? · red placement · Go/Hold |
 | **1 · stills board** | one frozen frame per beat/slide at its busiest moment, pack mounted | fix list (numbered) · Go/Hold |
 | **2 · the finished file** | the MP4 / the slide PNGs, gates run | headline strike round · Go/Hold |
@@ -247,3 +272,13 @@ The `pack/` folder rides in the run zip: `brainstorm.md`, `pack.json`, `pack-boa
 After Stop 2, file the row in `references/pack-archive.md` (hero first, colours as
 declared, where the PNGs live) and run the persist step. A pack that exists only in a
 session's scratch dir did not happen.
+
+## 11. Open levers — offered 2026-09-21, not built, AC's call when he wants them
+
+- **A week signature.** `ac-week` alternates looks across the five slots and shares one
+  family across a week's packs, so the grid reads as a set.
+- **Motion presets.** A small module so a pack object enters identically in every reel
+  (drop-and-settle, rise, 4% breathe) — the "one move per beat" check made mechanical.
+- **A whole-deck 140px strip** on the stills board, not only the icons.
+- **A no-shell bake page** for Claude Design sessions: this template on the pinned CDN
+  import map (`bake_icons_day40.html` style), capture via `toDataURL` + the Gate 9 knock-out.

@@ -37,8 +37,9 @@ He replies **in plain chat words**, not line numbers, not doc edits.
 
 ### The stops (2026-09-20 — four, each closing on a tick-box form)
 0. **The pack brainstorm** — three directions that differ in metaphor, an object per beat,
-   the 2D/3D + look recommendation with its reason, the colour declaration, the pick named.
-   Before any words. `references/imagery-pack.md` §3.
+   the 2D/3D + look recommendation with its reason, the colour declaration (red and team
+   colours off unless named), the pick named **and the pick's hero baked** so the choice is
+   visual. Before any words. `references/imagery-pack.md` §3.
 1a. **The pack board** — every baked object at 600px, at TRUE mount on its ACTUAL ground,
    at 140px. Mandatory now that every run bakes; retires the optional Day 41 bake board.
 1. **The stills board** — one frozen frame per beat, each at its BUSIEST moment, pack mounted.
@@ -46,7 +47,8 @@ He replies **in plain chat words**, not line numbers, not doc edits.
 
 Silence at any stop is a Hold, never a Go.
 
-**Stop 1b · the bake board** (AC, Day 41, 2026-09-11) — optional, **default ON on any
+**Stop 1b · the bake board** (AC, Day 41, 2026-09-11 — **retired into Stop 1a on
+2026-09-20**; kept here as the record of where the board came from) — optional, **default ON on any
 day a new 3D anchor was baked.** Sits between the stills board and motion. The board
 shows the icon at 600px, at mount size on its ACTUAL ground (gold band or black), and at
 140px feed size; plus any recoloured vendor marks at cut size and at mount size. AC

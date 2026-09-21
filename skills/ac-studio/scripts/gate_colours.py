@@ -1,21 +1,23 @@
 #!/usr/bin/env python3
 """Gate 10 · the three-colour law.
 
-    python3 gate_colours.py <png|jpg|mp4|dir> [...] [--declare black,gold,cream[,red]]
-                            [--tolerance 0.05] [--fps 2] [--json out.json]
+    python3 gate_colours.py <png|jpg|mp4|dir> [...] [--declare black,gold,cream[,red][,team]]
+                            [--allow "#RRGGBB,#RRGGBB"] [--tolerance 0.05] [--fps 2] [--json out.json]
 
 Every post carries at most THREE colour families — BLACK (the ground and its
 inks), GOLD (every gold from light to dim) and CREAM (warm white and its stone
-and dim greys). Shades of one family count as one. RED is the single permitted
-exception, for ONE very important highlight, and only when it was declared at
-Stop 0. Anything else on the frame is a foreign colour and fails the gate.
+and dim greys). Shades of one family count as one. Two exceptions exist and
+both must be DECLARED at Stop 0 for the run (AC, 2026-09-20/21):
+  - RED, for ONE very important highlight (one element, never chrome or art);
+  - TEAM colours on a named person in a comparison stage (`--allow` lists the
+    hexes; a hue within 14° of any of them counts as the "team" family).
+Anything else on the frame is a foreign colour and fails the gate.
 
-The gate classifies every opaque pixel into a family by hue, saturation and
+The gate classifies every opaque pixel into a family by hue, chroma and
 lightness, then reports coverage per family. It fails when:
-  - a family outside the declared set covers more than --tolerance % of the
-    frame (default 0.05 % — enough to forgive anti-aliasing, not a logo);
-  - red is present above tolerance but was not declared;
-  - more than three families are present and red was not declared.
+  - a foreign colour covers more than --tolerance % of the frame (default
+    0.05 % — enough to forgive anti-aliasing, not a logo);
+  - red or team colours are present above tolerance but were not declared.
 It warns (does not fail) when a declared family is absent from a frame.
 
 An MP4 is sampled at --fps frames per second through ffmpeg (system ffmpeg,
@@ -32,13 +34,28 @@ try:
 except ImportError:
     sys.exit("gate_colours: Pillow is required (pip install pillow)")
 
-FAMILIES = ("black", "gold", "cream", "red")
-
+FAMILIES = ("black", "gold", "cream", "red", "team")
+BASE = ("black", "gold", "cream")       # always legal; red and team need a declaration
+TEAM_HUE_TOL = 14.0                     # degrees either side of a declared team hex
 
 REDUCE = 8   # box-average 8x8 px before classifying — see gate_image
 
 
-def classify(r, g, b):
+def parse_allow(spec):
+    """'#2ECC71,#FFD700' -> hue centres (degrees) of the declared team colours."""
+    hues = []
+    for hx in (spec or "").split(","):
+        hx = hx.strip().lstrip("#")
+        if not hx:
+            continue
+        if len(hx) != 6:
+            sys.exit("gate_colours: bad hex in --allow: " + hx)
+        r, g, b = int(hx[0:2], 16), int(hx[2:4], 16), int(hx[4:6], 16)
+        hues.append(colorsys.rgb_to_hsv(r / 255.0, g / 255.0, b / 255.0)[0] * 360.0)
+    return hues
+
+
+def classify(r, g, b, allow=None):
     """Map one RGB pixel to a colour family.
 
     Thresholds were set against the brand palette in references/brand.md and
@@ -63,10 +80,17 @@ def classify(r, g, b):
         return "gold"                       # #F4DF95 → #E7C765 → #C9A23F → #8A7331 → #3A3218 (orange #FF8C00 is 33° — out)
     if hue >= 340.0 or hue <= 12.0:
         return "red"                        # #E5484D · #A32328 · #8E1219 · #D8262F
+    # gold and red are checked first, so a team hex inside those bands simply counts
+    # as that family — both are declared, so nothing is lost. A red jersey is "red":
+    # declare it as red, with its one-element meaning.
+    for h in (allow or ()):
+        d = abs(hue - h)
+        if min(d, 360.0 - d) <= TEAM_HUE_TOL:
+            return "team"
     return "other"
 
 
-def gate_image(path, declared, tolerance, reduce=REDUCE):
+def gate_image(path, declared, tolerance, reduce=REDUCE, allow=None):
     im = Image.open(path).convert("RGBA")
     # Chromium's sub-pixel text anti-aliasing leaves one-pixel orange and blue
     # fringes on every glyph edge — about 1% of a slide, all of it "foreign".
@@ -88,7 +112,7 @@ def gate_image(path, declared, tolerance, reduce=REDUCE):
             continue                        # transparent pixels are not colour
         r, g, b = buf[i], buf[i + 1], buf[i + 2]
         total += 1
-        fam = classify(r, g, b)
+        fam = classify(r, g, b, allow)
         counts[fam] += 1
         if fam == "other":
             key = (r >> 4 << 4, g >> 4 << 4, b >> 4 << 4)   # 16-level bins
@@ -98,14 +122,17 @@ def gate_image(path, declared, tolerance, reduce=REDUCE):
     pct = {k: 100.0 * v / total for k, v in counts.items()}
     present = [k for k in FAMILIES if pct[k] > tolerance]
     problems, warnings = [], []
-    if pct["other"] > tolerance:
+    # with team colours declared, the seams between them and gold blend to in-between
+    # hues on every edge of the subject — allow three times the tolerance for "other"
+    other_tol = tolerance * (3.0 if "team" in declared else 1.0)
+    if pct["other"] > other_tol:
         top = sorted(foreign.items(), key=lambda kv: -kv[1])[:3]
         swatches = ", ".join("#%02X%02X%02X (%.2f%%)" % (k[0], k[1], k[2], 100.0 * v / total) for k, v in top)
         problems.append("foreign colour %.2f%% of frame: %s" % (pct["other"], swatches))
-    if "red" in present and "red" not in declared:
-        problems.append("red present (%.2f%%) but not declared at Stop 0" % pct["red"])
-    if len(present) > 3 and "red" not in declared:
-        problems.append("%d families on one frame: %s" % (len(present), ", ".join(present)))
+    for k in present:
+        if k not in BASE and k not in declared:
+            problems.append("%s present (%.2f%%) but not declared at Stop 0" % (
+                "red" if k == "red" else "team colours", pct[k]))
     for k in declared:
         if k not in present:
             warnings.append("declared family absent: %s" % k)
@@ -161,7 +188,9 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("targets", nargs="+")
     ap.add_argument("--declare", default="black,gold,cream",
-                    help="families declared at Stop 0 (default black,gold,cream; add red only when declared)")
+                    help="families declared at Stop 0 (default black,gold,cream; add red / team only when declared)")
+    ap.add_argument("--allow", default="",
+                    help="declared team colours as hexes, e.g. '#FFD700,#2ECC71' (implies team in --declare)")
     ap.add_argument("--tolerance", type=float, default=0.05, help="max %% of frame a stray family may cover")
     ap.add_argument("--fps", type=float, default=2.0, help="frames per second sampled from a video")
     ap.add_argument("--reduce", type=int, default=REDUCE, help="box-average factor before classifying (default 8)")
@@ -169,11 +198,16 @@ def main():
     a = ap.parse_args()
 
     declared = [d.strip().lower() for d in a.declare.split(",") if d.strip()]
+    allow = parse_allow(a.allow)
+    if allow and "team" not in declared:
+        declared.append("team")
+    if "team" in declared and not allow:
+        sys.exit("gate_colours: team declared but no --allow hexes given")
     bad = [d for d in declared if d not in FAMILIES]
     if bad:
         sys.exit("gate_colours: unknown family %s (use %s)" % (bad, "/".join(FAMILIES)))
-    if len([d for d in declared if d != "red"]) > 3:
-        sys.exit("gate_colours: more than three families declared — the law is three plus the red exception")
+    if len([d for d in declared if d in BASE]) > 3:
+        sys.exit("gate_colours: more than three base families declared — the law is three, plus the declared exceptions")
 
     files, errors = expand(a.targets, a.fps)
     for e in errors:
@@ -184,7 +218,7 @@ def main():
 
     reports, fails = [], 0
     for f in files:
-        rep = gate_image(f, declared, a.tolerance, a.reduce)
+        rep = gate_image(f, declared, a.tolerance, a.reduce, allow)
         reports.append(rep)
         if rep.get("error"):
             print("  ?? %s: %s" % (f, rep["error"]))
@@ -199,7 +233,7 @@ def main():
 
     if a.json:
         with open(a.json, "w") as fh:
-            json.dump({"declared": declared, "tolerance": a.tolerance, "frames": reports}, fh, indent=1)
+            json.dump({"declared": declared, "allow": a.allow, "tolerance": a.tolerance, "frames": reports}, fh, indent=1)
 
     print("\ngate 10 · colours: %d frame(s), %d fail(s), declared %s" % (len(files), fails, "+".join(declared)))
     if errors:

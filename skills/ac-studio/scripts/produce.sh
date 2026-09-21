@@ -141,10 +141,11 @@ bash "$HERE/qa_layout.sh" "${BASE}_subs.mp4" ${QA_ARGS:-}
 # Stop 0. The declaration lives in pack/pack.json when the run has a pack; a run
 # with no pack is held to the three defaults. Samples the primary cut at 2 fps.
 echo "==> Colour gate (three families)"
-DECL="black,gold,cream"
+DECL="black,gold,cream"; ALLOW=""
 if [ -f pack/pack.json ]; then
-  DECL="$(python3 -c 'import json; p=json.load(open("pack/pack.json"))["colours"]; print(",".join(p["families"]+(["red"] if p.get("red",{}).get("on") else [])))')"
+  DECL="$(python3 -c 'import json; p=json.load(open("pack/pack.json"))["colours"]; print(",".join(p["families"]+(["red"] if p.get("red",{}).get("on") else [])+(["team"] if p.get("team",{}).get("on") else [])))')"
+  ALLOW="$(python3 -c 'import json; t=json.load(open("pack/pack.json"))["colours"].get("team",{}); print(",".join(t.get("hexes",[])) if t.get("on") else "")')"
 fi
-python3 "$HERE/gate_colours.py" "${BASE}_subs.mp4" --declare "$DECL"
+python3 "$HERE/gate_colours.py" "${BASE}_subs.mp4" --declare "$DECL" ${ALLOW:+--allow "$ALLOW"}
 
 echo "==> Done. Eyeball one typed-caption frame before shipping (subtitles.md)."

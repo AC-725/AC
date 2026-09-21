@@ -44,10 +44,11 @@ Every post carries at most **three colour families**, and the ground counts:
 Shades of one family are one family. **RED** (`#E5484D` bright / `#A32328` deep) is the
 single exception — ONE element, for the one thing that must be seen, declared at Stop 0
 with the reason; never chrome, never an icon, never two elements. Nothing else is on the
-post: no vendor colour, no chart palette, no hint of anything. A named person's team colours
-(`comparisons.md`) are a fourth family and wait on AC's call; until then they are declared
-like red or not used. Measured by **Gate 10**, `scripts/gate_colours.py`, on every rendered
-slide and every video. Full law: `references/imagery-pack.md` §5.
+post: no vendor colour, no chart palette, no hint of anything. A named person's **team
+colours** (`comparisons.md`) are the second exception, declared per run like red (AC,
+2026-09-21): the subject, the hexes and the reason at Stop 0, on the stage subject only,
+default off. Measured by **Gate 10**, `scripts/gate_colours.py`, on every rendered slide and
+every video. Full law: `references/imagery-pack.md` §5.
 
 ## Type
 

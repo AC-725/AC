@@ -58,7 +58,7 @@ h1{font-family:'Gloock';font-weight:400;font-size:74px;line-height:1.05;color:va
 #foot{display:flex;justify-content:space-between;margin-top:50px;padding-top:24px;border-top:1px solid var(--hair);font-size:16px;color:var(--dim)}
 #foot b{color:var(--gold);font-weight:600}
 </style></head><body>
-<div id="hdr"><div class="k"><span class="dot"></span>Pack board · Stop 1a</div><div class="h" id="handle">@ITSAC.AI</div></div>
+<div id="hdr"><div class="k"><span class="dot"></span><span id="stoplabel">Pack board · Stop 1a</span></div><div class="h" id="handle">@ITSAC.AI</div></div>
 <h1 id="title">Pack</h1>
 <div id="sub"></div>
 <div id="meta"></div>
@@ -68,12 +68,14 @@ h1{font-family:'Gloock';font-weight:400;font-size:74px;line-height:1.05;color:va
 <div class="sec k">Every object · 600 · true mount on its ground · 140 feed</div>
 <div id="grid"></div>
 <div id="none"></div>
-<div id="foot"><div>Stop 1a. <b>Nothing mounts until this passes.</b> Approve, or strike an object in one line.</div><div id="count"></div></div>
+<div id="foot"><div id="footline">Stop 1a. <b>Nothing mounts until this passes.</b> Approve, or strike an object in one line.</div><div id="count"></div></div>
 <script>
 (function(){
   const P = window.PACK; if(!P){ document.getElementById('title').textContent='no PACK injected'; return; }
   const $ = id => document.getElementById(id);
   const esc = s => String(s==null?'':s).replace(/[&<>]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+  const stop0 = String(P.stop || '') === '0';
+  $('stoplabel').textContent = stop0 ? 'Hero preview · Stop 0' : 'Pack board · Stop 1a';
   $('title').textContent = P.pack;
   $('sub').innerHTML = esc(P.topic) + (P.brief ? '<br>' + esc(P.brief) : '') +
     '<br>Every object below is <b>one family</b> — one camera, one light, one material, one scale system. Shown at true size; nothing is mounted until this board passes.';
@@ -81,10 +83,12 @@ h1{font-family:'Gloock';font-weight:400;font-size:74px;line-height:1.05;color:va
   $('meta').innerHTML = `<div>Format <b>${esc(P.format)}</b></div><div>Dimension <b>${esc(P.dimension)}</b></div><div>Look <b>${esc(P.look)}</b></div><div>Objects <b>${P.objects.length}</b></div><div>New bakes <b>${bakes}</b></div>`;
   const FAM = { black:['#0A0A0A','the ground and its inks'], gold:['#E7C765','light to dim, one family'], cream:['#F4F0E7','warm white, stone, dim'] };
   $('swatches').innerHTML = (P.colours.families||[]).map(f => `<div class="sw"><i style="background:${FAM[f]?FAM[f][0]:'#f0f'}"></i><div>${esc(f)}<small>${FAM[f]?FAM[f][1]:'?'}</small></div></div>`).join('') +
-    (P.colours.red && P.colours.red.on ? `<div class="sw"><i style="background:#E5484D"></i><div>red<small>the exception · one element</small></div></div>` : '');
-  $('redrow').innerHTML = (P.colours.red && P.colours.red.on)
-    ? `<b>RED, DECLARED</b> · on <b>${esc(P.colours.red.element)}</b> only · because ${esc(P.colours.red.reason)}`
-    : 'No red on this post. Three families, gold means look here.';
+    (P.colours.red && P.colours.red.on ? `<div class="sw"><i style="background:#E5484D"></i><div>red<small>the exception · one element</small></div></div>` : '') +
+    (P.colours.team && P.colours.team.on ? (P.colours.team.hexes||[]).map(h => `<div class="sw"><i style="background:${esc(h)}"></i><div>team<small>${esc(P.colours.team.subject)} only</small></div></div>`).join('') : '');
+  const lines = [];
+  if (P.colours.red && P.colours.red.on) lines.push(`<b>RED, DECLARED</b> · on <b>${esc(P.colours.red.element)}</b> only · because ${esc(P.colours.red.reason)}`);
+  if (P.colours.team && P.colours.team.on) lines.push(`<b style="color:var(--gold)">TEAM COLOURS, DECLARED</b> · on <b>${esc(P.colours.team.subject)}</b> (stage only) · because ${esc(P.colours.team.reason)}`);
+  $('redrow').innerHTML = lines.length ? lines.join('<br>') : 'No red, no team colours on this post. Three families, gold means look here.';
   const grid = $('grid');
   P.objects.forEach(o => {
     const m = +o.mount || 208; const ground = (o.ground === 'gold') ? 'gold' : 'black';
@@ -105,6 +109,7 @@ h1{font-family:'Gloock';font-weight:400;font-size:74px;line-height:1.05;color:va
   $('none').innerHTML = none.length ? `Slots with <b>no object by design</b>: ${none.map(esc).join(' · ')} — the copy owns those frames.` : '';
   $('count').textContent = `${P.objects.length} objects · ${bakes} baked this run · ${P.slots.length} slots`;
   $('handle').textContent = (P.handle || '@ITSAC.AI').toUpperCase();
+  if (stop0) $('footline').innerHTML = 'Stop 0. <b>The pick\'s hero, baked in the recommended look.</b> Choose a direction; nothing else is baked until you do.';
   document.body.dataset.ready = '1';
 })();
 </script></body></html>

@@ -62,6 +62,16 @@ at true size and gated. Six laws and one engine. Full spec: `references/imagery-
    → Stop 1 (stills board) → Stop 2 (the finished file). Each closes on one
    AskUserQuestion form with tick boxes and Go/Hold. The follow-up rule stands.
 
+**Round two (2026-09-21), four more calls.** Red is a **fourth family by exception, one
+element** — gold keeps the brand (confirmed as built). **Four stops, always** — never merge
+the pack board into the stills board. **Stop 0 shows the pick's hero, baked** in the
+recommended look before he chooses (`bake_pack.js … pack/stop0 <hero>`, a one-object
+manifest with `"stop": "0"`, `imagery-pack.md` §3); the other two directions stay as words.
+**Team colours on a named person are declared per run, like red** — `colours.team` names
+the subject, the hexes and the reason; stage subject only; default off; gate 10 is told the
+hexes (`--allow`). Standing by default, unstruck: polished still governs Prompt Drop unless
+overridden at Stop 0.
+
 **The engine.** `assets/pack-bake.template.html` — ONE `LOOK` per pack (matte · polished
 · wire); builders describe shape through the material kit, the family (camera, key, rim,
 hemi, contact shadow, exposure) is fixed under ENGINE, so a pack cannot drift into mixed
@@ -626,7 +636,7 @@ Read only what the task needs.
 | A Prompt Drop in Claude Design / no shell (the standing path since Pack 08) | `prompt-drop-dc.md` (**v4** — intro cover, polished icons, story cover, "You are X" house style) |
 | A Prompt Drop whose exchange is a SKILL, not a tool (the lesson generalises) | `prompt-drop-skill-exchange.md` (**v5** — 7 slides, 3 prompts, AC writes the final skill) |
 | A number that may already be verified / filing one that just cleared | `verified-numbers.md` FIRST, then `research.md` |
-| **A run is starting / "do today's AI News"** | `run-protocol.md` FIRST (arrive filled, two stops) |
+| **A run is starting / "do today's AI News"** | `run-protocol.md` FIRST (arrive filled, four stops: 0 · 1a · 1 · 2) |
 | The narrator figure — poses, face, stroke, grounding | `figure-rig.md` |
 | A prompting technique / "technique day" / a move that works in every chatbot | `technique-day.md` + `dc-engine.md` |
 | Which theme / how the frames look | `themes.md`, then `brand.md` |
@@ -1141,12 +1151,17 @@ branding.
   pre-filled on a real story — candidates, theme, hook, beats, camera, figure actions,
   subs, VO, caption, hashtags, cover. He strikes what is wrong in plain chat words. An
   empty template or an opening question is the failure. `references/run-protocol.md`.
-- **Two stops, and only two** (AC, 2026-08-26). The stills board and the finished MP4.
-  Nothing between them needs him. **No reply means no build.** A failed board loops on
-  his numbered fix list until every frame passes; motion starts after that.
+- **Two stops, and only two** (AC, 2026-08-26) — **superseded 2026-09-20/21: four stops,
+  always** — Stop 0 the pack brainstorm (with the pick's hero baked) · Stop 1a the pack
+  board · Stop 1 the stills board · Stop 2 the finished file (`imagery-pack.md` §9). The
+  principle survives: nothing BETWEEN the stops needs him. **No reply means no build.** A
+  failed board loops on his numbered fix list until every frame passes; motion starts
+  after that.
   **Stop 1b · the bake board** (AC, Day 41, 2026-09-11) — optional, default ON on any day
   a new 3D anchor was baked: the icon at 600px, at mount size on its actual ground, at
   140px; recoloured vendor marks at cut and mount size. Nothing mounts before he approves.
+  **Retired into Stop 1a, the pack board, 2026-09-20** — every run bakes now, so the
+  board is mandatory and the four stops are 0 · 1a · 1 · 2 (`imagery-pack.md` §9).
   **The headline strike round** on the final confirm: six headlines as tick-boxes, three
   rewrites plus a free box for any unticked, blank submit = agent picks and reports.
   **Overlap gate, Day 41 form:** every ink leaf measured separately, never a group; 24
@@ -1293,14 +1308,16 @@ branding.
   rail — conceived for the story, baked with ONE `LOOK`, boarded at true size on its actual
   ground before anything mounts. Catalog objects re-bake into the pack's look or stay on the
   bench. No hero repeats inside 14 days. `references/imagery-pack.md`.
-- **Three colour families per post — BLACK · GOLD · CREAM — and red only as the declared
-  exception** (AC, 2026-09-20). The ground counts; shades of a family are one family; the
-  tier gradations, dim footnotes and the band gradient are all GOLD. Red is ONE element,
-  named at Stop 0 with the reason, never chrome, never an icon. Gate 10 runs on every slide
-  and every video; a foreign colour anywhere fails the post.
-- **Stop 0 before any words on a slide, and a form at every stop** (AC, 2026-09-20).
-  Brainstorm → pack board → stills board → final; each closes on tick boxes and Go/Hold.
-  Silence is a Hold, never a Go. The follow-up rule stands.
+- **Three colour families per post — BLACK · GOLD · CREAM — and two declared exceptions**
+  (AC, 2026-09-20/21). The ground counts; shades of a family are one family; the tier
+  gradations, dim footnotes and the band gradient are all GOLD. Red is ONE element, named at
+  Stop 0 with the reason, never chrome, never an icon. A named person's team colours are
+  declared per run — subject, hexes, reason — on the stage subject only, default off. Gate 10
+  runs on every slide and every video; a foreign colour anywhere fails the post.
+- **Stop 0 before any words on a slide, and a form at every stop** (AC, 2026-09-20/21).
+  Brainstorm (with the pick's hero baked) → pack board → stills board → final — four stops,
+  always; each closes on tick boxes and Go/Hold. Silence is a Hold, never a Go. The
+  follow-up rule stands.
 - **2D or 3D is recommended per topic, with the reason, and decided by AC** (AC,
   2026-09-20). A reference sheet outranks the recommendation; ≤60px is always a 2D
   hairline; a reel mounts the pack as prepped PNGs, transform-only.

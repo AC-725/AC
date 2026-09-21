@@ -15,3 +15,7 @@ AC's note, 2026-08-25: two abstract marks racing read as one blob. What fixed it
   a second BOLT under the row label. Static tags sitting on each lane's own rule (y just above
   the rule, at the start of the lane) never collide and read as a legend.
 - Colour law: gold = the new thing, warm ink = the human, dim gold = a year ago.
+- **Team colours are a declared exception now** (AC, 2026-09-21, under the three-colour law in
+  `imagery-pack.md` §5). They go on only when Stop 0 declares `colours.team` — the named
+  subject, the hexes, the reason — and only on the stage subject. Undeclared, the human runs in
+  cream. Gate 10 is told the hexes through `produce.sh`.

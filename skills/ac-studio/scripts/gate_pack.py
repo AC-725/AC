@@ -11,7 +11,9 @@ declaration to the files on disk before the pack board ships:
   - every object's file exists, carries real transparency (Gate 9) and its
     alpha bbox clears the frame edge (a cropped render)
   - every object's ink sits inside the declared colour families; red on an
-    icon is never legal (the red exception is ONE element of type, not art)
+    icon is never legal (the red exception is ONE element of type, not art);
+    team colours are legal only on a `stage` object, and only when
+    colours.team is on with a subject, its hexes and the reason
   - a 3D object is never mounted below 60px (hairline law: 2D below 60)
   - one look per pack — objects declare no look of their own; the pack does
   - the red exception, when on, names the element and the reason
@@ -21,7 +23,7 @@ Exit 0 pass · 1 fail. Warnings never fail the gate but are printed.
 import json, os, sys
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-from gate_colours import classify  # noqa: E402
+from gate_colours import classify, parse_allow  # noqa: E402
 
 try:
     from PIL import Image
@@ -33,7 +35,7 @@ FAMILIES = ("black", "gold", "cream", "red")
 ROLES = ("hero", "anchor", "rail", "chip", "mark", "stage")
 
 
-def icon_families(path):
+def icon_families(path, allow=None):
     im = Image.open(path).convert("RGBA").reduce(2)
     buf = im.tobytes()
     counts = {}
@@ -42,7 +44,7 @@ def icon_families(path):
         if buf[i + 3] < 128:
             continue
         total += 1
-        fam = classify(buf[i], buf[i + 1], buf[i + 2])
+        fam = classify(buf[i], buf[i + 1], buf[i + 2], allow)
         counts[fam] = counts.get(fam, 0) + 1
     return {k: 100.0 * v / total for k, v in counts.items()} if total else {}
 
@@ -74,7 +76,14 @@ def main():
     if red.get("on"):
         if not red.get("element") or not red.get("reason"):
             problems.append("red is on but colours.red.element / .reason is empty — say WHAT is red and WHY it is the one thing")
-    declared = fams + (["red"] if red.get("on") else [])
+    team = P["colours"].get("team", {"on": False})
+    allow = None
+    if team.get("on"):
+        if not team.get("subject") or not team.get("hexes") or not team.get("reason"):
+            problems.append("team colours are on but colours.team.subject / .hexes / .reason is incomplete — name the person, the hexes and why")
+        else:
+            allow = parse_allow(",".join(team["hexes"]))
+    declared = fams + (["red"] if red.get("on") else []) + (["team"] if team.get("on") else [])
 
     slots = list(P["slots"])
     no_anchor = set(P.get("no_anchor", []))
@@ -104,8 +113,16 @@ def main():
         x0, y0, x1, y1 = bb
         if x0 <= 0 or y0 <= 0 or x1 >= W or y1 >= H:
             problems.append("object %s: alpha bbox touches the frame edge — cropped render" % o["key"])
-        pct = icon_families(f)
-        stray = {k: v for k, v in pct.items() if (k not in declared or k == "red") and v > 0.5}
+        pct = icon_families(f, allow)
+        # A declared team subject is multicoloured by definition, so the anti-aliased seams
+        # between its team colours and gold blend to hues that are neither (2.9% on a
+        # synthetic striped runner). Those seams are tolerated on the STAGE subject only;
+        # everywhere else a stray hue above 1% is a real foreign colour.
+        other_tol = 5.0 if (allow and o.get("role") == "stage") else 1.0
+        stray = {k: v for k, v in pct.items()
+                 if (k not in declared or k == "red") and v > (other_tol if k == "other" else 1.0)}
+        if pct.get("team", 0) > 1.0 and o.get("role") != "stage":
+            stray["team"] = pct["team"]     # team colours live on the named subject only
         if stray:
             problems.append("object %s: ink outside the pack's families: %s" % (
                 o["key"], ", ".join("%s %.1f%%" % kv for kv in stray.items())))

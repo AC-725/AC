@@ -32,7 +32,7 @@
 | close | mark | the signature | mark · 104 · black | asset |
 
 - **Dimension · look:** 3D · matte — because <the objects have mass / are nameable things>.
-- **Colours:** BLACK · GOLD · CREAM. Red: OFF.
+- **Colours:** BLACK · GOLD · CREAM. Red: OFF. Team colours: OFF.
 - **Bakes:** <n> new · <n> re-baked from the archive into this look · <n> assets.
 - **Risk:** <what could read wrong at 140px, and the fallback>.
 
@@ -61,6 +61,9 @@
 
 <A, because … . B is the runner-up if AC wants the red highlight; C only if he attaches a reference.>
 
+**Hero preview:** `pack/stop0-hero.png` — <hero object> baked in <look>, sent with this sheet.
+(One object only. The other directions stay as words until one is chosen.)
+
 ## Concept test — every object in the picked direction
 
 - [ ] means the THING, not the neighbourhood (a shield-with-tick says *protected*, not *breached*)
@@ -75,5 +78,6 @@
 1. **Direction:** A (recommended) / B / C / other in words
 2. **Look:** accept the recommendation / override to matte · polished · wire · flat
 3. **Red:** off / on → which element, in words
-4. **Remaps:** any object → slot change, in words (blank = as proposed)
-5. **Go / Hold**
+4. **Team colours** (only when a named person is on the stage): off / on → who, which hexes
+5. **Remaps:** any object → slot change, in words (blank = as proposed)
+6. **Go / Hold**

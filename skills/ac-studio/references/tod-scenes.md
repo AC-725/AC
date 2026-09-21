@@ -45,6 +45,11 @@ shown as-is on the short gold bar ("$0", "2 min"). `oldLabel/oldSub`, `newLabel/
 soft CTA. `cta.tagline` — signature line. `cta.loop` — keep `'try it &rarr; _'`.
 
 ## Icons
+**Under the pack law (2026-09-21)** the TOD line family — stroke-5 gold on `0 0 100 100`,
+no fill — is the engine's standing 2D pack: one look, one weight, already one family. Stop 0
+still runs (which icon per build card, per step, and the rule swap), and an icon the story
+needs but the registry lacks is added to `ICONS` — the Stop 0 approval is the ask. A 3D hero
+on the cover is legal as a `mixed` pack (`imagery-pack.md` §4).
 Line-icons in the `ICONS` registry at the top of the template, referenced by key:
 `globe · calculator · quiz · browser · calendar · plus · chat · rocket · pdf · tool ·
 check · save · gear · bolt (fallback) · chart · doc · audio · cards`.

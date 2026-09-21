@@ -8,7 +8,8 @@
   "handle": "@itsac.ai",
   "colours": {
     "families": ["black", "gold", "cream"],
-    "red": { "on": false, "element": "", "reason": "" }
+    "red": { "on": false, "element": "", "reason": "" },
+    "team": { "on": false, "subject": "", "hexes": [], "reason": "" }
   },
   "slots": ["cover", "02", "03", "04", "05", "06", "07", "08", "close"],
   "no_anchor": ["02", "close"],
