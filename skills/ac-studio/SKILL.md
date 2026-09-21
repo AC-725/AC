@@ -2,18 +2,17 @@
 name: ac-studio
 description: >-
   Austin's single front door for the Instagram brand "AC — AI in Plain English"
-  (@itsac.ai) — the video studio (Tool of the Day, a 31s animated tool demo; AI News, a
-  sub-12s reel that opens on the payoff and loops), the carousel and static-post system,
-  and the brand protocol (voice, post formula, captions, bio, Story Highlights, posting
-  calendar, hashtags, growth). Researches fresh stories, verifies every number, writes
-  algorithm-aware copy, brainstorms the post's own imagery pack with AC before drafting
-  (Stop 0: hero, anchors and rail as one 2D or 3D family, three colour families per post),
-  gates on a layout audit and a virality scorecard, checks in with AC at every stop, then
-  ships the MP4, cover, VO script, caption, hashtags and A/B hooks. Use this WHENEVER Austin touches his Instagram — a reel, video, TOD, tool of the
-  day, AI news, "day N" content, a carousel, a slide, a post, caption, bio, highlight,
-  hashtag set, weekly plan, growth question, or any AI story, tool or number he drops for
-  the page — even when he never names the brand or the format. The single source of truth
-  for how the page looks, sounds and grows. Replaces ac-instagram and ac-design.
+  (@itsac.ai) — the video studio (Tool of the Day, AI News), the carousel and
+  static-post system, and the brand protocol (voice, post formula, captions, bio, Story
+  Highlights, posting calendar, hashtags, growth). Researches fresh stories, verifies
+  every number, writes algorithm-aware copy, brainstorms the post's imagery pack with AC
+  first (Stop 0, three colour families), gates on a layout audit and a virality
+  scorecard, checks in with AC at every stop, then ships the MP4, cover, VO script,
+  caption, hashtags and A/B hooks. Use this WHENEVER Austin touches his Instagram — a
+  reel, video, TOD, tool of the day, AI news, "day N" content, a carousel, a slide, a
+  post, caption, bio, highlight, hashtag set, weekly plan, growth question, or any AI
+  story, tool or number he drops for the page — even when he never names the brand or
+  the format. The single source of truth for how the page looks, sounds and grows.
 ---
 
 # AC — Studio (@itsac.ai)
